@@ -4,6 +4,8 @@ open Lake DSL
 package «AM» where
   -- Settings applied to both builds and interactive editing
   leanOptions := #[
+    ⟨`autoImplicit, false⟩,
+    ⟨`relaxedAutoImplicit, false⟩,
     ⟨`pp.unicode.fun, true⟩, -- pretty-prints `fun a ↦ b`
     ⟨`pp.proofs.withType, false⟩
   ]
