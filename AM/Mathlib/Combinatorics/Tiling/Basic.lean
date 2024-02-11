@@ -57,6 +57,8 @@ expected to be handled by working with a group such as `Fin n → Multiplicative
 
 * `Protoset G X ιₚ`: An indexed family of prototiles.
 
+* `PlacedTile p`: An image of a tile in the protoset `p`.
+
 ## References
 
 * Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
@@ -123,5 +125,79 @@ variable {G X ιₚ}
 lemma coe_mk (t) : (⟨t⟩ : Protoset G X ιₚ) = t := rfl
 
 end Protoset
+
+variable {G X ιₚ}
+
+/-- A `PlacedTile p` is an image of a tile in the protoset `p` under an element of the group `G`.
+This is represented using a quotient so that images under group elements differing only by a
+symmetry of the tile are equal. -/
+@[ext] structure PlacedTile (p : Protoset G X ιₚ) where
+  /-- The index of the tile in the protoset. -/
+  index : ιₚ
+  /-- The group elements under which this tile is an image. -/
+  groupElts : G ⧸ ((p index).symmetries.map <| Subgroup.subtype _)
+
+namespace PlacedTile
+
+variable {p : Protoset G X ιₚ}
+
+/-- An induction principle to deduce results for `PlacedTile` from those given an index and an
+element of `G`, used with `induction pt using PlacedTile.induction_on`. -/
+@[elab_as_elim] protected lemma induction_on {ppt : PlacedTile p → Prop} (pt : PlacedTile p)
+    (h : ∀ i : ιₚ, ∀ gx : G, ppt ⟨i, gx⟩) : ppt pt := by
+  rcases pt with ⟨i, gx⟩
+  exact Quotient.inductionOn' gx (h i)
+
+/-- Coercion from a `PlacedTile` to a set of points. Use the coercion rather than using `coeSet`
+directly. -/
+@[coe] def coeSet : PlacedTile p → Set X :=
+  fun pt ↦ Quotient.liftOn' pt.groupElts (fun g ↦ g • (p pt.index : Set X))
+    fun a b r ↦ by
+      rw [QuotientGroup.leftRel_eq] at r
+      simp only
+      rw [eq_comm, ←inv_smul_eq_iff, smul_smul, ←MulAction.mem_stabilizer_iff]
+      exact SetLike.le_def.1 (Subgroup.map_subtype_le _) r
+
+instance : CoeTC (PlacedTile p) (Set X) where
+  coe := coeSet
+
+instance : Membership X (PlacedTile p) where
+  mem := fun x p ↦ x ∈ (p : Set X)
+
+@[simp] lemma mem_coe {x : X} {pt : PlacedTile p} : x ∈ (pt : Set X) ↔ x ∈ pt := Iff.rfl
+
+lemma coe_mk_mk (i : ιₚ) (g : G) : (⟨i, ⟦g⟧⟩ : PlacedTile p) = g • (p i : Set X) := rfl
+
+lemma coe_mk_coe (i : ιₚ) (g : G) : (⟨i, g⟩ : PlacedTile p) = g • (p i : Set X) := rfl
+
+instance : MulAction G (PlacedTile p) where
+  smul := fun g pt ↦ Quotient.liftOn' pt.groupElts (fun h ↦ ⟨pt.index, g * h⟩)
+    fun a b r ↦ by
+      rw [QuotientGroup.leftRel_eq] at r
+      refine PlacedTile.ext _ _ rfl ?_
+      simpa [QuotientGroup.eq, ←mul_assoc] using r
+  one_smul := fun pt ↦ by
+    simp only [HSMul.hSMul]
+    induction pt using PlacedTile.induction_on
+    simp
+  mul_smul := fun x y pt ↦ by
+    simp only [HSMul.hSMul]
+    induction pt using PlacedTile.induction_on
+    simp [mul_assoc]
+
+@[simp] lemma smul_mk_mk (g h : G) (i : ιₚ) : g • (⟨i, ⟦h⟧⟩ : PlacedTile p) = ⟨i, g * h⟩ := rfl
+
+@[simp] lemma smul_mk_coe (g h : G) (i : ιₚ) : g • (⟨i, h⟩ : PlacedTile p) = ⟨i, g * h⟩ := rfl
+
+@[simp] lemma smul_index (g : G) (pt : PlacedTile p) : (g • pt).index = pt.index := by
+  induction pt using PlacedTile.induction_on
+  rfl
+
+@[simp] lemma coe_smul (g : G) (pt : PlacedTile p) :
+    (g • pt : PlacedTile p) = g • (pt : Set X) := by
+  induction pt using PlacedTile.induction_on
+  simp [coeSet, mul_smul]
+
+end PlacedTile
 
 end Discrete
