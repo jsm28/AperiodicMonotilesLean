@@ -22,8 +22,8 @@ faithful, although typically it is. In a discrete context, tiles are expected to
 or a subset of it being tiled when working with tilings not of the whole space, and the tiles are
 pairwise disjoint. In a continuous context, definitions in the literature vary; the tiles may be
 closed and cover the space with interiors may be required to be disjoint (as used by Grünbaum and
-Shephard or Goodman-Strauss), or they may be required to be measurable and to cover partition it
-up to null sets (as used by Greenfeld and Tao).
+Shephard or Goodman-Strauss), or they may be required to be measurable and to partition it up to
+null sets (as used by Greenfeld and Tao).
 
 In general we are concerned not with a tiling in isolation but with tilings by some protoset of
 tiles; thus we make definitions in the context of such a protoset, where copies of the tiles in
