@@ -48,7 +48,7 @@ full stabilizer.
 
 The group `G` is throughout here a multiplicative group. Additive groups are also used in the
 literature, typically when based on `ℤ`; when working with the definitions here, such cases are
-expected to be handled by working with a group such as `Fin n → multiplicative ℤ`.
+expected to be handled by working with a group such as `Fin n → Multiplicative ℤ`.
 
 ## Main definitions
 
