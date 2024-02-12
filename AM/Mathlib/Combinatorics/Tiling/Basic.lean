@@ -89,6 +89,9 @@ not so related, even if they have the same points, are considered distinct. -/
 
 namespace Prototile
 
+instance : Inhabited (Prototile G X) where
+  default := ⟨∅, ⊥⟩
+
 instance : CoeTC (Prototile G X) (Set X) where
   coe := Prototile.carrier
 
@@ -115,6 +118,9 @@ with dot notation. -/
 
 namespace Protoset
 
+instance : Inhabited (Protoset G X ιₚ) where
+  default := ⟨fun _ ↦ default⟩
+
 instance : CoeFun (Protoset G X ιₚ) (fun _ ↦ ιₚ → Prototile G X) where
   coe := tiles
 
@@ -140,6 +146,8 @@ symmetry of the tile are equal. -/
 namespace PlacedTile
 
 variable {p : Protoset G X ιₚ}
+
+instance [Nonempty ιₚ] : Nonempty (PlacedTile p) := ⟨⟨Classical.arbitrary _, (1 : G)⟩⟩
 
 /-- An induction principle to deduce results for `PlacedTile` from those given an index and an
 element of `G`, used with `induction pt using PlacedTile.induction_on`. -/
