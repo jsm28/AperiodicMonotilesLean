@@ -163,7 +163,7 @@ directly. -/
     fun a b r ↦ by
       rw [QuotientGroup.leftRel_eq] at r
       simp only
-      rw [eq_comm, ←inv_smul_eq_iff, smul_smul, ←MulAction.mem_stabilizer_iff]
+      rw [eq_comm, ← inv_smul_eq_iff, smul_smul, ← MulAction.mem_stabilizer_iff]
       exact SetLike.le_def.1 (Subgroup.map_subtype_le _) r
 
 instance : CoeTC (PlacedTile p) (Set X) where
@@ -183,7 +183,7 @@ instance : MulAction G (PlacedTile p) where
     fun a b r ↦ by
       rw [QuotientGroup.leftRel_eq] at r
       refine PlacedTile.ext _ _ rfl ?_
-      simpa [QuotientGroup.eq, ←mul_assoc] using r
+      simpa [QuotientGroup.eq, ← mul_assoc] using r
   one_smul := fun pt ↦ by
     simp only [HSMul.hSMul]
     induction pt using PlacedTile.induction_on
