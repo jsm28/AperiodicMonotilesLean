@@ -213,7 +213,7 @@ instance : MulAction G (PlacedTile p) where
 
 end PlacedTile
 
-/-- A `TileSet p ιₜ` is an an indexed family of `PlacedTile p`. This is a separate definition
+/-- A `TileSet p ιₜ` is an indexed family of `PlacedTile p`. This is a separate definition
 rather than just using plain functions to facilitate defining associated API that can be used
 with dot notation. -/
 @[ext] structure TileSet (p : Protoset G X ιₚ) (ιₜ : Type*) where
