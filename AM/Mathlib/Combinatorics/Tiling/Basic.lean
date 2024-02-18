@@ -59,6 +59,11 @@ expected to be handled by working with a group such as `Fin n → Multiplicative
 
 * `PlacedTile p`: An image of a tile in the protoset `p`.
 
+* `TileSet p ιₜ`: An indexed family of images of tiles from the protoset `p`.
+
+* `TileSet.symmetryGroup`: The group of symmetries preserving a `TileSet` up to permutation of the
+indices.
+
 ## References
 
 * Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
@@ -207,5 +212,104 @@ instance : MulAction G (PlacedTile p) where
   simp [coeSet, mul_smul]
 
 end PlacedTile
+
+/-- A `TileSet p ιₜ` is an an indexed family of `PlacedTile p`. This is a separate definition
+rather than just using plain functions to facilitate defining associated API that can be used
+with dot notation. -/
+@[ext] structure TileSet (p : Protoset G X ιₚ) (ιₜ : Type*) where
+  /-- The tiles in the family. Use the coercion to a function rather than using `tiles`
+      directly. -/
+  tiles : ιₜ → PlacedTile p
+
+namespace TileSet
+
+variable {p : Protoset G X ιₚ} {ιₜ : Type*}
+
+instance [Nonempty ιₚ] : Nonempty (TileSet p ιₜ) := ⟨⟨fun _ ↦ Classical.arbitrary _⟩⟩
+
+instance : CoeFun (TileSet p ιₜ) (fun _ ↦ ιₜ → PlacedTile p) where
+  coe := tiles
+
+attribute [coe] tiles
+
+lemma coe_mk (t) : (⟨t⟩ : TileSet p ιₜ) = t := rfl
+
+/-- Reindex a `TileSet` by composition with a function on index types (typically an equivalence
+for it to literally be reindexing, though not required to be one in this definition). -/
+def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : TileSet p ιₜ' where
+  tiles := ↑t ∘ f
+
+@[simp] lemma coe_reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : t.reindex f = ↑t ∘ f :=
+  rfl
+
+@[simp] lemma reindex_apply {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) (i : ιₜ') :
+    t.reindex f i = t (f i) := rfl
+
+lemma reindex_reindex {ιₜ' : Type*} {ιₜ'' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ)
+    (f' : ιₜ'' → ιₜ') : t.reindex (f ∘ f') = (t.reindex f).reindex f' :=
+  rfl
+
+instance : MulAction G (TileSet p ιₜ) where
+  smul := fun g t ↦ ⟨(g • ·) ∘ ↑t.tiles⟩
+  one_smul := fun _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ one_smul _ _
+  mul_smul := fun _ _ _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ mul_smul _ _ _
+
+lemma smul_apply (g : G) (t : TileSet p ιₜ) (i : ιₜ) : (g • t) i = g • (t i) := rfl
+
+lemma smul_reindex {ιₜ' : Type*} (g : G) (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) :
+    g • (t.reindex f) = (g • t).reindex f :=
+  rfl
+
+/-- The action of both a group element and a permutation of the index type on a `TileSet`, used
+in defining the symmetry group. -/
+instance : MulAction (G × Equiv.Perm ιₜ) (TileSet p ιₜ) where
+  smul := fun g t ↦ (g.fst • t).reindex g.snd.symm
+  one_smul := fun _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ one_smul _ _
+  mul_smul := fun g h t ↦ TileSet.ext _ _ <| funext <| fun i ↦ by
+    change (g.1 * h.1) • t ((g.2 * h.2)⁻¹ i) = g.1 • h.1 • t (h.2⁻¹ (g.2⁻¹ i))
+    simp [mul_smul]
+
+lemma smul_prod_eq_reindex (g : G) (f : Equiv.Perm ιₜ) (t : TileSet p ιₜ) :
+    (g, f) • t = (g • t).reindex f.symm :=
+  rfl
+
+lemma smul_prod_apply (g : G) (f : Equiv.Perm ιₜ) (t : TileSet p ιₜ) (i : ιₜ) :
+    ((g, f) • t) i = g • t (f.symm i) :=
+  rfl
+
+/-- The symmetry group of a `TileSet p ιₜ` is the subgroup of `G` that preserves the tiles up to
+permutation of the indices. -/
+def symmetryGroup (t : TileSet p ιₜ) : Subgroup G :=
+  (MulAction.stabilizer (G × Equiv.Perm ιₜ) t).map (MonoidHom.fst _ _)
+
+/-- A group element is in the symmetry group if and only if there is a permutation of the indices
+such that mapping by the group element and that permutation preserves the `TileSet`. -/
+lemma mem_symmetryGroup_iff_exists {t : TileSet p ιₜ} {g : G} :
+    g ∈ t.symmetryGroup ↔ ∃ f : Equiv.Perm ιₜ, (g • t).reindex f = t := by
+  simp_rw [symmetryGroup, Subgroup.mem_map, MulAction.mem_stabilizer_iff]
+  change (∃ x : G × Equiv.Perm ιₜ, _ ∧ x.1 = g) ↔ _
+  refine ⟨fun ⟨⟨g', f⟩, ⟨h, hg⟩⟩ ↦ ⟨f.symm, ?_⟩, fun ⟨f, h⟩ ↦ ⟨(g, f.symm), h, rfl⟩⟩
+  dsimp only at hg
+  subst hg
+  exact h
+
+/-- If `g` is in the symmetry group, the image of any tile under `g` is in `t`. -/
+lemma exists_smul_eq_of_mem_symmetryGroup {t : TileSet p ιₜ} {g : G} (i : ιₜ)
+    (hg : g ∈ t.symmetryGroup) : ∃ j, g • (t i) = t j := by
+  rw [mem_symmetryGroup_iff_exists] at hg
+  rcases hg with ⟨f, h⟩
+  refine ⟨f.symm i, ?_⟩
+  nth_rewrite 2 [← h]
+  simp [TileSet.smul_apply]
+
+/-- If `g` is in the symmetry group, every tile in `t` is the image under `g` of some tile in
+`t`. -/
+lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ιₜ)
+    (hg : g ∈ t.symmetryGroup) : ∃ j, g • (t j) = t i := by
+  rcases exists_smul_eq_of_mem_symmetryGroup i (inv_mem hg) with ⟨j, hj⟩
+  refine ⟨j, ?_⟩
+  simp [← hj]
+
+end TileSet
 
 end Discrete
