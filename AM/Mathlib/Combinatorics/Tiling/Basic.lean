@@ -3,6 +3,9 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
+import AM.Mathlib.Data.Set.Pointwise.SMul
+import AM.Mathlib.GroupTheory.GroupAction.Basic
+import AM.Mathlib.Logic.Equiv.Pairwise
 import Mathlib.GroupTheory.Coset
 
 /-!
@@ -63,6 +66,14 @@ expected to be handled by working with a group such as `Fin n → Multiplicative
 
 * `TileSet.symmetryGroup`: The group of symmetries preserving a `TileSet` up to permutation of the
 indices.
+
+* `TileSetFunction p Y s`: A bundled function from `TileSet p ιₜ` to `Y` that is invariant under
+change or permutation of index type `ιₜ` and under the action of group elements in `s`.
+
+* `TileSet.IsTilingOf s t`: A `TileSetFunction` for whether `t` is a tiling of the set `s` of
+points.
+
+* `TileSet.IsTiling t`: A `TileSetFunction` for whether `t` is a tiling of `X`.
 
 ## References
 
@@ -309,6 +320,144 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
   rcases exists_smul_eq_of_mem_symmetryGroup i (inv_mem hg) with ⟨j, hj⟩
   refine ⟨j, ?_⟩
   simp [← hj]
+
+end TileSet
+
+universe u
+
+/-- A `TileSetFunction p Y s` is a function from `TileSet p ιₜ` to `Y` that is invariant under
+change or permutation of index type `ιₜ` (within the same universe) and under the action of group
+elements in `s`. -/
+@[ext] structure TileSetFunction (p : Protoset G X ιₚ) (Y : Type*) (s : Subgroup G) where
+  /-- The function.  Use the coercion to a function rather than using `toFun` directly. -/
+  toFun : {ιₜ : Type u} → TileSet p ιₜ → Y
+  /-- The function is invariant under reindexing. -/
+  reindex_eq : ∀ {ιₜ ιₜ' : Type u} (f : ιₜ ≃ ιₜ') (t : TileSet p ιₜ),
+    toFun (t.reindex f.symm) = toFun t
+  /-- The function is invariant under the group action within the subgroup `s`. -/
+  smul_eq : ∀ {ιₜ : Type u} {g : G} (t : TileSet p ιₜ), g ∈ s → toFun (g • t) = toFun t
+
+namespace TileSetFunction
+
+variable (p : Protoset G X ιₚ) (Y : Type*) (s : Subgroup G)
+
+instance : CoeFun (TileSetFunction p Y s) (fun _ ↦ {ιₜ : Type*} → TileSet p ιₜ → Y) where
+  coe := toFun
+
+attribute [coe] toFun
+
+attribute [simp] reindex_eq
+
+attribute [simp] smul_eq
+
+variable {p Y s}
+
+lemma coe_mk (f : {ιₜ : Type*} → TileSet p ιₜ → Y) (hr hs) :
+    (⟨f, hr, hs⟩ : TileSetFunction p Y s) = @f :=
+  rfl
+
+variable (p s)
+
+/-- The constant `TileSetFunction`. -/
+protected def const (y : Y) : TileSetFunction p Y s :=
+  ⟨fun {ιₜ} ↦ Function.const (TileSet p ιₜ) y, by simp, by simp⟩
+
+@[simp] lemma const_apply (y : Y) {ιₜ : Type*} (t : TileSet p ιₜ) :
+  TileSetFunction.const p s y t = y := rfl
+
+variable {p s}
+
+instance [Nonempty Y] : Nonempty (TileSetFunction p Y s) :=
+  ⟨TileSetFunction.const p s <| Classical.arbitrary _⟩
+
+/-- Composing a `TileSetFunction` with a function on the result type. -/
+protected def comp {Z : Type*} (f : TileSetFunction p Y s) (fyz : Y → Z) : TileSetFunction p Z s :=
+  ⟨fyz ∘ f.toFun, by simp, fun _ hg ↦ by simp [hg]⟩
+
+@[simp] lemma comp_apply {Z : Type*} (f : TileSetFunction p Y s) (fyz : Y → Z) {ιₜ : Type*}
+    (t : TileSet p ιₜ) : f.comp fyz t = fyz (f t) :=
+  rfl
+
+/-- Combining two `TileSetFunction`s with a function on their result types. -/
+protected def comp₂ {Y' : Type*} {Z : Type*} (f : TileSetFunction p Y s)
+    (f' : TileSetFunction p Y' s) (fyz : Y → Y' → Z) : TileSetFunction p Z s :=
+  ⟨fun {ιₜ : Type*} (t : TileSet p ιₜ) ↦ fyz (f t) (f' t), by simp, fun _ hg ↦ by simp [hg]⟩
+
+@[simp] lemma comp₂_apply {Y' : Type*} {Z : Type*} (f : TileSetFunction p Y s)
+    (f' : TileSetFunction p Y' s) (fyz : Y → Y' → Z) {ιₜ : Type*} (t : TileSet p ιₜ) :
+    f.comp₂ f' fyz t = fyz (f t) (f' t) :=
+  rfl
+
+/-- Converting a `TileSetFunction p Y s` to one using a subgroup of `s`. -/
+protected def ofLE (f : TileSetFunction p Y s) {s' : Subgroup G} (h : s' ≤ s) :
+    TileSetFunction p Y s' :=
+  ⟨f.toFun, by simp, fun _ hg ↦ by simp [SetLike.le_def.1 h hg]⟩
+
+@[simp] lemma ofLE_apply (f : TileSetFunction p Y s) {s' : Subgroup G} (h : s' ≤ s) {ιₜ : Type*}
+    (t : TileSet p ιₜ) : f.ofLE h t = f t :=
+  rfl
+
+end TileSetFunction
+
+namespace TileSet
+
+variable {p : Protoset G X ιₚ}
+
+/-- Whether the tiles of `t` are pairwise disjoint. -/
+protected def Disjoint : TileSetFunction p Prop ⊤ :=
+  ⟨fun {ιₜ : Type*} (t : TileSet p ιₜ) ↦ Pairwise fun i j ↦ Disjoint (t i : Set X) (t j),
+   by
+     intro ιₜ ιₜ' f t
+     simp only [eq_iff_iff]
+     convert EquivLike.pairwise_comp_iff f.symm _
+     rfl,
+   by simp [TileSet.smul_apply]⟩
+
+protected lemma disjoint_iff {ιₜ : Type*} {t : TileSet p ιₜ} :
+    TileSet.Disjoint t ↔ Pairwise fun i j ↦ Disjoint (t i : Set X) (t j) :=
+  Iff.rfl
+
+/-- Whether the union of the tiles of `t` is the set `s`. -/
+def UnionEq (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :=
+  ⟨fun {ιₜ : Type*} (t : TileSet p ιₜ) ↦ (⋃ i, (t i : Set X)) = s,
+   by
+     intro ιₜ ιₜ' f t
+     simp only [eq_iff_iff]
+     convert Iff.rfl
+     exact f.symm.iSup_comp.symm,
+   by
+     intro ιₜ g t hg
+     rw [MulAction.mem_stabilizer_iff] at hg
+     nth_rewrite 1 [← hg]
+     simp [TileSet.smul_apply, ← Set.smul_set_iUnion]⟩
+
+lemma unionEq_iff {ιₜ : Type*} {t : TileSet p ιₜ} {s : Set X} :
+    TileSet.UnionEq s t ↔ (⋃ i, (t i : Set X)) = s :=
+  Iff.rfl
+
+/-- Whether the union of the tiles of `t` is the whole of `X`. -/
+def UnionEqUniv : TileSetFunction p Prop ⊤ := (UnionEq Set.univ).ofLE (by simp)
+
+lemma unionEqUniv_iff {ιₜ : Type*} {t : TileSet p ιₜ} :
+    TileSet.UnionEqUniv t ↔ (⋃ i, (t i : Set X)) = Set.univ :=
+  Iff.rfl
+
+/-- Whether `t` is a tiling of the set `s`. -/
+def IsTilingOf (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :=
+  (TileSet.Disjoint.ofLE (by simp)).comp₂ (UnionEq s) (· ∧ ·)
+
+lemma isTilingOf_iff {ιₜ : Type*} {t : TileSet p ιₜ} {s : Set X} :
+    IsTilingOf s t ↔
+    (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = s :=
+  Iff.rfl
+
+/-- Whether `t` is a tiling of the whole of `X`. -/
+def IsTiling : TileSetFunction p Prop ⊤ := TileSet.Disjoint.comp₂ (UnionEqUniv) (· ∧ ·)
+
+lemma isTiling_iff {ιₜ : Type*} {t : TileSet p ιₜ} :
+    IsTiling t ↔
+    (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = Set.univ :=
+  Iff.rfl
 
 end TileSet
 
