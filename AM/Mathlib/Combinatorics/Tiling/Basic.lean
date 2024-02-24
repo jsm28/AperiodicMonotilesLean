@@ -331,7 +331,7 @@ elements in `s`. -/
   /-- The function.  Use the coercion to a function rather than using `toFun` directly. -/
   toFun : {ιₜ : Type u} → TileSet p ιₜ → Y
   /-- The function is invariant under reindexing. -/
-  reindex_eq : ∀ {ιₜ ιₜ' : Type u} (f : ιₜ ≃ ιₜ') (t : TileSet p ιₜ),
+  reindex_eq' : ∀ {ιₜ ιₜ' : Type u} (f : ιₜ ≃ ιₜ') (t : TileSet p ιₜ),
     toFun (t.reindex f.symm) = toFun t
   /-- The function is invariant under the group action within the subgroup `s`. -/
   smul_eq : ∀ {ιₜ : Type u} {g : G} (t : TileSet p ιₜ), g ∈ s → toFun (g • t) = toFun t
@@ -345,11 +345,17 @@ instance : CoeFun (TileSetFunction p Y s) (fun _ ↦ {ιₜ : Type*} → TileSet
 
 attribute [coe] toFun
 
-attribute [simp] reindex_eq
-
 attribute [simp] smul_eq
 
 variable {p Y s}
+
+@[simp] lemma reindex_eq {ιₜ ιₜ' : Type u} {F : Type*} [EquivLike F ιₜ' ιₜ]
+    (f : TileSetFunction p Y s) (t : TileSet p ιₜ) (e : F) : f (t.reindex e) = f t :=
+  f.reindex_eq' (EquivLike.toEquiv e).symm t
+
+@[simp] lemma reindex_eq_of_bijective {ιₜ ιₜ' : Type u} (f : TileSetFunction p Y s)
+    (t : TileSet p ιₜ) {e : ιₜ' → ιₜ} (h : Function.Bijective e) : f (t.reindex e) = f t :=
+  f.reindex_eq t <| Equiv.ofBijective e h
 
 lemma coe_mk (f : {ιₜ : Type*} → TileSet p ιₜ → Y) (hr hs) :
     (⟨f, hr, hs⟩ : TileSetFunction p Y s) = @f :=
