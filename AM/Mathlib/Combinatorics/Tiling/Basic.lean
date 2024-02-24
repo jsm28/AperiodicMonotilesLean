@@ -3,6 +3,7 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
+import AM.Mathlib.Logic.Equiv.Defs
 import AM.Mathlib.Logic.Equiv.Pairwise
 import Mathlib.Algebra.Pointwise.Stabilizer
 import Mathlib.GroupTheory.Coset
@@ -255,9 +256,51 @@ def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : Tile
 @[simp] lemma reindex_apply {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) (i : ιₜ') :
     t.reindex f i = t (f i) := rfl
 
-lemma reindex_reindex {ιₜ' : Type*} {ιₜ'' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ)
-    (f' : ιₜ'' → ιₜ') : t.reindex (f ∘ f') = (t.reindex f).reindex f' :=
+@[simp] lemma reindex_id (t : TileSet p ιₜ) : t.reindex id = t := rfl
+
+@[simp] lemma reindex_reindex {ιₜ' : Type*} {ιₜ'' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ)
+    (f' : ιₜ'' → ιₜ') : (t.reindex f).reindex f' = t.reindex (f ∘ f') :=
   rfl
+
+@[simp] lemma reindex_eq_reindex_iff_of_surjective {ιₜ' : Type*} {t₁ t₂ : TileSet p ιₜ}
+    {f : ιₜ' → ιₜ} (h : Function.Surjective f) : t₁.reindex f = t₂.reindex f ↔ t₁ = t₂ := by
+  refine ⟨fun he ↦ TileSet.ext _ _ <| funext <| h.forall.2 fun i ↦ ?_,
+          fun he ↦ congrArg₂ _ he rfl⟩
+  simp_rw [← reindex_apply, he]
+
+@[simp] lemma reindex_eq_reindex_iff_of_equivLike {ιₜ' : Type*} {F : Type*} [EquivLike F ιₜ' ιₜ]
+    {t₁ t₂ : TileSet p ιₜ} (f : F) : t₁.reindex f = t₂.reindex f ↔ t₁ = t₂ :=
+  reindex_eq_reindex_iff_of_surjective (EquivLike.surjective f)
+
+@[simp] lemma reindex_comp_eq_reindex_comp_iff_of_surjective {ιₜ' : Type*} {ιₜ'' : Type*}
+    {t₁ t₂ : TileSet p ιₜ} {f₁ f₂ : ιₜ' → ιₜ} {f : ιₜ'' → ιₜ'} (h : Function.Surjective f) :
+    t₁.reindex (f₁ ∘ f) = t₂.reindex (f₂ ∘ f) ↔ t₁.reindex f₁ = t₂.reindex f₂ := by
+  rw [← reindex_reindex, ← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
+
+@[simp] lemma reindex_comp_eq_reindex_comp_iff_of_equivLike {ιₜ' : Type*} {ιₜ'' : Type*}
+    {F : Type*} [EquivLike F ιₜ'' ιₜ'] {t₁ t₂ : TileSet p ιₜ} {f₁ f₂ : ιₜ' → ιₜ} (f : F) :
+    t₁.reindex (f₁ ∘ f) = t₂.reindex (f₂ ∘ f) ↔ t₁.reindex f₁ = t₂.reindex f₂ :=
+  reindex_comp_eq_reindex_comp_iff_of_surjective (EquivLike.surjective f)
+
+@[simp] lemma reindex_comp_eq_reindex_iff_of_surjective {ιₜ' : Type*}
+    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Function.Surjective f) :
+    t₁.reindex (f₁ ∘ f) = t₂.reindex f ↔ t₁.reindex f₁ = t₂ := by
+  rw [← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
+
+@[simp] lemma reindex_comp_eq_reindex_iff_of_equivLike {ιₜ' : Type*} {F : Type*}
+    [EquivLike F ιₜ' ιₜ] {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} (f : F) :
+    t₁.reindex (f₁ ∘ f) = t₂.reindex f ↔ t₁.reindex f₁ = t₂ :=
+  reindex_comp_eq_reindex_iff_of_surjective (EquivLike.surjective f)
+
+@[simp] lemma reindex_eq_reindex_comp_iff_of_surjective {ιₜ' : Type*}
+    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Function.Surjective f) :
+    t₁.reindex f = t₂.reindex (f₁ ∘ f) ↔ t₁ = t₂.reindex f₁ := by
+  rw [← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
+
+@[simp] lemma reindex_eq_reindex_comp_iff_of_equivLike {ιₜ' : Type*} {F : Type*}
+    [EquivLike F ιₜ' ιₜ] {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} (f : F) :
+    t₁.reindex f = t₂.reindex (f₁ ∘ f) ↔ t₁ = t₂.reindex f₁ :=
+  reindex_eq_reindex_comp_iff_of_surjective (EquivLike.surjective f)
 
 instance : MulAction G (TileSet p ιₜ) where
   smul := fun g t ↦ ⟨(g • ·) ∘ ↑t.tiles⟩
@@ -266,7 +309,7 @@ instance : MulAction G (TileSet p ιₜ) where
 
 lemma smul_apply (g : G) (t : TileSet p ιₜ) (i : ιₜ) : (g • t) i = g • (t i) := rfl
 
-lemma smul_reindex {ιₜ' : Type*} (g : G) (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) :
+@[simp] lemma smul_reindex {ιₜ' : Type*} (g : G) (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) :
     g • (t.reindex f) = (g • t).reindex f :=
   rfl
 
@@ -319,6 +362,18 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
   rcases exists_smul_eq_of_mem_symmetryGroup i (inv_mem hg) with ⟨j, hj⟩
   refine ⟨j, ?_⟩
   simp [← hj]
+
+@[simp] lemma symmetryGroup_reindex {ιₜ' : Type*} {F : Type*} [EquivLike F ιₜ' ιₜ]
+    (t : TileSet p ιₜ) (f : F) : (t.reindex f).symmetryGroup = t.symmetryGroup := by
+  ext g
+  simp_rw [mem_symmetryGroup_iff_exists]
+  refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨e, he⟩ ↦ ?_⟩
+  · refine ⟨((EquivLike.toEquiv f).symm.trans e).trans (EquivLike.toEquiv f), ?_⟩
+    rw [← reindex_eq_reindex_iff_of_equivLike f, ← he]
+    simp [Function.comp.assoc]
+  · refine ⟨((EquivLike.toEquiv f).trans e).trans (EquivLike.toEquiv f).symm, ?_⟩
+    nth_rewrite 2 [← he]
+    simp [← Function.comp.assoc]
 
 end TileSet
 
