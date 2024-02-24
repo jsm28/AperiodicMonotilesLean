@@ -4,6 +4,9 @@ open Function
 
 variable {α β : Type*} {r : α → α → Prop}
 
+protected lemma Subsingleton.pairwise [Subsingleton α] : Pairwise r :=
+  fun _ _ h ↦ False.elim <| h.elim <| Subsingleton.elim _ _
+
 lemma Pairwise.comp_of_injective (hr : Pairwise r) {f : β → α} (hf : Injective f) :
     Pairwise (r on f) :=
   fun _ _ h ↦ hr <| hf.ne h
