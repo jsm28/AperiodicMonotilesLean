@@ -239,6 +239,10 @@ variable {p : Protoset G X ιₚ} {ιₜ : Type*}
 
 instance [Nonempty ιₚ] : Nonempty (TileSet p ιₜ) := ⟨⟨fun _ ↦ Classical.arbitrary _⟩⟩
 
+instance [IsEmpty ιₜ] : Unique (TileSet p ιₜ) where
+  default := ⟨isEmptyElim⟩
+  uniq := fun _ ↦ TileSet.ext _ _ <| funext isEmptyElim
+
 instance : CoeFun (TileSet p ιₜ) (fun _ ↦ ιₜ → PlacedTile p) where
   coe := tiles
 
@@ -364,6 +368,12 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
   refine ⟨j, ?_⟩
   simp [← hj]
 
+@[simp] lemma symmetryGroup_of_isEmpty [IsEmpty ιₜ] (t : TileSet p ιₜ) : t.symmetryGroup = ⊤ := by
+  ext g
+  rw [mem_symmetryGroup_iff_exists]
+  simp only [Subgroup.mem_top, iff_true]
+  exact ⟨Equiv.refl _, Subsingleton.elim _ _⟩
+
 @[simp] lemma symmetryGroup_reindex {ιₜ' : Type*} {F : Type*} [EquivLike F ιₜ' ιₜ]
     (t : TileSet p ιₜ) (f : F) : (t.reindex f).symmetryGroup = t.symmetryGroup := by
   ext g
@@ -376,8 +386,13 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
     nth_rewrite 2 [← he]
     simp [← comp.assoc]
 
+@[simp] lemma symmetryGroup_reindex_of_bijective {ιₜ' : Type*} (t : TileSet p ιₜ) {f : ιₜ' → ιₜ}
+    (h : Bijective f) : (t.reindex f).symmetryGroup = t.symmetryGroup :=
+  t.symmetryGroup_reindex <| Equiv.ofBijective f h
+
 /-- Mapping the `TileSet` by a group element acts on the symmetry group by conjugation. -/
-lemma symmetryGroup_smul (t : TileSet p ιₜ) (g : G) : (g • t).symmetryGroup = (ConjAct.toConjAct g) • t.symmetryGroup := by
+lemma symmetryGroup_smul (t : TileSet p ιₜ) (g : G) :
+    (g • t).symmetryGroup = (ConjAct.toConjAct g) • t.symmetryGroup := by
   ext h
   simp_rw [Subgroup.mem_smul_pointwise_iff_exists, mem_symmetryGroup_iff_exists]
   refine ⟨fun ⟨f, hf⟩ ↦ ?_, fun ⟨f, ⟨e, he⟩, hh⟩ ↦ ⟨e, ?_⟩⟩
