@@ -89,6 +89,7 @@ noncomputable section
 
 namespace Discrete
 
+open Function
 open scoped Pointwise
 
 variable (G : Type*) (X : Type*) (ιₚ : Type*) [Group G] [MulAction G X]
@@ -263,7 +264,7 @@ def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : Tile
   rfl
 
 @[simp] lemma reindex_eq_reindex_iff_of_surjective {ιₜ' : Type*} {t₁ t₂ : TileSet p ιₜ}
-    {f : ιₜ' → ιₜ} (h : Function.Surjective f) : t₁.reindex f = t₂.reindex f ↔ t₁ = t₂ := by
+    {f : ιₜ' → ιₜ} (h : Surjective f) : t₁.reindex f = t₂.reindex f ↔ t₁ = t₂ := by
   refine ⟨fun he ↦ TileSet.ext _ _ <| funext <| h.forall.2 fun i ↦ ?_,
           fun he ↦ congrArg₂ _ he rfl⟩
   simp_rw [← reindex_apply, he]
@@ -273,7 +274,7 @@ def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : Tile
   reindex_eq_reindex_iff_of_surjective (EquivLike.surjective f)
 
 @[simp] lemma reindex_comp_eq_reindex_comp_iff_of_surjective {ιₜ' : Type*} {ιₜ'' : Type*}
-    {t₁ t₂ : TileSet p ιₜ} {f₁ f₂ : ιₜ' → ιₜ} {f : ιₜ'' → ιₜ'} (h : Function.Surjective f) :
+    {t₁ t₂ : TileSet p ιₜ} {f₁ f₂ : ιₜ' → ιₜ} {f : ιₜ'' → ιₜ'} (h : Surjective f) :
     t₁.reindex (f₁ ∘ f) = t₂.reindex (f₂ ∘ f) ↔ t₁.reindex f₁ = t₂.reindex f₂ := by
   rw [← reindex_reindex, ← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
 
@@ -283,7 +284,7 @@ def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : Tile
   reindex_comp_eq_reindex_comp_iff_of_surjective (EquivLike.surjective f)
 
 @[simp] lemma reindex_comp_eq_reindex_iff_of_surjective {ιₜ' : Type*}
-    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Function.Surjective f) :
+    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Surjective f) :
     t₁.reindex (f₁ ∘ f) = t₂.reindex f ↔ t₁.reindex f₁ = t₂ := by
   rw [← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
 
@@ -293,7 +294,7 @@ def reindex {ιₜ' : Type*} (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) : Tile
   reindex_comp_eq_reindex_iff_of_surjective (EquivLike.surjective f)
 
 @[simp] lemma reindex_eq_reindex_comp_iff_of_surjective {ιₜ' : Type*}
-    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Function.Surjective f) :
+    {t₁ t₂ : TileSet p ιₜ} {f₁ : ιₜ → ιₜ} {f : ιₜ' → ιₜ} (h : Surjective f) :
     t₁.reindex f = t₂.reindex (f₁ ∘ f) ↔ t₁ = t₂.reindex f₁ := by
   rw [← reindex_reindex, reindex_eq_reindex_iff_of_surjective h]
 
@@ -370,10 +371,10 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
   refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨e, he⟩ ↦ ?_⟩
   · refine ⟨((EquivLike.toEquiv f).symm.trans e).trans (EquivLike.toEquiv f), ?_⟩
     rw [← reindex_eq_reindex_iff_of_equivLike f, ← he]
-    simp [Function.comp.assoc]
+    simp [comp.assoc]
   · refine ⟨((EquivLike.toEquiv f).trans e).trans (EquivLike.toEquiv f).symm, ?_⟩
     nth_rewrite 2 [← he]
-    simp [← Function.comp.assoc]
+    simp [← comp.assoc]
 
 end TileSet
 
@@ -409,7 +410,7 @@ variable {p Y s}
   f.reindex_eq' (EquivLike.toEquiv e).symm t
 
 @[simp] lemma reindex_eq_of_bijective {ιₜ ιₜ' : Type u} (f : TileSetFunction p Y s)
-    (t : TileSet p ιₜ) {e : ιₜ' → ιₜ} (h : Function.Bijective e) : f (t.reindex e) = f t :=
+    (t : TileSet p ιₜ) {e : ιₜ' → ιₜ} (h : Bijective e) : f (t.reindex e) = f t :=
   f.reindex_eq t <| Equiv.ofBijective e h
 
 lemma coe_mk (f : {ιₜ : Type*} → TileSet p ιₜ → Y) (hr hs) :
@@ -420,7 +421,7 @@ variable (p s)
 
 /-- The constant `TileSetFunction`. -/
 protected def const (y : Y) : TileSetFunction p Y s :=
-  ⟨fun {ιₜ} ↦ Function.const (TileSet p ιₜ) y, by simp, by simp⟩
+  ⟨fun {ιₜ} ↦ const (TileSet p ιₜ) y, by simp, by simp⟩
 
 @[simp] lemma const_apply (y : Y) {ιₜ : Type*} (t : TileSet p ιₜ) :
   TileSetFunction.const p s y t = y := rfl
