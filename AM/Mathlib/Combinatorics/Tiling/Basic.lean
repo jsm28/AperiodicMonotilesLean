@@ -452,6 +452,14 @@ lemma coe_mk (f : {ιₜ : Type*} → TileSet p ιₜ → Y) (hr hs) :
     (⟨f, hr, hs⟩ : TileSetFunction p Y s) = @f :=
   rfl
 
+lemma reindex_iff {ιₜ ιₜ' : Type u} {F : Type*} [EquivLike F ιₜ' ιₜ]
+    {f : TileSetFunction p Prop s} {t : TileSet p ιₜ} (e : F) : f (t.reindex e) ↔ f t :=
+  by simp
+
+lemma reindex_iff_of_bijective {ιₜ ιₜ' : Type u} {f : TileSetFunction p Prop s}
+    {t : TileSet p ιₜ} {e : ιₜ' → ιₜ} (h : Bijective e) : f (t.reindex e) ↔ f t :=
+  by simp [h]
+
 variable (p s)
 
 /-- The constant `TileSetFunction`. -/
@@ -512,6 +520,20 @@ protected def Disjoint : TileSetFunction p Prop ⊤ :=
 protected lemma disjoint_iff {ιₜ : Type*} {t : TileSet p ιₜ} :
     TileSet.Disjoint t ↔ Pairwise fun i j ↦ Disjoint (t i : Set X) (t j) :=
   Iff.rfl
+
+lemma Disjoint.reindex_of_injective {ιₜ : Type*} {ιₜ' : Type*} {t : TileSet p ιₜ}
+    (hd : TileSet.Disjoint t) {e : ιₜ' → ιₜ} (h : Injective e) : TileSet.Disjoint (t.reindex e) :=
+  hd.comp_of_injective h
+
+lemma Disjoint.reindex_of_embeddingLike {ιₜ ιₜ' : Type*} {F : Type*} [FunLike F ιₜ' ιₜ]
+    [EmbeddingLike F ιₜ' ιₜ] {t : TileSet p ιₜ} (hd : TileSet.Disjoint t) (e : F) :
+    TileSet.Disjoint (t.reindex e) :=
+  EmbeddingLike.pairwise_comp e hd
+
+lemma Disjoint.reindex_of_surjective {ιₜ : Type*} {ιₜ' : Type*} {t : TileSet p ιₜ}
+    {e : ιₜ' → ιₜ} (hd : TileSet.Disjoint (t.reindex e)) (h : Surjective e) :
+    TileSet.Disjoint t :=
+  Pairwise.of_comp_of_surjective hd h
 
 /-- Whether the union of the tiles of `t` is the set `s`. -/
 def UnionEq (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :=
