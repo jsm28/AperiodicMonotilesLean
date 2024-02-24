@@ -376,6 +376,21 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
     nth_rewrite 2 [← he]
     simp [← comp.assoc]
 
+/-- Mapping the `TileSet` by a group element acts on the symmetry group by conjugation. -/
+lemma symmetryGroup_smul (t : TileSet p ιₜ) (g : G) : (g • t).symmetryGroup = (ConjAct.toConjAct g) • t.symmetryGroup := by
+  ext h
+  simp_rw [Subgroup.mem_smul_pointwise_iff_exists, mem_symmetryGroup_iff_exists]
+  refine ⟨fun ⟨f, hf⟩ ↦ ?_, fun ⟨f, ⟨e, he⟩, hh⟩ ↦ ⟨e, ?_⟩⟩
+  · refine ⟨(ConjAct.toConjAct g)⁻¹ • h, ?_⟩
+    simp only [smul_inv_smul, and_true]
+    refine ⟨f, ?_⟩
+    simp only [ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
+    rw [← smul_left_cancel_iff g, ← hf]
+    simp [←mul_smul, ←mul_assoc]
+  · subst hh
+    nth_rewrite 2 [← he]
+    simp [ConjAct.smul_def, mul_smul]
+
 end TileSet
 
 universe u
