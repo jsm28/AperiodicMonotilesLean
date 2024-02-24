@@ -335,6 +335,13 @@ lemma smul_prod_apply (g : G) (f : Equiv.Perm ιₜ) (t : TileSet p ιₜ) (i : 
     ((g, f) • t) i = g • t (f.symm i) :=
   rfl
 
+@[simp] lemma smul_prod_one (g : G) (t : TileSet p ιₜ) : (g, (1 : Equiv.Perm ιₜ)) • t = g • t :=
+  rfl
+
+@[simp] lemma smul_prod_refl (g : G) (t : TileSet p ιₜ) :
+    (g, (Equiv.refl ιₜ : Equiv.Perm ιₜ)) • t = g • t :=
+  rfl
+
 /-- The symmetry group of a `TileSet p ιₜ` is the subgroup of `G` that preserves the tiles up to
 permutation of the indices. -/
 def symmetryGroup (t : TileSet p ιₜ) : Subgroup G :=
@@ -393,18 +400,16 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
 /-- Mapping the `TileSet` by a group element acts on the symmetry group by conjugation. -/
 lemma symmetryGroup_smul (t : TileSet p ιₜ) (g : G) :
     (g • t).symmetryGroup = (ConjAct.toConjAct g) • t.symmetryGroup := by
+  simp_rw [← smul_prod_one, symmetryGroup, MulAction.stabilizer_smul_eq_stabilizer_map_conj]
   ext h
-  simp_rw [Subgroup.mem_smul_pointwise_iff_exists, mem_symmetryGroup_iff_exists]
-  refine ⟨fun ⟨f, hf⟩ ↦ ?_, fun ⟨f, ⟨e, he⟩, hh⟩ ↦ ⟨e, ?_⟩⟩
-  · refine ⟨(ConjAct.toConjAct g)⁻¹ • h, ?_⟩
-    simp only [smul_inv_smul, and_true]
-    refine ⟨f, ?_⟩
-    simp only [ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-    rw [← smul_left_cancel_iff g, ← hf]
-    simp [←mul_smul, ←mul_assoc]
-  · subst hh
-    nth_rewrite 2 [← he]
-    simp [ConjAct.smul_def, mul_smul]
+  simp only [Subgroup.mem_map, MulAction.mem_stabilizer_iff, MulEquiv.coe_toMonoidHom,
+             MulAut.conj_apply, Prod.inv_mk, inv_one, Prod.exists, Prod.mk_mul_mk, one_mul,
+             mul_one, MonoidHom.coe_fst, Prod.mk.injEq, exists_eq_right_right, exists_and_right,
+             exists_eq_right, Subgroup.mem_smul_pointwise_iff_exists, ConjAct.smul_def,
+             ConjAct.ofConjAct_toConjAct]
+  rw [exists_comm]
+  convert Iff.rfl
+  rw [exists_and_right]
 
 end TileSet
 
