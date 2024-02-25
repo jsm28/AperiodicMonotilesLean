@@ -3,7 +3,6 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Data.Set.Pairwise.Basic
 import AM.Mathlib.Logic.Equiv.Defs
 import AM.Mathlib.Logic.Equiv.Pairwise
 import Mathlib.Algebra.Pointwise.Stabilizer
