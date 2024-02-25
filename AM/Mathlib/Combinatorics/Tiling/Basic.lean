@@ -3,6 +3,7 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
+import AM.Mathlib.Data.Set.Pairwise.Basic
 import AM.Mathlib.Logic.Equiv.Defs
 import AM.Mathlib.Logic.Equiv.Pairwise
 import Mathlib.Algebra.Pointwise.Stabilizer
@@ -274,6 +275,17 @@ instance : Membership (PlacedTile p) (TileSet p ιₜ) where
   Iff.rfl
 
 lemma coeSet_apply (t : TileSet p ιₜ) : t = Set.range t := rfl
+
+protected lemma mem_def {pt : PlacedTile p} {t : TileSet p ιₜ} : pt ∈ t ↔ ∃ i, t i = pt :=
+  Iff.rfl
+
+@[simp] lemma exists_mem_iff {t : TileSet p ιₜ} {f : PlacedTile p → Prop} :
+    (∃ pt ∈ t, f pt) ↔ ∃ i, f (t i) := by
+  simp_rw [← mem_coeSet, coeSet_apply, Set.exists_range_iff]
+
+lemma union_of_mem_eq_iUnion (t : TileSet p ιₜ) : ⋃ pt ∈ t, (pt : Set X) = ⋃ i, (t i : Set X) := by
+  ext x
+  simp
 
 /-- Reindex a `TileSet` by composition with a function on index types (typically an equivalence
 for it to literally be reindexing, though not required to be one in this definition). -/
@@ -573,6 +585,17 @@ lemma smul_iff {f : TileSetFunction p Prop s} {g : G} {t : TileSet p ιₜ} (hg 
     f (g • t) ↔ f t :=
   by simp [hg]
 
+lemma eq_of_coeSet_eq_of_injective (f : TileSetFunction p Y s) {t₁ : TileSet p ιᵤ}
+    {t₂ : TileSet p ιᵤ'} (h : (t₁ : Set (PlacedTile p)) = t₂) (h₁ : Injective t₁)
+    (h₂ : Injective t₂) : f t₁ = f t₂ := by
+  rw [← TileSet.reindex_equivOfCoeSetEqOfInjective h h₁ h₂]
+  exact (reindex_eq _ _ _).symm
+
+lemma iff_of_coeSet_eq_of_injective (f : TileSetFunction p Prop s) {t₁ : TileSet p ιᵤ}
+    {t₂ : TileSet p ιᵤ'} (h : (t₁ : Set (PlacedTile p)) = t₂) (h₁ : Injective t₁)
+    (h₂ : Injective t₂) : f t₁ ↔ f t₂ := by
+  simpa using f.eq_of_coeSet_eq_of_injective h h₁ h₂
+
 variable (p s)
 
 /-- The constant `TileSetFunction`. -/
@@ -646,6 +669,14 @@ lemma Disjoint.reindex_of_surjective {t : TileSet p ιₜ} {e : ιₜ' → ιₜ
     TileSet.Disjoint t := by
   simp [TileSet.disjoint_iff, Subsingleton.pairwise]
 
+lemma Disjoint.coeSet_disjoint {t : TileSet p ιₜ} (hd : TileSet.Disjoint t) :
+    (t : Set (PlacedTile p)).Pairwise fun x y ↦ Disjoint (x : Set X) y :=
+  hd.range_pairwise (r := fun (x y : PlacedTile p) ↦ Disjoint (x : Set X) y)
+
+lemma coeSet_disjoint_iff_disjoint_of_injective {t : TileSet p ιₜ} (h : Injective t) :
+    ((t : Set (PlacedTile p)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ↔ TileSet.Disjoint t :=
+  ⟨fun hd ↦ hd.on_injective h Set.mem_range_self, Disjoint.coeSet_disjoint⟩
+
 /-- Whether the union of the tiles of `t` is the set `s`. -/
 def UnionEq (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :=
   ⟨fun {ιₜ : Type*} (t : TileSet p ιₜ) ↦ (⋃ i, (t i : Set X)) = s,
@@ -662,6 +693,10 @@ def UnionEq (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :=
 
 lemma unionEq_iff {t : TileSet p ιₜ} {s : Set X} : TileSet.UnionEq s t ↔ (⋃ i, (t i : Set X)) = s :=
   Iff.rfl
+
+lemma unionEq_iff' {t : TileSet p ιₜ} {s : Set X} :
+    TileSet.UnionEq s t ↔ (⋃ pt ∈ t, (pt : Set X)) = s := by
+  rw [unionEq_iff, union_of_mem_eq_iUnion]
 
 @[simp] lemma unionEq_reindex_iff_of_surjective {t : TileSet p ιₜ} {s : Set X} {e : ιₜ' → ιₜ}
     (h : Surjective e) : TileSet.UnionEq s (t.reindex e) ↔ TileSet.UnionEq s t :=
@@ -691,6 +726,10 @@ lemma unionEqUniv_iff {t : TileSet p ιₜ} :
     TileSet.UnionEqUniv t ↔ (⋃ i, (t i : Set X)) = Set.univ :=
   Iff.rfl
 
+lemma unionEqUniv_iff' {t : TileSet p ιₜ} :
+    TileSet.UnionEqUniv t ↔ (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
+  rw [unionEqUniv_iff, union_of_mem_eq_iUnion]
+
 @[simp] lemma unionEqUniv_reindex_iff_of_surjective {t : TileSet p ιₜ} {e : ιₜ' → ιₜ}
     (h : Surjective e) : TileSet.UnionEqUniv (t.reindex e) ↔ TileSet.UnionEqUniv t :=
   unionEq_reindex_iff_of_surjective h
@@ -702,6 +741,12 @@ def IsTilingOf (s : Set X) : TileSetFunction p Prop (MulAction.stabilizer G s) :
 lemma isTilingOf_iff {t : TileSet p ιₜ} {s : Set X} : IsTilingOf s t ↔
     (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = s :=
   Iff.rfl
+
+lemma isTilingOf_iff_of_injective {t : TileSet p ιₜ} {s : Set X} (h : Injective t) :
+    IsTilingOf s t ↔ ((t : Set (PlacedTile p)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
+      (⋃ pt ∈ t, (pt : Set X)) = s := by
+  rw [isTilingOf_iff, ← TileSet.disjoint_iff, ← coeSet_disjoint_iff_disjoint_of_injective h,
+      union_of_mem_eq_iUnion]
 
 @[simp] lemma isTilingOf_smul_iff {s : Set X} {t : TileSet p ιₜ} (g : G) :
     TileSet.IsTilingOf (g • s) (g • t) ↔ TileSet.IsTilingOf s t := by
@@ -727,6 +772,12 @@ def IsTiling : TileSetFunction p Prop ⊤ := TileSet.Disjoint.comp₂ (UnionEqUn
 lemma isTiling_iff {t : TileSet p ιₜ} : IsTiling t ↔
     (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = Set.univ :=
   Iff.rfl
+
+lemma isTiling_iff_of_injective {t : TileSet p ιₜ} (h : Injective t) :
+    IsTiling t ↔ ((t : Set (PlacedTile p)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
+      (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
+  rw [isTiling_iff, ← TileSet.disjoint_iff, ← coeSet_disjoint_iff_disjoint_of_injective h,
+      union_of_mem_eq_iUnion]
 
 end TileSet
 
