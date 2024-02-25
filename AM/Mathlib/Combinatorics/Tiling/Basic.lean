@@ -279,6 +279,8 @@ lemma coeSet_apply (t : TileSet p ιₜ) : t = Set.range t := rfl
 protected lemma mem_def {pt : PlacedTile p} {t : TileSet p ιₜ} : pt ∈ t ↔ ∃ i, t i = pt :=
   Iff.rfl
 
+lemma apply_mem (t : TileSet p ιₜ) (i : ιₜ) : t i ∈ t := Set.mem_range_self i
+
 @[simp] lemma exists_mem_iff {t : TileSet p ιₜ} {f : PlacedTile p → Prop} :
     (∃ pt ∈ t, f pt) ↔ ∃ i, f (t i) := by
   simp_rw [← mem_coeSet, coeSet_apply, Set.exists_range_iff]
@@ -420,6 +422,10 @@ lemma smul_apply (g : G) (t : TileSet p ιₜ) (i : ιₜ) : (g • t) i = g •
     (g • t : TileSet p ιₜ) = g • (t : Set (PlacedTile p)) := by
   simp [coeSet_apply, smul_coe, Set.range_comp]
 
+@[simp] lemma smul_mem_smul_iff {pt : PlacedTile p} (g : G) {t : TileSet p ιₜ} :
+    g • pt ∈ g • t ↔ pt ∈ t := by
+  rw [← mem_coeSet, ← mem_coeSet, coeSet_smul, Set.smul_mem_smul_set_iff]
+
 lemma mem_smul_iff_smul_inv_mem {pt : PlacedTile p} {g : G} {t : TileSet p ιₜ} :
     pt ∈ g • t ↔ g⁻¹ • pt ∈ t := by
   simp_rw [← mem_coeSet, coeSet_smul, Set.mem_smul_set_iff_inv_smul_mem]
@@ -489,6 +495,21 @@ lemma exists_smul_eq_of_mem_symmetryGroup' {t : TileSet p ιₜ} {g : G} (i : ι
   refine ⟨j, ?_⟩
   simp [← hj]
 
+/-- If `g` is in the symmetry group, the image of any tile under `g` is in `t`. -/
+lemma smul_mem_of_mem_of_mem_symmetryGroup {t : TileSet p ιₜ} {g : G} {pt : PlacedTile p}
+    (hg : g ∈ t.symmetryGroup) (hpt : pt ∈ t) : g • pt ∈ t := by
+  rcases hpt with ⟨i, rfl⟩
+  simp_rw [TileSet.mem_def, eq_comm]
+  exact exists_smul_eq_of_mem_symmetryGroup i hg
+
+/-- If `g` is in the symmetry group, every tile in `t` is the image under `g` of some tile in
+`t`. -/
+lemma exists_smul_eq_of_mem_of_mem_symmetryGroup {t : TileSet p ιₜ} {g : G} {pt : PlacedTile p}
+    (hg : g ∈ t.symmetryGroup) (hpt : pt ∈ t) : ∃ pt' ∈ t, g • pt' = pt := by
+  rcases hpt with ⟨i, rfl⟩
+  rw [exists_mem_iff]
+  exact exists_smul_eq_of_mem_symmetryGroup' i hg
+
 @[simp] lemma symmetryGroup_of_isEmpty [IsEmpty ιₜ] (t : TileSet p ιₜ) : t.symmetryGroup = ⊤ := by
   ext g
   rw [mem_symmetryGroup_iff_exists]
@@ -524,6 +545,15 @@ lemma symmetryGroup_smul (t : TileSet p ιₜ) (g : G) :
   rw [exists_comm]
   convert Iff.rfl
   rw [exists_and_right]
+
+lemma mem_symmetryGroup_smul_iff {t : TileSet p ιₜ} (g : G) {g' : G} :
+    g * g' * g⁻¹ ∈ (g • t).symmetryGroup ↔ g' ∈ t.symmetryGroup := by
+  simp [symmetryGroup_smul, Subgroup.mem_smul_pointwise_iff_exists, ConjAct.smul_def]
+
+lemma mem_symmetryGroup_smul_iff' {t : TileSet p ιₜ} {g g' : G} :
+    g' ∈ (g • t).symmetryGroup ↔ g⁻¹ * g' * g ∈ t.symmetryGroup := by
+  convert mem_symmetryGroup_smul_iff g
+  simp [mul_assoc]
 
 lemma symmetryGroup_le_stabilizer_coeSet (t : TileSet p ιₜ) :
     t.symmetryGroup ≤ MulAction.stabilizer G (t : Set (PlacedTile p)) := by
