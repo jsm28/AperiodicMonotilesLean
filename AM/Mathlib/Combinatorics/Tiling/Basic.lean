@@ -349,12 +349,20 @@ lemma injective_reindex_of_embeddingLike {t : TileSet p ιₜ} (f : F) (ht : Inj
     (f : E) : t₁.reindex f = t₂.reindex (f₁ ∘ f) ↔ t₁ = t₂.reindex f₁ :=
   reindex_eq_reindex_comp_iff_of_surjective (EquivLike.surjective f)
 
+lemma coeSet_reindex_eq_range_comp (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) :
+    (t.reindex f : Set (PlacedTile p)) = Set.range (t ∘ f) :=
+  rfl
+
 lemma coeSet_reindex_subset (t : TileSet p ιₜ) (f : ιₜ' → ιₜ) :
     (t.reindex f : Set (PlacedTile p)) ⊆ t := Set.range_comp_subset_range f t
 
 lemma mem_of_mem_reindex {t : TileSet p ιₜ} {f : ιₜ' → ιₜ} {pt : PlacedTile p}
     (h : pt ∈ t.reindex f) : pt ∈ t :=
   Set.mem_of_mem_of_subset h <| t.coeSet_reindex_subset f
+
+lemma mem_reindex_iff {t : TileSet p ιₜ} {f : ιₜ' → ιₜ} {pt : PlacedTile p} :
+    pt ∈ (t.reindex f) ↔ ∃ i, t (f i) = pt :=
+  Set.mem_range
 
 @[simp] lemma coeSet_reindex_of_surjective (t : TileSet p ιₜ) {f : ιₜ' → ιₜ} (h : Surjective f) :
     (t.reindex f : Set (PlacedTile p)) = t :=
@@ -419,6 +427,10 @@ lemma mem_smul_iff_smul_inv_mem {pt : PlacedTile p} {g : G} {t : TileSet p ιₜ
 lemma mem_inv_smul_iff_smul_mem {pt : PlacedTile p} {g : G} {t : TileSet p ιₜ} :
     pt ∈ g⁻¹ • t ↔ g • pt ∈ t := by
   simp_rw [← mem_coeSet, coeSet_smul, Set.mem_inv_smul_set_iff]
+
+@[simp] lemma smul_inter_smul (g : G) (t : TileSet p ιₜ) (s : Set X) (i : ιₜ) :
+    g • s ∩ (g • t) i = g • (s ∩ t i) := by
+  simp [smul_apply, Set.smul_set_inter]
 
 /-- The action of both a group element and a permutation of the index type on a `TileSet`, used
 in defining the symmetry group. -/
