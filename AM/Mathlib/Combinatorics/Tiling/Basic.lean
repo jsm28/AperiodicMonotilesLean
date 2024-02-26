@@ -113,7 +113,7 @@ namespace Prototile
 instance : Inhabited (Prototile G X) where
   default := ⟨∅, ⊥⟩
 
-instance : CoeTC (Prototile G X) (Set X) where
+instance : CoeOut (Prototile G X) (Set X) where
   coe := Prototile.carrier
 
 attribute [coe] carrier
@@ -190,7 +190,7 @@ directly. -/
       rw [eq_comm, ← inv_smul_eq_iff, smul_smul, ← MulAction.mem_stabilizer_iff]
       exact SetLike.le_def.1 (Subgroup.map_subtype_le _) r
 
-instance : CoeTC (PlacedTile p) (Set X) where
+instance : CoeOut (PlacedTile p) (Set X) where
   coe := coeSet
 
 instance : Membership X (PlacedTile p) where
@@ -263,7 +263,7 @@ lemma coe_mk (t) : (⟨t⟩ : TileSet p ιₜ) = t := rfl
 duplicate tiles in the `TileSet`). Use the coercion rather than using `coeSet` directly. -/
 @[coe] def coeSet : TileSet p ιₜ → Set (PlacedTile p) := fun t ↦ Set.range t
 
-instance : CoeTC (TileSet p ιₜ) (Set (PlacedTile p)) where
+instance : CoeOut (TileSet p ιₜ) (Set (PlacedTile p)) where
   coe := coeSet
 
 instance : Membership (PlacedTile p) (TileSet p ιₜ) where
