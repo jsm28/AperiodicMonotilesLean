@@ -114,6 +114,28 @@ lemma isohedralNumber_eq_card (t : TileSet p ιₜ) :
     isohedralNumber t = #(MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile p))) :=
   rfl
 
+lemma isohedralNumber_le_one_iff {t : TileSet p ιₜ} :
+    isohedralNumber t ≤ 1 ↔ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile p)) := by
+  rw [isohedralNumber_eq_card, Cardinal.le_one_iff_subsingleton,
+      MulAction.pretransitive_iff_subsingleton_quotient]
+
+lemma isohedralNumber_ne_zero_iff (t : TileSet p ιₜ) : isohedralNumber t ≠ 0 ↔ Nonempty ιₜ := by
+  rw [isohedralNumber_eq_card, Cardinal.mk_ne_zero_iff, nonempty_quotient_iff,
+      Set.nonempty_coe_sort, coeSet_apply, Set.range_nonempty_iff_nonempty]
+
+lemma isohedralNumber_eq_zero_iff (t : TileSet p ιₜ) : isohedralNumber t = 0 ↔ IsEmpty ιₜ := by
+  rw [← not_iff_not, not_isEmpty_iff]
+  exact t.isohedralNumber_ne_zero_iff
+
+lemma isohedralNumber_eq_one_iff {t : TileSet p ιₜ} :
+    isohedralNumber t = 1
+      ↔ Nonempty ιₜ ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile p)) := by
+  refine ⟨fun h ↦ ⟨t.isohedralNumber_ne_zero_iff.1 ?_, isohedralNumber_le_one_iff.1 h.le⟩,
+          fun ⟨hn, ht⟩ ↦ (le_antisymm
+            (isohedralNumber_le_one_iff.2 ht)
+            (Cardinal.one_le_iff_ne_zero.2 (t.isohedralNumber_ne_zero_iff.2 hn)))⟩
+  simp [h]
+
 /-- The number of orbits of tiles under the action of the symmetry group of a `TileSet`, as a
 natural number; zero if infinite. -/
 def isohedralNumberNat : TileSetFunction p ℕ ⊤ := isohedralNumber.comp Cardinal.toNat
