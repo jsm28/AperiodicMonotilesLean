@@ -126,7 +126,7 @@ lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
                zpowersHom_apply, Subtype.ext_iff, SubgroupClass.coe_zpow]
     intro a₁ a₂ h
     have h' := ho h
-    simpa using h'
+    simpa [funext_iff_of_subsingleton] using h'
 
 end TileSet
 
