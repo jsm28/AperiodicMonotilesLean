@@ -145,8 +145,8 @@ lemma mem_patch_iff {t : TileSet ps ιₜ} {s : Set X} {pt : PlacedTile ps} :
   rintro rfl
   rfl
 
-/-- An equivalence between index subtypes for a patch from a tiling and a corresponding patch
-with the same group element applied to both the tiling and the set of points. -/
+/-- An equivalence between index subtypes for a patch from a `TileSet` and a corresponding patch
+with the same group element applied to both the `TileSet` and the set of points. -/
 def smulPatchEquiv (g : G) (t : TileSet ps ιₜ) (s : Set X) :
     {i // (g • s ∩ ((g • t) i)).Nonempty} ≃ {i // (s ∩ t i).Nonempty} :=
   Equiv.subtypeEquivRight (by simp)
@@ -166,6 +166,19 @@ lemma union_patch (t : TileSet ps ιₜ) (s : Set X) :
 lemma union_patch' (t : TileSet ps ιₜ) (s : Set X) :
     ⋃ pt ∈ t.patch s, (pt : Set X) = ⋃ (i) (_ : (s ∩ t i).Nonempty), (t i : Set X) :=
   t.union_subtype' _
+
+/-- An equivalence between index subtypes for a patch of a patch and a corresponding patch taken
+directly from the original `TileSet`. -/
+def patchPatchEquiv (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s₁) :
+    {i // (s₂ ∩ t.patch s₁ i).Nonempty} ≃ {i // (s₂ ∩ t i).Nonempty} where
+  toFun := fun i ↦ ⟨↑↑i, by exact i.property⟩
+  invFun := fun i ↦ ⟨⟨↑i, i.property.mono <| by gcongr⟩, i.property⟩
+  left_inv := by simp [LeftInverse]
+  right_inv := by simp [Function.RightInverse, LeftInverse]
+
+lemma patch_patch_reindex (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s₁) :
+    (t.patch s₂).reindex (t.patchPatchEquiv h) = (t.patch s₁).patch s₂ :=
+  rfl
 
 end TileSet
 
