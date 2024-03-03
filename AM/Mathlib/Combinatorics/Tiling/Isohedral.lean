@@ -42,7 +42,7 @@ namespace Discrete
 open Function
 open scoped Cardinal Pointwise
 
-variable {G X ιₚ ιₜ ιₜ' : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
+variable {G X ιₚ ιₜ : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
 
 namespace TileSet
 
