@@ -21,6 +21,9 @@ protoset (that satisfy those matching rules).
 * `TileSet.isohedralNumber t`: A `TileSetFunction` for the isohedral number of `t`, as a
 `Cardinal`.
 
+* `TileSet.isohedralNumberNat t`: A `TileSetFunction` for the isohedral number of `t`, as a
+natural number.
+
 ## References
 
 * Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
