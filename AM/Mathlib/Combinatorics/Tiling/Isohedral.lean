@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Basic
+import AM.Mathlib.SetTheory.Cardinal.Basic
 
 /-!
 # Isohedral numbers of tilings and protosets
@@ -23,6 +24,10 @@ protoset (that satisfy those matching rules).
 
 * `TileSet.isohedralNumberNat t`: A `TileSetFunction` for the isohedral number of `t`, as a
 natural number.
+
+* `Protoset.isohedralNumber`: The isohedral number of a protoset, as a `Cardinal`.
+
+* `Protoset.isohedralNumberNat`: The isohedral number of a protoset, as a natural number.
 
 ## References
 
@@ -166,5 +171,74 @@ lemma isohedralNumberNat_eq_zero_iff {t : TileSet ps ιₜ} :
   simp [isohedralNumberNat, isohedralNumber_eq_zero_iff, aleph0_le_isohedralNumber_iff]
 
 end TileSet
+
+namespace Protoset
+
+variable (ιₜ) {s : Subgroup G}
+
+/-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`. -/
+def isohedralNumber (p : TileSetFunction ps Prop s) : Cardinal :=
+  ⨅ (t : {x : TileSet ps ιₜ // p x}), TileSet.isohedralNumber (t : TileSet ps ιₜ)
+
+variable {ιₜ}
+
+lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop s} :
+    isohedralNumber ιₜ p = 0 ↔ IsEmpty ιₜ ∨ ∀ t : TileSet ps ιₜ, ¬ p t := by
+  simp_rw [isohedralNumber, Cardinal.iInf_eq_zero_iff, TileSet.isohedralNumber_eq_zero_iff]
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rcases h with h | ⟨⟨_, _⟩, hi⟩
+    · exact Or.inr ((isEmpty_subtype _).1 h)
+    · exact Or.inl hi
+  · rcases h with h | h
+    · simp only [isEmpty_subtype, h, Subtype.exists, exists_prop, and_true]
+      rw [← not_exists]
+      exact (Classical.em _).symm
+    · simp [h]
+
+lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop s} :
+    isohedralNumber ιₜ p ≠ 0 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t := by
+  simp [isohedralNumber_eq_zero_iff, not_or]
+
+lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop s} :
+    isohedralNumber ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t
+      ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
+  rw [isohedralNumber, iInf]
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rcases Set.eq_empty_or_nonempty (Set.range fun (t : {x : TileSet ps ιₜ // p x}) ↦
+      TileSet.isohedralNumber (t : TileSet ps ιₜ)) with he | hn
+    · simp [he] at h
+    · have h' := csInf_mem hn
+      simp only [h, Set.mem_range, Subtype.exists, exists_prop,
+                 TileSet.isohedralNumber_eq_one_iff] at h'
+      rcases h' with ⟨t, hp, hni, hm⟩
+      exact ⟨hni, t, hp, hm⟩
+  · rcases h with ⟨hn, t, hp, ht⟩
+    have hi := TileSet.isohedralNumber_eq_one_iff.2 ⟨hn, ht⟩
+    refine IsLeast.csInf_eq ⟨?_, ?_⟩
+    · change TileSet.isohedralNumber
+        ((⟨t, hp⟩ : {x : TileSet ps ιₜ // p x}) : TileSet ps ιₜ) = 1 at hi
+      rw [← hi]
+      exact Set.mem_range_self _
+    · intro c
+      rw [Set.mem_range, Cardinal.one_le_iff_ne_zero]
+      rintro ⟨t', rfl⟩
+      rwa [TileSet.isohedralNumber_ne_zero_iff]
+
+variable (ιₜ)
+
+/-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`,
+as a natural number; zero if infinite or if no such `TileSet` exists. -/
+def isohedralNumberNat (p : TileSetFunction ps Prop s) : ℕ :=
+  Cardinal.toNat <| isohedralNumber ιₜ p
+
+variable {ιₜ}
+
+lemma isohedralNumberNat_eq_one_iff {p : TileSetFunction ps Prop s} :
+    isohedralNumberNat ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t
+      ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
+  rw [← isohedralNumber_eq_one_iff]
+  simp [isohedralNumberNat]
+
+end Protoset
 
 end Discrete
