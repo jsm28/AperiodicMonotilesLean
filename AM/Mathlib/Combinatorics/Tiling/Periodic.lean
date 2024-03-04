@@ -24,11 +24,15 @@ admits a tiling but not a weakly periodic tiling.
 
 ## Main definitions
 
-* `TileSet.stronglyPeriodic t`: A `TileSetFunction` for the property of `t` being strongly
+* `TileSet.StronglyPeriodic t`: A `TileSetFunction` for the property of `t` being strongly
 periodic.
 
-* `TileSet.weaklyPeriodic n t`: A `TileSetFunction` for the property of `t` being weakly
+* `TileSet.WeaklyPeriodic n t`: A `TileSetFunction` for the property of `t` being weakly
 `n`-periodic.
+
+* `Protoset.WeaklyAperiodic`: The property of a protoset being weakly aperiodic.
+
+* `Protoset.StronglyAperiodic`: The property of a protoset being strongly aperiodic.
 
 ## References
 
@@ -53,7 +57,7 @@ namespace TileSet
 
 /-- Whether a `TileSet` is strongly periodic: that is, whether its symmetry group has only
 finitely many orbits of points of `X` under its action. -/
-def stronglyPeriodic : TileSetFunction ps Prop ⊤ :=
+def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
   ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦ Infinite <| MulAction.orbitRel.Quotient t.symmetryGroup X,
    by
      refine fun {ιₜ ιₜ'} (f t) ↦ ?_
@@ -77,12 +81,12 @@ def stronglyPeriodic : TileSetFunction ps Prop ⊤ :=
        exact ⟨g * a * g⁻¹, ha, by simp [mul_smul, ha']⟩⟩
 
 lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :
-    TileSet.stronglyPeriodic t ↔ Infinite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
+    TileSet.StronglyPeriodic t ↔ Infinite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
   Iff.rfl
 
 /-- Whether a `TileSet` is `n`-weakly periodic: that is, whether its symmetry group has a `ℤ^n`
 subgroup. -/
-def weaklyPeriodic (n : ℕ) : TileSetFunction ps Prop ⊤ :=
+def WeaklyPeriodic (n : ℕ) : TileSetFunction ps Prop ⊤ :=
   ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦
      ∃ f : (Fin n → Multiplicative ℤ) →* t.symmetryGroup, Injective f,
    by
@@ -106,11 +110,11 @@ def weaklyPeriodic (n : ℕ) : TileSetFunction ps Prop ⊤ :=
        simpa [Injective] using hf⟩
 
 lemma weaklyPeriodic_iff {n : ℕ} {t : TileSet ps ιₜ} :
-    TileSet.weaklyPeriodic n t ↔ ∃ f : (Fin n → Multiplicative ℤ) →* t.symmetryGroup, Injective f :=
+    TileSet.WeaklyPeriodic n t ↔ ∃ f : (Fin n → Multiplicative ℤ) →* t.symmetryGroup, Injective f :=
   Iff.rfl
 
 lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
-    TileSet.weaklyPeriodic 1 t ↔ ∃ g ∈ t.symmetryGroup, ¬IsOfFinOrder g := by
+    TileSet.WeaklyPeriodic 1 t ↔ ∃ g ∈ t.symmetryGroup, ¬IsOfFinOrder g := by
   rw [weaklyPeriodic_iff]
   refine ⟨fun ⟨f, hf⟩ ↦ ?_, fun ⟨g, hg, ho⟩ ↦ ?_⟩
   · refine ⟨f (fun _ ↦ Multiplicative.ofAdd 1), (f (fun _ ↦ Multiplicative.ofAdd 1)).property, ?_⟩
@@ -129,5 +133,21 @@ lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
     simpa [funext_iff_of_subsingleton] using h'
 
 end TileSet
+
+namespace Protoset
+
+variable (ιₜ) {s : Subgroup G}
+
+/-- Whether `ps` is weakly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that is,
+whether it has such a `TileSet`, but none is strongly periodic. -/
+def WeaklyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
+  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, ¬ TileSet.StronglyPeriodic t
+
+/-- Whether `ps` is strongly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that
+is, whether it has such a `TileSet`, but none is weakly periodic. -/
+def StronglyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
+  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, ¬ TileSet.WeaklyPeriodic 1 t
+
+end Protoset
 
 end Discrete
