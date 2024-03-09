@@ -57,17 +57,17 @@ namespace TileSet
 /-- Whether a `TileSet` is strongly periodic: that is, whether its symmetry group has only
 finitely many orbits of points of `X` under its action. -/
 def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
-  ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦ Infinite <| MulAction.orbitRel.Quotient t.symmetryGroup X,
+  ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦ Finite <| MulAction.orbitRel.Quotient t.symmetryGroup X,
    by
      refine fun {ιₜ ιₜ'} (f t) ↦ ?_
      simp only [eq_iff_iff]
-     refine Equiv.infinite_iff (Quotient.congrRight fun x y ↦ ?_)
+     refine Equiv.finite_iff (Quotient.congrRight fun x y ↦ ?_)
      change _ ∈ MulAction.orbit _ _ ↔ _ ∈ MulAction.orbit _ _
      simp [MulAction.mem_orbit_iff],
    by
      refine fun {ιₜ g} (t _) ↦ ?_
      simp only [eq_iff_iff]
-     refine Equiv.infinite_iff (Quotient.congr (MulAction.toPerm g⁻¹) fun x y ↦ ?_)
+     refine Equiv.finite_iff (Quotient.congr (MulAction.toPerm g⁻¹) fun x y ↦ ?_)
      change _ ∈ MulAction.orbit _ _ ↔ _ ∈ MulAction.orbit _ _
      simp only [MulAction.mem_orbit_iff, Subtype.exists, Submonoid.mk_smul, exists_prop,
                 MulAction.toPerm_apply]
@@ -80,7 +80,7 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
        exact ⟨g * a * g⁻¹, ha, by simp [mul_smul, ha']⟩⟩
 
 lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :
-    TileSet.StronglyPeriodic t ↔ Infinite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
+    TileSet.StronglyPeriodic t ↔ Finite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
   Iff.rfl
 
 /-- Whether a `TileSet` is `n`-weakly periodic: that is, whether its symmetry group has a `ℤ^n`
