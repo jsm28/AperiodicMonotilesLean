@@ -80,7 +80,7 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
        exact ⟨g * a * g⁻¹, ha, by simp [mul_smul, ha']⟩⟩
 
 lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :
-    TileSet.StronglyPeriodic t ↔ Finite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
+    StronglyPeriodic t ↔ Finite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
   Iff.rfl
 
 /-- Whether a `TileSet` is `n`-weakly periodic: that is, whether its symmetry group has a `ℤ^n`
@@ -109,14 +109,14 @@ def WeaklyPeriodic (n : ℕ) : TileSetFunction ps Prop ⊤ :=
        simpa [Injective] using hf⟩
 
 lemma weaklyPeriodic_iff {n : ℕ} {t : TileSet ps ιₜ} :
-    TileSet.WeaklyPeriodic n t ↔ ∃ f : (Fin n → Multiplicative ℤ) →* t.symmetryGroup, Injective f :=
+    WeaklyPeriodic n t ↔ ∃ f : (Fin n → Multiplicative ℤ) →* t.symmetryGroup, Injective f :=
   Iff.rfl
 
-lemma weaklyPeriodic_zero (t : TileSet ps ιₜ) : TileSet.WeaklyPeriodic 0 t :=
+lemma weaklyPeriodic_zero (t : TileSet ps ιₜ) : WeaklyPeriodic 0 t :=
   ⟨1, Function.injective_of_subsingleton _⟩
 
 lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
-    TileSet.WeaklyPeriodic 1 t ↔ ∃ g ∈ t.symmetryGroup, ¬IsOfFinOrder g := by
+    WeaklyPeriodic 1 t ↔ ∃ g ∈ t.symmetryGroup, ¬IsOfFinOrder g := by
   rw [weaklyPeriodic_iff]
   refine ⟨fun ⟨f, hf⟩ ↦ ?_, fun ⟨g, hg, ho⟩ ↦ ?_⟩
   · refine ⟨f (fun _ ↦ Multiplicative.ofAdd 1), (f (fun _ ↦ Multiplicative.ofAdd 1)).property, ?_⟩
@@ -134,8 +134,8 @@ lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
     have h' := ho h
     simpa [funext_iff_of_subsingleton] using h'
 
-lemma weaklyPeriodic_of_le {t : TileSet ps ιₜ} {m n : ℕ} (h : TileSet.WeaklyPeriodic n t)
-    (hle : m ≤ n) : TileSet.WeaklyPeriodic m t := by
+lemma weaklyPeriodic_of_le {t : TileSet ps ιₜ} {m n : ℕ} (h : WeaklyPeriodic n t) (hle : m ≤ n) :
+    WeaklyPeriodic m t := by
   rcases h with ⟨f, hf⟩
   exact ⟨f.comp (ExtendByOne.hom (Multiplicative ℤ) (Fin.castLE hle)),
          hf.comp (extend_injective (Fin.strictMono_castLE hle).injective _)⟩
