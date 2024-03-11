@@ -1,5 +1,4 @@
 import Mathlib.Data.Setoid.Partition
-import AM.Mathlib.Logic.Equiv.Set
 
 variable {α : Type*} {β : Type*}
 
@@ -23,7 +22,7 @@ noncomputable def equivSigmaFibersOfLe {r s : Setoid α} (hle : r ≤ s) :
           (fun y z h ↦ (Set.image_eq_image Subtype.val_injective).1 h))
     _ ≃ ⋃ q : Quotient s, (fun t ↦ (Subtype.val '' t)) ''
           (r.comap (Subtype.val : Quotient.mk s ⁻¹' {q} → α)).classes :=
-        (Equiv.Set.iUnion fun i j hij ↦ Set.disjoint_left.2 fun c hc ↦ by
+        (Set.unionEqSigmaOfDisjoint fun i j hij ↦ Set.disjoint_left.2 fun c hc ↦ by
           rcases hc with ⟨k, hk, rfl⟩
           simp only [Set.mem_image, not_exists, not_and]
           intro k' hk' he
