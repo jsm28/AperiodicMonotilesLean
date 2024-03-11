@@ -2,9 +2,6 @@ import Mathlib.GroupTheory.GroupAction.Basic
 
 open Function
 
-attribute [to_additive] MulAction.pretransitive_iff_subsingleton_quotient
-attribute [to_additive] MulAction.pretransitive_iff_unique_quotient_of_nonempty
-
 namespace MulAction
 variable {M G α : Type*} [Group G] [Monoid M] [MulAction G α] [MulAction M α]
 
