@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Basic
+import AM.Mathlib.GroupTheory.Index
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!
@@ -82,6 +83,16 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
 lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :
     StronglyPeriodic t ↔ Finite (MulAction.orbitRel.Quotient t.symmetryGroup X) :=
   Iff.rfl
+
+lemma stronglyPeriodic_of_finite_quotient_of_index_ne_zero {t : TileSet ps ιₜ}
+    (hq : Finite <| MulAction.orbitRel.Quotient G X) (hi : t.symmetryGroup.index ≠ 0) :
+    StronglyPeriodic t :=
+  Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hq hi
+
+lemma stronglyPeriodic_of_pretransitive_of_index_ne_zero {t : TileSet ps ιₜ}
+    [MulAction.IsPretransitive G X] (hi : t.symmetryGroup.index ≠ 0) :
+    StronglyPeriodic t :=
+  Subgroup.finite_quotient_of_pretransitive_of_index_ne_zero hi
 
 /-- Whether a `TileSet` is `n`-weakly periodic: that is, whether its symmetry group has a `ℤ^n`
 subgroup. -/
