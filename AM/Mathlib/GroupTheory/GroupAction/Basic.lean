@@ -36,6 +36,19 @@ lemma mem_orbit_symm {a₁ a₂ : α} : a₁ ∈ orbit G a₂ ↔ a₂ ∈ orbit
   simp_rw [← orbit_eq_iff, eq_comm]
 
 @[to_additive]
+lemma mem_subgroup_orbit_iff {H : Subgroup G} {x : α} {a b : orbit G x} :
+    a ∈ MulAction.orbit H b ↔ (a : α) ∈ MulAction.orbit H (b : α) := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rcases h with ⟨g, rfl⟩
+    simp_rw [Submonoid.smul_def, Subgroup.coe_toSubmonoid, orbit.coe_smul, ← Submonoid.smul_def]
+    exact MulAction.mem_orbit _ g
+  · rcases h with ⟨g, h⟩
+    simp_rw [Submonoid.smul_def, Subgroup.coe_toSubmonoid, ← orbit.coe_smul,
+             ← Submonoid.smul_def, ← Subtype.ext_iff] at h
+    subst h
+    exact MulAction.mem_orbit _ g
+
+@[to_additive]
 lemma orbitRel.Quotient.orbit_injective :
     Injective (orbitRel.Quotient.orbit : orbitRel.Quotient G α → Set α) := by
   intro x y h
@@ -94,7 +107,6 @@ instance (x : orbitRel.Quotient G α) : IsPretransitive G x.orbit where
     ext
     simp [mul_smul]
 
--- TODO version for plain MulAction.orbit as well.
 @[to_additive]
 lemma orbitRel.Quotient.mem_subgroup_orbit_iff {H : Subgroup G} {x : orbitRel.Quotient G α}
     {a b : x.orbit} : a ∈ MulAction.orbit H b ↔ (a : α) ∈ MulAction.orbit H (b : α) := by
