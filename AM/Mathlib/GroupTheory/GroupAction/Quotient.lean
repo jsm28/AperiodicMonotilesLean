@@ -1,4 +1,3 @@
-import AM.Mathlib.Data.Setoid.Partition
 import AM.Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.GroupTheory.GroupAction.Quotient
 
@@ -88,7 +87,7 @@ noncomputable def equivSubgroupOrbits (H : Subgroup α) :
   calc
     orbitRel.Quotient H β ≃ Σω : Ω, Quotient ((orbitRel H β).comap
       (Subtype.val : Quotient.mk (orbitRel α β) ⁻¹' {ω} → β)) :=
-        (Setoid.equivSigmaFibersOfLe (orbitRel_subgroup_le H)).symm
+        (Setoid.sigmaQuotientEquivOfLe (orbitRel_subgroup_le H)).symm
     _ ≃ Σω : Ω, orbitRel.Quotient H (orbitRel.Quotient.orbit ω) :=
       Equiv.sigmaCongrRight fun ω ↦ (equivSubgroupOrbitsSetoidComap H ω).symm
 
