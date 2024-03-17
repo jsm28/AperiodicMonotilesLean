@@ -179,6 +179,40 @@ element of `G`, used with `induction pt using PlacedTile.induction_on`. -/
   rcases pt with ⟨i, gx⟩
   exact Quotient.inductionOn' gx (h i)
 
+/-- An alternative extensionality principle for `PlacedTile` that avoids `HEq`, using existence
+of a common group element. -/
+lemma ext_iff_of_exists {pt₁ pt₂ : PlacedTile ps} :
+    pt₁ = pt₂ ↔ pt₁.index = pt₂.index ∧ ∃ g, ⟦g⟧ = pt₁.groupElts ∧ ⟦g⟧ = pt₂.groupElts := by
+  refine ⟨fun h ↦ ?_, fun ⟨h, g, hg₁, hg₂⟩ ↦ ?_⟩
+  · subst h
+    simp only [and_self, true_and]
+    refine ⟨pt₁.groupElts.out', ?_⟩
+    rw [← @Quotient.mk''_eq_mk, Quotient.out_eq']
+  · rcases pt₁ with ⟨i₁, g₁⟩
+    rcases pt₂ with ⟨i₂, g₂⟩
+    dsimp only at h
+    subst h
+    ext
+    · rfl
+    · exact heq_of_eq (hg₁.symm.trans hg₂)
+
+/-- An alternative extensionality principle for `PlacedTile` that avoids `HEq`, using equality
+of quotient preimages. -/
+lemma ext_iff_of_preimage {pt₁ pt₂ : PlacedTile ps} :
+    pt₁ = pt₂ ↔ pt₁.index = pt₂.index ∧
+      (Quotient.mk _) ⁻¹' {pt₁.groupElts} = (Quotient.mk _) ⁻¹' {pt₂.groupElts} := by
+  refine ⟨fun h ↦ ?_, fun ⟨hi, hq⟩ ↦ ?_⟩
+  · subst h
+    simp only [and_self, true_and]
+  · rcases pt₁ with ⟨i₁, g₁⟩
+    rcases pt₂ with ⟨i₂, g₂⟩
+    dsimp only at hi
+    subst hi
+    ext
+    · rfl
+    · exact heq_of_eq (Set.singleton_eq_singleton_iff.1
+        ((Set.preimage_eq_preimage Quotient.surjective_Quotient_mk'').1 hq))
+
 /-- Coercion from a `PlacedTile` to a set of points. Use the coercion rather than using `coeSet`
 directly. -/
 @[coe] def coeSet : PlacedTile ps → Set X :=
@@ -200,6 +234,28 @@ instance : Membership X (PlacedTile ps) where
 lemma coe_mk_mk (i : ιₚ) (g : G) : (⟨i, ⟦g⟧⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
 
 lemma coe_mk_coe (i : ιₚ) (g : G) : (⟨i, g⟩ : PlacedTile ps) = g • (ps i : Set X) := rfl
+
+lemma coe_nonempty_iff {pt : PlacedTile ps} :
+    (pt : Set X).Nonempty ↔ (ps pt.index : Set X).Nonempty := by
+  rcases pt with ⟨index, groupElts⟩
+  simp only [coeSet]
+  rw [← groupElts.out_eq', Quotient.liftOn'_mk'']
+  simp
+
+@[simp] lemma coe_mk_nonempty_iff {i : ιₚ} (g) :
+    ((⟨i, g⟩ : PlacedTile ps) : Set X).Nonempty ↔ (ps i : Set X).Nonempty :=
+  coe_nonempty_iff
+
+lemma coe_finite_iff {pt : PlacedTile ps} :
+    (pt : Set X).Finite ↔ (ps pt.index : Set X).Finite := by
+  rcases pt with ⟨index, groupElts⟩
+  simp only [coeSet]
+  rw [← groupElts.out_eq', Quotient.liftOn'_mk'']
+  simp
+
+@[simp] lemma coe_mk_finite_iff {i : ιₚ} (g) :
+    ((⟨i, g⟩ : PlacedTile ps) : Set X).Finite ↔ (ps i : Set X).Finite :=
+  coe_finite_iff
 
 instance : MulAction G (PlacedTile ps) where
   smul := fun g pt ↦ Quotient.liftOn' pt.groupElts (fun h ↦ ⟨pt.index, g * h⟩)
@@ -286,6 +342,14 @@ lemma apply_mem (t : TileSet ps ιₜ) (i : ιₜ) : t i ∈ t := Set.mem_range_
 lemma union_of_mem_eq_iUnion (t : TileSet ps ιₜ) : ⋃ pt ∈ t, (pt : Set X) = ⋃ i, (t i : Set X) := by
   ext x
   simp
+
+lemma nonempty_of_forall_nonempty (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Nonempty) (i : ιₜ) :
+    (t i : Set X).Nonempty :=
+  PlacedTile.coe_nonempty_iff.2 (h _)
+
+lemma finite_of_forall_finite (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Finite) (i : ιₜ) :
+    (t i : Set X).Finite :=
+  PlacedTile.coe_finite_iff.2 (h _)
 
 /-- Reindex a `TileSet` by composition with a function on index types (typically an equivalence
 for it to literally be reindexing, though not required to be one in this definition). -/
