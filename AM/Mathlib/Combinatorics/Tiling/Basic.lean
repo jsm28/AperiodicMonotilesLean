@@ -285,6 +285,9 @@ instance : MulAction G (PlacedTile ps) where
   induction pt using PlacedTile.induction_on
   simp [coeSet, mul_smul]
 
+@[simp] lemma smul_mem_smul_iff (g : G) {x : X} {pt : PlacedTile ps} : g • x ∈ g • pt ↔ x ∈ pt := by
+  rw [← mem_coe, coe_smul, Set.smul_mem_smul_set_iff, mem_coe]
+
 end PlacedTile
 
 variable (ps ιₜ)

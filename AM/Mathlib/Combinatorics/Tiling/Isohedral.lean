@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Basic
+import Mathlib.GroupTheory.GroupAction.Prod
+import Mathlib.GroupTheory.GroupAction.SubMulAction
 
 /-!
 # Isohedral numbers of tilings and protosets
@@ -53,6 +55,11 @@ instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup (t : Set (PlacedTile
   mul_smul := fun x y pt ↦ by
     simp only [HSMul.hSMul, Subtype.ext_iff]
     exact mul_smul _ _ _
+
+lemma coe_symmetryGroup_smul (t : TileSet ps ιₜ) (g : t.symmetryGroup)
+    (pt : (t : Set (PlacedTile ps))) : ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) =
+      g • (pt : PlacedTile ps) :=
+  rfl
 
 /-- An equivalence between the orbits of tiles in a `TileSet` acted on by a group element and the
 orbits in the original `TileSet`. -/
@@ -168,6 +175,19 @@ lemma isohedralNumberNat_eq_zero_iff {t : TileSet ps ιₜ} :
     isohedralNumberNat t = 0 ↔ IsEmpty ιₜ ∨
       Infinite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
   simp [isohedralNumberNat, isohedralNumber_eq_zero_iff, aleph0_le_isohedralNumber_iff]
+
+/-- The symmetry group also acts on pairs of a tile and a point in that tile. -/
+def subMulActionTilePoint (t : TileSet ps ιₜ) :
+    SubMulAction t.symmetryGroup (Prod (t : Set (PlacedTile ps)) X) where
+  carrier := {x | x.2 ∈ (x.1 : PlacedTile ps)}
+  smul_mem' := fun g x h ↦ by
+    rcases x with ⟨pt, x⟩
+    simp only [Prod.smul_mk, Set.mem_setOf_eq, coe_symmetryGroup_smul, Subgroup.smul_def] at h ⊢
+    exact (PlacedTile.smul_mem_smul_iff ↑g).2 h
+
+instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup
+    {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)} :=
+  SubMulAction.SMulMemClass.toMulAction (S' := subMulActionTilePoint t)
 
 end TileSet
 
