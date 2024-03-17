@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Basic
+import AM.Mathlib.GroupTheory.GroupAction.Basic
+import AM.Mathlib.GroupTheory.GroupAction.SubMulAction
 import Mathlib.GroupTheory.GroupAction.Prod
-import Mathlib.GroupTheory.GroupAction.SubMulAction
 
 /-!
 # Isohedral numbers of tilings and protosets
@@ -188,6 +189,34 @@ def subMulActionTilePoint (t : TileSet ps ιₜ) :
 instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup
     {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)} :=
   SubMulAction.SMulMemClass.toMulAction (S' := subMulActionTilePoint t)
+
+/-- Map from the quotient by the action of the symmetry group on pairs of a tile and a point in
+that tile to the quotient by the action on tiles. -/
+def quotientPlacedTileOfquotientTilePoint (t : TileSet ps ιₜ) :
+    MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)} →
+        MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps)) :=
+  Subtype.val ∘
+  Setoid.comapQuotientEquiv _ _ ∘
+  Quot.mapRight (MulAction.orbitRel_le_fst _ _ _) ∘
+  Subtype.val ∘
+  Setoid.comapQuotientEquiv _ _ ∘
+  (Quotient.congrRight <| Setoid.ext_iff.1 <|
+    SubMulAction.orbitRel_of_subMul t.subMulActionTilePoint)
+
+/-- Map from the quotient by the action of the symmetry group on pairs of a tile and a point in
+that tile to the quotient by the action on points. -/
+def quotientPointOfquotientTilePoint (t : TileSet ps ιₜ) :
+    MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)} →
+        MulAction.orbitRel.Quotient t.symmetryGroup X :=
+  Subtype.val ∘
+  Setoid.comapQuotientEquiv _ _ ∘
+  Quot.mapRight (MulAction.orbitRel_le_snd _ _ _) ∘
+  Subtype.val ∘
+  Setoid.comapQuotientEquiv _ _ ∘
+  (Quotient.congrRight <| Setoid.ext_iff.1 <|
+    SubMulAction.orbitRel_of_subMul t.subMulActionTilePoint)
 
 end TileSet
 
