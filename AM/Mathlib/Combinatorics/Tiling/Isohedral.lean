@@ -5,8 +5,7 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Basic
-import AM.Mathlib.GroupTheory.GroupAction.SubMulAction
-import Mathlib.GroupTheory.GroupAction.Prod
+import Mathlib.GroupTheory.GroupAction.SubMulAction
 
 /-!
 # Isohedral numbers of tilings and protosets
