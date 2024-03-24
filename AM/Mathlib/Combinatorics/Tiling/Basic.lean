@@ -288,6 +288,14 @@ instance : MulAction G (PlacedTile ps) where
 @[simp] lemma smul_mem_smul_iff (g : G) {x : X} {pt : PlacedTile ps} : g • x ∈ g • pt ↔ x ∈ pt := by
   rw [← mem_coe, coe_smul, Set.smul_mem_smul_set_iff, mem_coe]
 
+lemma mem_smul_iff_smul_inv_mem {g : G} {x : X} {pt : PlacedTile ps} :
+    x ∈ g • pt ↔ g⁻¹ • x ∈ pt := by
+  simp_rw [← mem_coe, coe_smul, Set.mem_smul_set_iff_inv_smul_mem]
+
+lemma mem_inv_smul_iff_smul_mem {g : G} {x : X} {pt : PlacedTile ps} :
+    x ∈ g⁻¹ • pt ↔ g • x ∈ pt := by
+  simp_rw [← mem_coe, coe_smul, Set.mem_inv_smul_set_iff]
+
 end PlacedTile
 
 variable (ps ιₜ)
@@ -799,48 +807,71 @@ def UnionEq (s : Set X) : TileSetFunction ps Prop (MulAction.stabilizer G s) :=
      nth_rewrite 1 [← hg]
      simp [TileSet.smul_apply, ← Set.smul_set_iUnion]⟩
 
-lemma unionEq_iff {t : TileSet ps ιₜ} {s : Set X} :
-    TileSet.UnionEq s t ↔ (⋃ i, (t i : Set X)) = s :=
+lemma unionEq_iff {t : TileSet ps ιₜ} {s : Set X} : UnionEq s t ↔ (⋃ i, (t i : Set X)) = s :=
   Iff.rfl
 
 lemma unionEq_iff' {t : TileSet ps ιₜ} {s : Set X} :
-    TileSet.UnionEq s t ↔ (⋃ pt ∈ t, (pt : Set X)) = s := by
+    UnionEq s t ↔ (⋃ pt ∈ t, (pt : Set X)) = s := by
   rw [unionEq_iff, union_of_mem_eq_iUnion]
 
+@[simp] lemma UnionEq.exists_mem_iff {t : TileSet ps ιₜ} {s : Set X} (h : UnionEq s t) {x : X} :
+    (∃ i, x ∈ t i) ↔ x ∈ s := by
+  rw [← unionEq_iff'.1 h]
+  simp
+
+lemma UnionEq.exists_mem_mem_iff {t : TileSet ps ιₜ} {s : Set X} (h : UnionEq s t) {x : X} :
+    (∃ pt ∈ t, x ∈ pt) ↔ x ∈ s := by
+  rw [← unionEq_iff'.1 h]
+  simp
+
 @[simp] lemma unionEq_reindex_iff_of_surjective {t : TileSet ps ιₜ} {s : Set X} {e : ιₜ' → ιₜ}
-    (h : Surjective e) : TileSet.UnionEq s (t.reindex e) ↔ TileSet.UnionEq s t :=
+    (h : Surjective e) : UnionEq s (t.reindex e) ↔ UnionEq s t :=
   (h.iUnion_comp (fun i ↦ (t i : Set X))).congr_left
 
 @[simp] lemma unionEq_smul_iff {s : Set X} {t : TileSet ps ιₜ} (g : G) :
-    TileSet.UnionEq (g • s) (g • t) ↔ TileSet.UnionEq s t := by
-  simp [unionEq_iff, TileSet.smul_apply, ← Set.smul_set_iUnion]
+    UnionEq (g • s) (g • t) ↔ UnionEq s t := by
+  simp [unionEq_iff, smul_apply, ← Set.smul_set_iUnion]
 
 lemma unionEq_smul_set_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
-    TileSet.UnionEq (g • s) t ↔ TileSet.UnionEq s (g⁻¹ • t) := by
+    UnionEq (g • s) t ↔ UnionEq s (g⁻¹ • t) := by
   nth_rewrite 1 [← one_smul G t]
   rw [← mul_inv_self g, mul_smul, unionEq_smul_iff]
 
 lemma unionEq_smul_tileSet_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
-    TileSet.UnionEq s (g • t) ↔ TileSet.UnionEq (g⁻¹ • s) t := by
+    UnionEq s (g • t) ↔ UnionEq (g⁻¹ • s) t := by
   nth_rewrite 2 [← one_smul G t]
   rw [← mul_left_inv g, mul_smul, unionEq_smul_iff]
 
-@[simp] lemma unionEq_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) : TileSet.UnionEq ∅ t := by
+@[simp] lemma unionEq_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) : UnionEq ∅ t := by
   simp [unionEq_iff]
 
 /-- Whether the union of the tiles of `t` is the whole of `X`. -/
 def UnionEqUniv : TileSetFunction ps Prop ⊤ := (UnionEq Set.univ).ofLE (by simp)
 
-lemma unionEqUniv_iff {t : TileSet ps ιₜ} :
-    TileSet.UnionEqUniv t ↔ (⋃ i, (t i : Set X)) = Set.univ :=
+lemma unionEqUniv_iff {t : TileSet ps ιₜ} : UnionEqUniv t ↔ (⋃ i, (t i : Set X)) = Set.univ :=
   Iff.rfl
 
 lemma unionEqUniv_iff' {t : TileSet ps ιₜ} :
-    TileSet.UnionEqUniv t ↔ (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
+    UnionEqUniv t ↔ (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
   rw [unionEqUniv_iff, union_of_mem_eq_iUnion]
 
+lemma unionEqUniv_iff_unionEq {t : TileSet ps ιₜ} : UnionEqUniv t ↔ UnionEq Set.univ t :=
+  Iff.rfl
+
+lemma UnionEqUniv.exists_mem {t : TileSet ps ιₜ} (h : UnionEqUniv t) (x : X) :
+    ∃ i, x ∈ t i := by
+  rw [unionEqUniv_iff_unionEq] at h
+  rw [UnionEq.exists_mem_iff h]
+  exact Set.mem_univ _
+
+lemma UnionEqUniv.exists_mem_mem {t : TileSet ps ιₜ} (h : UnionEqUniv t) (x : X) :
+    ∃ pt ∈ t, x ∈ pt := by
+  rw [unionEqUniv_iff_unionEq] at h
+  rw [UnionEq.exists_mem_mem_iff h]
+  exact Set.mem_univ _
+
 @[simp] lemma unionEqUniv_reindex_iff_of_surjective {t : TileSet ps ιₜ} {e : ιₜ' → ιₜ}
-    (h : Surjective e) : TileSet.UnionEqUniv (t.reindex e) ↔ TileSet.UnionEqUniv t :=
+    (h : Surjective e) : UnionEqUniv (t.reindex e) ↔ UnionEqUniv t :=
   unionEq_reindex_iff_of_surjective h
 
 /-- Whether `t` is a tiling of the set `s`. -/
@@ -851,6 +882,18 @@ lemma isTilingOf_iff {t : TileSet ps ιₜ} {s : Set X} : IsTilingOf s t ↔
     (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = s :=
   Iff.rfl
 
+lemma isTilingOf_iff' {t : TileSet ps ιₜ} {s : Set X} : IsTilingOf s t ↔
+    TileSet.Disjoint t ∧ UnionEq s t :=
+  Iff.rfl
+
+lemma IsTilingOf.disjoint {t : TileSet ps ιₜ} {s : Set X} (h : IsTilingOf s t) :
+    TileSet.Disjoint t :=
+  And.left h
+
+lemma IsTilingOf.unionEq {t : TileSet ps ιₜ} {s : Set X} (h : IsTilingOf s t) :
+    UnionEq s t :=
+  And.right h
+
 lemma isTilingOf_iff_of_injective {t : TileSet ps ιₜ} {s : Set X} (h : Injective t) :
     IsTilingOf s t ↔ ((t : Set (PlacedTile ps)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
       (⋃ pt ∈ t, (pt : Set X)) = s := by
@@ -858,21 +901,20 @@ lemma isTilingOf_iff_of_injective {t : TileSet ps ιₜ} {s : Set X} (h : Inject
       union_of_mem_eq_iUnion]
 
 @[simp] lemma isTilingOf_smul_iff {s : Set X} {t : TileSet ps ιₜ} (g : G) :
-    TileSet.IsTilingOf (g • s) (g • t) ↔ TileSet.IsTilingOf s t := by
+    IsTilingOf (g • s) (g • t) ↔ IsTilingOf s t := by
   apply Iff.and <;> simp
 
 lemma isTilingOf_smul_set_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
-    TileSet.IsTilingOf (g • s) t ↔ TileSet.IsTilingOf s (g⁻¹ • t) := by
+    IsTilingOf (g • s) t ↔ IsTilingOf s (g⁻¹ • t) := by
   nth_rewrite 1 [← one_smul G t]
   rw [← mul_inv_self g, mul_smul, isTilingOf_smul_iff]
 
 lemma isTilingOf_smul_tileSet_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
-    TileSet.IsTilingOf s (g • t) ↔ TileSet.IsTilingOf (g⁻¹ • s) t := by
+    IsTilingOf s (g • t) ↔ IsTilingOf (g⁻¹ • s) t := by
   nth_rewrite 2 [← one_smul G t]
   rw [← mul_left_inv g, mul_smul, isTilingOf_smul_iff]
 
-@[simp] lemma isTilingOf_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) :
-    TileSet.IsTilingOf ∅ t := by
+@[simp] lemma isTilingOf_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) : IsTilingOf ∅ t := by
   simp [isTilingOf_iff, Subsingleton.pairwise]
 
 /-- Whether `t` is a tiling of the whole of `X`. -/
@@ -882,11 +924,20 @@ lemma isTiling_iff {t : TileSet ps ιₜ} : IsTiling t ↔
     (Pairwise fun i j ↦ Disjoint (t i : Set X) (t j)) ∧ (⋃ i, (t i : Set X)) = Set.univ :=
   Iff.rfl
 
+lemma isTiling_iff' {t : TileSet ps ιₜ} : IsTiling t ↔ TileSet.Disjoint t ∧ UnionEqUniv t :=
+  Iff.rfl
+
 lemma isTiling_iff_of_injective {t : TileSet ps ιₜ} (h : Injective t) :
     IsTiling t ↔ ((t : Set (PlacedTile ps)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
       (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
   rw [isTiling_iff, ← TileSet.disjoint_iff, ← coeSet_disjoint_iff_disjoint_of_injective h,
       union_of_mem_eq_iUnion]
+
+lemma IsTiling.disjoint {t : TileSet ps ιₜ} (h : IsTiling t) : TileSet.Disjoint t :=
+  And.left h
+
+lemma IsTiling.unionEqUniv {t : TileSet ps ιₜ} (h : IsTiling t) : UnionEqUniv t :=
+  And.right h
 
 end TileSet
 

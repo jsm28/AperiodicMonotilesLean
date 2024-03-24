@@ -61,6 +61,31 @@ lemma coe_symmetryGroup_smul (t : TileSet ps ιₜ) (g : t.symmetryGroup)
       g • (pt : PlacedTile ps) :=
   rfl
 
+lemma mem_smul_symmetryGroup_iff {t : TileSet ps ιₜ} {g : t.symmetryGroup}
+    {pt : (t : Set (PlacedTile ps))} {x : X} :
+      x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔ x ∈ g • (pt : PlacedTile ps) :=
+  Iff.rfl
+
+lemma smul_mem_smul_symmetryGroup_iff {t : TileSet ps ιₜ} (g : t.symmetryGroup)
+    {pt : (t : Set (PlacedTile ps))} {x : X} :
+      g • x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+        x ∈ (pt : PlacedTile ps) := by
+  simp [mem_smul_symmetryGroup_iff, Subgroup.smul_def]
+
+lemma mem_smul_symmetryGroup_iff_smul_inv_mem {t : TileSet ps ιₜ} (g : t.symmetryGroup)
+    {pt : (t : Set (PlacedTile ps))} {x : X} :
+      x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+        g⁻¹ • x ∈ (pt : PlacedTile ps) := by
+  simp_rw [mem_smul_symmetryGroup_iff, Subgroup.smul_def, Subgroup.coe_inv,
+           PlacedTile.mem_smul_iff_smul_inv_mem]
+
+lemma mem_inv_smul_symmetryGroup_iff_smul_mem {t : TileSet ps ιₜ} (g : t.symmetryGroup)
+    {pt : (t : Set (PlacedTile ps))} {x : X} :
+      x ∈ ((g⁻¹ • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+        g • x ∈ (pt : PlacedTile ps) := by
+  simp_rw [mem_smul_symmetryGroup_iff, Subgroup.smul_def, Subgroup.coe_inv,
+           PlacedTile.mem_inv_smul_iff_smul_mem]
+
 /-- An equivalence between the orbits of tiles in a `TileSet` acted on by a group element and the
 orbits in the original `TileSet`. -/
 def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
@@ -189,6 +214,12 @@ instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup
     {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)} :=
   SubMulAction.SMulMemClass.toMulAction (S' := subMulActionTilePoint t)
 
+lemma coe_smul_tilePoint {t : TileSet ps ιₜ} (g : t.symmetryGroup)
+    (x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) :
+      ((g • x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) : Prod _ _) =
+        g • (x : Prod (t : Set (PlacedTile ps)) X) :=
+  rfl
+
 /-- Map from the quotient by the action of the symmetry group on pairs of a tile and a point in
 that tile to the quotient by the action on tiles. -/
 def quotientPlacedTileOfquotientTilePoint (t : TileSet ps ιₜ) :
@@ -216,6 +247,74 @@ def quotientPointOfquotientTilePoint (t : TileSet ps ιₜ) :
   Setoid.comapQuotientEquiv _ _ ∘
   (Quotient.congrRight <| Setoid.ext_iff.1 <|
     SubMulAction.orbitRel_of_subMul t.subMulActionTilePoint)
+
+@[simp] lemma quotientPlacedTileOfquotientTilePoint_apply_mk {t : TileSet ps ιₜ}
+    (x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) :
+      t.quotientPlacedTileOfquotientTilePoint ⟦x⟧ = ⟦(Subtype.val x).1⟧ :=
+  rfl
+
+@[simp] lemma quotientPointOfquotientTilePoint_apply_mk {t : TileSet ps ιₜ}
+    (x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) :
+      t.quotientPointOfquotientTilePoint ⟦x⟧ = ⟦(Subtype.val x).2⟧ :=
+  rfl
+
+lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
+    (h : ∀ i, (t i : Set X).Nonempty) :
+      Function.Surjective t.quotientPlacedTileOfquotientTilePoint := by
+  intro x
+  induction' x using Quotient.inductionOn' with pt
+  rcases pt with ⟨pt, i, rfl⟩
+  obtain ⟨x, hx⟩ := h i
+  exact ⟨⟦⟨(⟨t i, apply_mem _ _⟩, x), hx⟩⟧, rfl⟩
+
+lemma surjective_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (h : UnionEqUniv t) :
+    Function.Surjective t.quotientPointOfquotientTilePoint := by
+  intro x
+  induction' x using Quotient.inductionOn' with p
+  obtain ⟨pt, hpt, hp⟩ := UnionEqUniv.exists_mem_mem h p
+  exact ⟨⟦⟨(⟨pt, hpt⟩, p), hp⟩⟧, rfl⟩
+
+lemma preimage_quotientPlacedTileOfquotientTilePoint_eq_range {t : TileSet ps ιₜ}
+    (pt : (t : Set (PlacedTile ps))) : t.quotientPlacedTileOfquotientTilePoint ⁻¹' {⟦pt⟧} =
+      Set.range (fun x : {x // x ∈ (pt : PlacedTile ps)} ↦ ⟦⟨(pt, x), x.property⟩⟧) := by
+  refine Set.Subset.antisymm (fun x h ↦ ?_) (Set.range_subset_iff.2 fun x ↦ (Set.mem_singleton _))
+  rw [Set.mem_preimage] at h
+  induction' x using Quotient.inductionOn' with pt'
+  rcases pt' with ⟨⟨pt', x⟩, hx⟩
+  simp only [Quotient.mk''_eq_mk, quotientPlacedTileOfquotientTilePoint_apply_mk,
+             Set.mem_singleton_iff] at h
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
+  rcases h with ⟨g, rfl⟩
+  dsimp only at hx
+  rw [mem_smul_symmetryGroup_iff_smul_inv_mem] at hx
+  refine ⟨⟨g⁻¹ • x, hx⟩, ?_⟩
+  simp only
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq'']
+  change _ ∈ MulAction.orbit _ _
+  refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
+  simp [coe_smul_tilePoint]
+
+lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} (x : X) :
+    t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧} =
+      Set.range (fun pt : {pt // pt ∈ t ∧ x ∈ pt} ↦
+        ⟦⟨(⟨pt, pt.property.1⟩, x), pt.property.2⟩⟧) := by
+  refine Set.Subset.antisymm (fun y h ↦ ?_) (Set.range_subset_iff.2 fun y ↦ (Set.mem_singleton _))
+  rw [Set.mem_preimage] at h
+  induction' y using Quotient.inductionOn' with pt'
+  rcases pt' with ⟨⟨pt', y⟩, hy⟩
+  simp only [Quotient.mk''_eq_mk, quotientPointOfquotientTilePoint_apply_mk,
+             Set.mem_singleton_iff] at h
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
+  rcases h with ⟨g, rfl⟩
+  dsimp only at hy
+  rw [← mem_inv_smul_symmetryGroup_iff_smul_mem] at hy
+  refine ⟨⟨(g⁻¹ • pt' : (t : Set (PlacedTile ps))),
+           (g⁻¹ • pt' : (t : Set (PlacedTile ps))).property, hy⟩, ?_⟩
+  simp only
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq'']
+  change _ ∈ MulAction.orbit _ _
+  refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
+  simp [coe_smul_tilePoint]
 
 end TileSet
 
