@@ -97,17 +97,31 @@ lemma apply_mem (t : TileSet ps ιₜ) (i : ιₜ) : t i ∈ t := Set.mem_range_
     (∃ pt ∈ t, f pt) ↔ ∃ i, f (t i) := by
   simp_rw [← mem_coeSet, coeSet_apply, Set.exists_range_iff]
 
+@[simp] lemma forall_mem_iff {t : TileSet ps ιₜ} {f : PlacedTile ps → Prop} :
+    (∀ pt ∈ t, f pt) ↔ ∀ i, f (t i) := by
+  simp_rw [← mem_coeSet, coeSet_apply, Set.forall_mem_range]
+
 lemma union_of_mem_eq_iUnion (t : TileSet ps ιₜ) : ⋃ pt ∈ t, (pt : Set X) = ⋃ i, (t i : Set X) := by
   ext x
   simp
 
-lemma nonempty_of_forall_nonempty (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Nonempty) (i : ιₜ) :
-    (t i : Set X).Nonempty :=
+lemma nonempty_apply_of_forall_nonempty (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Nonempty)
+    (i : ιₜ) : (t i : Set X).Nonempty :=
   PlacedTile.coe_nonempty_iff.2 (h _)
 
-lemma finite_of_forall_finite (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Finite) (i : ιₜ) :
+lemma nonempty_of_forall_nonempty (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Nonempty)
+    {pt : PlacedTile ps} (hpt : pt ∈ t) : (pt : Set X).Nonempty := by
+  rcases hpt with ⟨i, rfl⟩
+  exact t.nonempty_apply_of_forall_nonempty h _
+
+lemma finite_apply_of_forall_finite (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Finite) (i : ιₜ) :
     (t i : Set X).Finite :=
   PlacedTile.coe_finite_iff.2 (h _)
+
+lemma finite_of_forall_finite (t : TileSet ps ιₜ) (h : ∀ i, (ps i : Set X).Finite)
+    {pt : PlacedTile ps} (hpt : pt ∈ t) : (pt : Set X).Finite := by
+  rcases hpt with ⟨i, rfl⟩
+  exact t.finite_apply_of_forall_finite h _
 
 /-- Reindex a `TileSet` by composition with a function on index types (typically an equivalence
 for it to literally be reindexing, though not required to be one in this definition). -/

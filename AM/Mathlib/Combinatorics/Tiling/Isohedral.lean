@@ -181,6 +181,11 @@ lemma aleph0_le_isohedralNumber_iff {t : TileSet ps ιₜ} :
       Infinite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
   rw [Cardinal.infinite_iff, isohedralNumber_eq_card]
 
+lemma isohedralNumber_lt_aleph0_iff {t : TileSet ps ιₜ} :
+    isohedralNumber t < ℵ₀ ↔
+      Finite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
+  rw [isohedralNumber_eq_card, Cardinal.lt_aleph0_iff_finite]
+
 /-- The number of orbits of tiles under the action of the symmetry group of a `TileSet`, as a
 natural number; zero if infinite. -/
 def isohedralNumberNat : TileSetFunction ps ℕ ⊤ := isohedralNumber.comp Cardinal.toNat
@@ -316,6 +321,46 @@ lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} 
   refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
   simp [coe_smul_tilePoint]
 
+lemma finite_preimage_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
+    {pt : (t : Set (PlacedTile ps))} (h : ((pt : PlacedTile ps) : Set X).Finite) :
+    (t.quotientPlacedTileOfquotientTilePoint ⁻¹' {⟦pt⟧}).Finite := by
+  have := h.to_subtype
+  rw [preimage_quotientPlacedTileOfquotientTilePoint_eq_range]
+  exact Set.finite_range _
+
+-- TODO: this only actually needs the FiniteDistinctIntersections property at the point x
+-- (for which we don't yet have a separate definition).
+lemma finite_preimage_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (x : X)
+    (h : FiniteDistinctIntersections t) :
+    (t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧}).Finite := by
+  have hf := (h x).to_subtype
+  rw [Set.coe_setOf] at hf
+  rw [preimage_quotientPointOfquotientTilePoint_eq_range]
+  exact Set.finite_range _
+
+lemma finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ}
+    (h : isohedralNumber t < ℵ₀) (hf : ∀ i, (t i : Set X).Finite) :
+    Finite (MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) := by
+  rw [← Set.finite_univ_iff, ← Set.preimage_univ (f := t.quotientPlacedTileOfquotientTilePoint),
+      ← Set.biUnion_preimage_singleton]
+  rw [isohedralNumber_lt_aleph0_iff] at h
+  refine Finite.Set.finite_biUnion _ _ fun pt _ ↦ ?_
+  induction' pt using Quotient.inductionOn' with pt
+  rw [@Quotient.mk''_eq_mk]
+  refine finite_preimage_quotientPlacedTileOfquotientTilePoint ?_
+  rcases pt with ⟨pt, i, rfl⟩
+  exact hf i
+
+lemma isohedralNumber_lt_aleph0_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
+    (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}))
+    (hn : ∀ i, (t i : Set X).Nonempty) : isohedralNumber t < ℵ₀ := by
+  rw [isohedralNumber_lt_aleph0_iff]
+  rw [← Set.finite_univ_iff] at hf ⊢
+  exact Set.Finite.of_surjOn t.quotientPlacedTileOfquotientTilePoint
+    (Set.surjective_iff_surjOn_univ.1 (surjective_quotientPlacedTileOfquotientTilePoint hn)) hf
+
 end TileSet
 
 namespace Protoset
@@ -344,6 +389,24 @@ lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop s} :
 lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop s} :
     isohedralNumber ιₜ p ≠ 0 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t := by
   simp [isohedralNumber_eq_zero_iff, not_or]
+
+lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop s} {c : Cardinal} (h : c ≠ 0) :
+    c ≤ isohedralNumber ιₜ p ↔
+      (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → c ≤ TileSet.isohedralNumber t := by
+  rw [isohedralNumber]
+  by_cases he : ∃ t : TileSet ps ιₜ, p t
+  · simp only [he, true_and]
+    rcases he with ⟨xt, hpxt⟩
+    have : Nonempty {t : TileSet ps ιₜ // p t} := ⟨xt, hpxt⟩
+    rw [le_ciInf_iff']
+    exact ⟨fun h ↦ fun t ht ↦ h ⟨t, ht⟩, fun h ⟨t, ht⟩ ↦ h t ht⟩
+  · simp only [not_exists] at he
+    simp only [he, exists_false, IsEmpty.forall_iff, implies_true, and_true, iff_false, not_le,
+               iInf]
+    rw [← pos_iff_ne_zero] at h
+    convert h
+    convert Cardinal.sInf_empty
+    simpa using he
 
 lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop s} :
     isohedralNumber ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t

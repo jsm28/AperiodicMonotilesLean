@@ -3,7 +3,7 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Function
+import AM.Mathlib.Combinatorics.Tiling.Isohedral
 import AM.Mathlib.GroupTheory.Index
 import Mathlib.GroupTheory.OrderOfElement
 
@@ -94,6 +94,45 @@ lemma stronglyPeriodic_of_pretransitive_of_index_ne_zero {t : TileSet ps ιₜ}
     StronglyPeriodic t :=
   Subgroup.finite_quotient_of_pretransitive_of_index_ne_zero hi
 
+lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : StronglyPeriodic t)
+    (hf : FiniteDistinctIntersections t) :
+    Finite (MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) := by
+  rw [← Set.finite_univ_iff, ← Set.preimage_univ (f := t.quotientPointOfquotientTilePoint),
+      ← Set.biUnion_preimage_singleton]
+  rw [stronglyPeriodic_iff] at h
+  refine Finite.Set.finite_biUnion _ _ fun x _ ↦ ?_
+  induction' x using Quotient.inductionOn' with x
+  rw [@Quotient.mk''_eq_mk]
+  exact finite_preimage_quotientPointOfquotientTilePoint x hf
+
+lemma stronglyPeriodic_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
+    (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup
+      {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}))
+    (hu : UnionEqUniv t) : StronglyPeriodic t := by
+  rw [stronglyPeriodic_iff]
+  rw [← Set.finite_univ_iff] at hf ⊢
+  exact Set.Finite.of_surjOn t.quotientPointOfquotientTilePoint
+    (Set.surjective_iff_surjOn_univ.1 (surjective_quotientPointOfquotientTilePoint hu)) hf
+
+lemma stronglyPeriodic_of_isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ} (h : isohedralNumber t < ℵ₀)
+    (hf : ∀ i, (t i : Set X).Finite) (hu : UnionEqUniv t) : StronglyPeriodic t :=
+  stronglyPeriodic_of_finite_quotient_tilePoint
+    (finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 h hf) hu
+
+lemma StronglyPeriodic.isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ} (h : StronglyPeriodic t)
+    (hf : FiniteDistinctIntersections t) (hn : ∀ i, (t i : Set X).Nonempty) :
+    isohedralNumber t < ℵ₀ :=
+  isohedralNumber_lt_aleph0_of_finite_quotient_tilePoint
+    (StronglyPeriodic.finite_quotient_tilePoint h hf) hn
+
+lemma stronglyPeriodic_iff_isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ} (ht : IsTiling t)
+    (hf : ∀ i, (t i : Set X).Finite) (hn : ∀ i, (t i : Set X).Nonempty) :
+    StronglyPeriodic t ↔ isohedralNumber t < ℵ₀ :=
+  ⟨fun h ↦ StronglyPeriodic.isohedralNumber_lt_aleph0 h
+    (IsTiling.finiteDistinctIntersections ht) hn,
+   fun h ↦ stronglyPeriodic_of_isohedralNumber_lt_aleph0 h hf (IsTiling.unionEqUniv ht)⟩
+
 /-- Whether a `TileSet` is `n`-weakly periodic: that is, whether its symmetry group has a `ℤ^n`
 subgroup. -/
 def WeaklyPeriodic (n : ℕ) : TileSetFunction ps Prop ⊤ :=
@@ -160,12 +199,45 @@ variable (ιₜ) {s : Subgroup G}
 /-- Whether `ps` is weakly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that is,
 whether it has such a `TileSet`, but none is strongly periodic. -/
 def WeaklyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
-  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, ¬ TileSet.StronglyPeriodic t
+  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ TileSet.StronglyPeriodic t
 
 /-- Whether `ps` is strongly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that
 is, whether it has such a `TileSet`, but none is weakly periodic. -/
 def StronglyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
-  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, ¬ TileSet.WeaklyPeriodic 1 t
+  (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ TileSet.WeaklyPeriodic 1 t
+
+variable {ιₜ}
+
+lemma WeaklyAperiodic.aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+    (h : ps.WeaklyAperiodic ιₜ p) (hf : ∀ i, (ps i : Set X).Finite)
+    (hu : ∀ t : TileSet ps ιₜ, p t → TileSet.UnionEqUniv t) : ℵ₀ ≤ ps.isohedralNumber ιₜ p := by
+  rw [le_isohedralNumber_iff Cardinal.aleph0_ne_zero]
+  rcases h with ⟨he, hnp⟩
+  refine ⟨he, fun t hpt ↦ ?_⟩
+  by_contra hi
+  rw [not_le] at hi
+  refine hnp t hpt (TileSet.stronglyPeriodic_of_isohedralNumber_lt_aleph0 hi
+    (t.finite_apply_of_forall_finite hf) (hu t hpt))
+
+lemma weaklyAperiodic_of_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+    (h : ℵ₀ ≤ ps.isohedralNumber ιₜ p)
+    (hf : ∀ t : TileSet ps ιₜ, p t → TileSet.FiniteDistinctIntersections t)
+    (hn : ∀ i, (ps i : Set X).Nonempty) : ps.WeaklyAperiodic ιₜ p := by
+  rw [le_isohedralNumber_iff Cardinal.aleph0_ne_zero] at h
+  rcases h with ⟨he, hnp⟩
+  refine ⟨he, fun t hpt hp ↦ ?_⟩
+  have hi := hnp t hpt
+  revert hi
+  rw [← Not, not_le]
+  refine TileSet.StronglyPeriodic.isohedralNumber_lt_aleph0 hp (hf t hpt)
+    (t.nonempty_apply_of_forall_nonempty hn)
+
+lemma weaklyAperiodic_iff_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+    (ht : ∀ t : TileSet ps ιₜ, p t → TileSet.IsTiling t) (hf : ∀ i, (ps i : Set X).Finite)
+    (hn : ∀ i, (ps i : Set X).Nonempty) : ps.WeaklyAperiodic ιₜ p ↔ ℵ₀ ≤ ps.isohedralNumber ιₜ p :=
+  ⟨fun h ↦ h.aleph0_le_isohedralNumber hf fun t hpt ↦ TileSet.IsTiling.unionEqUniv (ht t hpt),
+   fun h ↦ weaklyAperiodic_of_aleph0_le_isohedralNumber h
+     (fun t hpt ↦ TileSet.IsTiling.finiteDistinctIntersections (ht t hpt)) hn⟩
 
 end Protoset
 
