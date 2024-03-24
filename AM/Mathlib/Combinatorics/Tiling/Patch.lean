@@ -86,6 +86,16 @@ protected lemma Disjoint.subtype {t : TileSet ps ιₜ} (hd : TileSet.Disjoint t
     TileSet.Disjoint (t.subtype p) :=
   TileSet.Disjoint.reindex_of_injective hd Subtype.val_injective
 
+protected lemma FiniteIntersections.subtype {t : TileSet ps ιₜ}
+    (hfi : FiniteIntersections t) (p : ιₜ → Prop) :
+    FiniteIntersections (t.subtype p) :=
+  FiniteIntersections.reindex_of_injective hfi Subtype.val_injective
+
+protected lemma FiniteDistinctIntersections.subtype {t : TileSet ps ιₜ}
+    (hfi : FiniteDistinctIntersections t) (p : ιₜ → Prop) :
+    FiniteDistinctIntersections (t.subtype p) :=
+  FiniteDistinctIntersections.reindex hfi
+
 lemma union_subtype (t : TileSet ps ιₜ) (p : ιₜ → Prop) :
     ⋃ i, (t.subtype p i : Set X) = ⋃ (i) (_ : p i), (t i : Set X) := by
   ext x
@@ -158,6 +168,16 @@ lemma smul_patch (g : G) (t : TileSet ps ιₜ) (s : Set X) :
 lemma Disjoint.patch {t : TileSet ps ιₜ} (hd : TileSet.Disjoint t) (s : Set X) :
     TileSet.Disjoint (t.patch s) :=
   TileSet.Disjoint.subtype hd _
+
+protected lemma FiniteIntersections.patch {t : TileSet ps ιₜ}
+    (hfi : FiniteIntersections t) (s : Set X) :
+    FiniteIntersections (t.patch s) :=
+  FiniteIntersections.subtype hfi _
+
+protected lemma FiniteDistinctIntersections.patch {t : TileSet ps ιₜ}
+    (hfi : FiniteDistinctIntersections t) (s : Set X) :
+    FiniteDistinctIntersections (t.patch s) :=
+  FiniteDistinctIntersections.subtype hfi _
 
 lemma union_patch (t : TileSet ps ιₜ) (s : Set X) :
     ⋃ i, (t.patch s i : Set X) = ⋃ (i) (_ : (s ∩ t i).Nonempty), (t i : Set X) :=

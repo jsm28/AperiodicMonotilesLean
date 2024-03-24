@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.TileSet
+import AM.Mathlib.Data.Set.Pairwise.Basic
 import AM.Mathlib.Logic.Equiv.Pairwise
+import AM.Mathlib.Logic.Equiv.Set
 import Mathlib.Algebra.Pointwise.Stabilizer
 
 /-!
@@ -333,6 +335,123 @@ lemma IsTiling.disjoint {t : TileSet ps ιₜ} (h : IsTiling t) : TileSet.Disjoi
 
 lemma IsTiling.unionEqUniv {t : TileSet ps ιₜ} (h : IsTiling t) : UnionEqUniv t :=
   And.right h
+
+/-- Whether only finitely many tiles of `t` contain any point. -/
+def FiniteIntersections : TileSetFunction ps Prop ⊤ :=
+  ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦ ∀ x, {i | x ∈ t i}.Finite,
+   by
+     intro ιₜ ιₜ' f t
+     refine forall_congr ?_
+     simp only [eq_iff_iff]
+     intro x
+     convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f) _)
+     exact Equiv.setOf_apply_symm_eq_image_setOf f fun i ↦ x ∈ t i,
+   by
+     intro ιₜ g t _
+     simp only [eq_iff_iff]
+     refine ⟨fun h ↦ fun x ↦ by simpa using h (g • x), fun h ↦ fun x ↦ ?_⟩
+     convert h (g⁻¹ • x) using 2
+     ext i
+     exact mem_smul_apply_iff_smul_inv_mem⟩
+
+lemma finiteIntersections_iff {t : TileSet ps ιₜ} :
+    FiniteIntersections t ↔ ∀ x, {i | x ∈ t i}.Finite :=
+  Iff.rfl
+
+lemma FiniteIntersections.reindex_of_injective {t : TileSet ps ιₜ}
+    (hfi : FiniteIntersections t) {e : ιₜ' → ιₜ} (h : Injective e) :
+    FiniteIntersections (t.reindex e) :=
+  fun x ↦ Set.Finite.preimage (Set.injOn_of_injective h _) (hfi x)
+
+lemma FiniteIntersections.reindex_of_embeddingLike {t : TileSet ps ιₜ}
+    (hfi : FiniteIntersections t) (e : F) : FiniteIntersections (t.reindex e) :=
+  FiniteIntersections.reindex_of_injective hfi (EmbeddingLike.injective _)
+
+lemma FiniteIntersections.reindex_of_surjective {t : TileSet ps ιₜ} {e : ιₜ' → ιₜ}
+    (hfi : FiniteIntersections (t.reindex e)) (h : Surjective e) :
+    FiniteIntersections t :=
+  fun x ↦ Set.Finite.of_preimage (hfi x) h
+
+@[simp] lemma finiteIntersections_of_subsingleton [Subsingleton ιₜ] (t : TileSet ps ιₜ) :
+    FiniteIntersections t :=
+  fun _ ↦ Set.subsingleton_of_subsingleton.finite
+
+lemma Disjoint.finiteIntersections {t : TileSet ps ιₜ} (h : TileSet.Disjoint t) :
+    FiniteIntersections t :=
+  fun _ ↦ Set.Subsingleton.finite (subsingleton_setOf_mem_iff_pairwise_disjoint.2 h _)
+
+lemma IsTilingOf.finiteIntersections {t : TileSet ps ιₜ} {s : Set X} (h : IsTilingOf s t) :
+    FiniteIntersections t :=
+  Disjoint.finiteIntersections (IsTilingOf.disjoint h)
+
+lemma IsTiling.finiteIntersections {t : TileSet ps ιₜ} (h : IsTiling t) :
+    FiniteIntersections t :=
+  Disjoint.finiteIntersections (IsTiling.disjoint h)
+
+/-- Whether only finitely many distinct tiles of `t` contain any point. -/
+def FiniteDistinctIntersections : TileSetFunction ps Prop ⊤ :=
+  ⟨fun {ιₜ : Type*} (t : TileSet ps ιₜ) ↦ ∀ x, {pt | pt ∈ t ∧ x ∈ pt}.Finite,
+   by simp,
+   by
+     intro ιₜ g t _
+     simp only [eq_iff_iff]
+     refine ⟨fun h ↦ fun x ↦ ?_, fun h ↦ fun x ↦ ?_⟩
+     · convert h (g • x) using 0
+       convert (Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
+         (β := PlacedTile ps) g) _)).symm using 2
+       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
+             PlacedTile.mem_inv_smul_iff_smul_mem]
+     · convert h (g⁻¹ • x) using 0
+       convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
+         (β := PlacedTile ps) g) _) using 2
+       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
+             PlacedTile.mem_inv_smul_iff_smul_mem]⟩
+
+lemma finiteDistinctIntersections_iff {t : TileSet ps ιₜ} :
+    FiniteDistinctIntersections t ↔ ∀ x, {pt | pt ∈ t ∧ x ∈ pt}.Finite :=
+  Iff.rfl
+
+lemma FiniteDistinctIntersections.reindex {t : TileSet ps ιₜ}
+    (hfi : FiniteDistinctIntersections t) {e : ιₜ' → ιₜ} :
+    FiniteDistinctIntersections (t.reindex e) := by
+  refine fun x ↦ Set.Finite.subset (hfi x) ?_
+  simp only [Set.setOf_subset_setOf, and_imp]
+  exact fun _ h hx ↦ ⟨mem_of_mem_reindex h, hx⟩
+
+lemma FiniteDistinctIntersections.reindex_of_surjective {t : TileSet ps ιₜ} {e : ιₜ' → ιₜ}
+    (hfi : FiniteDistinctIntersections (t.reindex e)) (h : Surjective e) :
+    FiniteDistinctIntersections t := by
+  intro x
+  convert hfi x
+  exact (mem_reindex_iff_of_surjective h).symm
+
+lemma FiniteIntersections.finiteDistinctIntersections {t : TileSet ps ιₜ}
+    (h : FiniteIntersections t) : FiniteDistinctIntersections t := by
+  intro x
+  convert Set.Finite.image t (h x)
+  ext pt
+  simp only [Set.mem_setOf_eq, Set.mem_image, TileSet.mem_def]
+  refine ⟨fun ⟨⟨i, hi⟩, hx⟩ ↦ ?_, fun ⟨i, ⟨hx, hi⟩⟩ ↦ ?_⟩
+  · subst hi
+    exact ⟨i, hx, rfl⟩
+  · subst hi
+    exact ⟨⟨i, rfl⟩, hx⟩
+
+@[simp] lemma finiteDistinctIntersections_of_subsingleton [Subsingleton ιₜ] (t : TileSet ps ιₜ) :
+    FiniteDistinctIntersections t :=
+  FiniteIntersections.finiteDistinctIntersections (finiteIntersections_of_subsingleton t)
+
+lemma Disjoint.finiteDistinctIntersections {t : TileSet ps ιₜ}
+    (h : TileSet.Disjoint t) : FiniteDistinctIntersections t :=
+  FiniteIntersections.finiteDistinctIntersections (Disjoint.finiteIntersections h)
+
+lemma IsTilingOf.finiteDistinctIntersections {t : TileSet ps ιₜ} {s : Set X}
+    (h : TileSet.IsTilingOf s t) : FiniteDistinctIntersections t :=
+  FiniteIntersections.finiteDistinctIntersections (IsTilingOf.finiteIntersections h)
+
+lemma IsTiling.finiteDistinctIntersections {t : TileSet ps ιₜ}
+    (h : TileSet.IsTiling t) : FiniteDistinctIntersections t :=
+  FiniteIntersections.finiteDistinctIntersections (IsTiling.finiteIntersections h)
 
 end TileSet
 

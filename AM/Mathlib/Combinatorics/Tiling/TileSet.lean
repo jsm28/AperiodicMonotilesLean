@@ -232,6 +232,18 @@ lemma smul_coe (g : G) (t : TileSet ps ιₜ) : (g • t : TileSet ps ιₜ) = (
 
 lemma smul_apply (g : G) (t : TileSet ps ιₜ) (i : ιₜ) : (g • t) i = g • (t i) := rfl
 
+@[simp] lemma smul_mem_smul_apply_iff (g : G) {x : X} {t : TileSet ps ιₜ} {i : ιₜ} :
+    g • x ∈ (g • t) i ↔ x ∈ t i :=
+  PlacedTile.smul_mem_smul_iff g
+
+lemma mem_smul_apply_iff_smul_inv_mem {g : G} {x : X} {t : TileSet ps ιₜ} {i : ιₜ} :
+    x ∈ (g • t) i ↔ g⁻¹ • x ∈ t i :=
+  PlacedTile.mem_smul_iff_smul_inv_mem
+
+lemma mem_inv_smul_apply_iff_smul_mem {g : G} {x : X} {t : TileSet ps ιₜ} {i : ιₜ} :
+    x ∈ (g⁻¹ • t) i ↔ g • x ∈ t i :=
+  PlacedTile.mem_inv_smul_iff_smul_mem
+
 @[simp] lemma smul_reindex (g : G) (t : TileSet ps ιₜ) (f : ιₜ' → ιₜ) :
     g • (t.reindex f) = (g • t).reindex f :=
   rfl
