@@ -63,26 +63,26 @@ lemma coe_symmetryGroup_smul (t : TileSet ps ιₜ) (g : t.symmetryGroup)
 
 lemma mem_smul_symmetryGroup_iff {t : TileSet ps ιₜ} {g : t.symmetryGroup}
     {pt : (t : Set (PlacedTile ps))} {x : X} :
-      x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔ x ∈ g • (pt : PlacedTile ps) :=
+    x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔ x ∈ g • (pt : PlacedTile ps) :=
   Iff.rfl
 
 lemma smul_mem_smul_symmetryGroup_iff {t : TileSet ps ιₜ} (g : t.symmetryGroup)
     {pt : (t : Set (PlacedTile ps))} {x : X} :
-      g • x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
-        x ∈ (pt : PlacedTile ps) := by
+    g • x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+      x ∈ (pt : PlacedTile ps) := by
   simp [mem_smul_symmetryGroup_iff, Subgroup.smul_def]
 
 lemma mem_smul_symmetryGroup_iff_smul_inv_mem {t : TileSet ps ιₜ} (g : t.symmetryGroup)
     {pt : (t : Set (PlacedTile ps))} {x : X} :
-      x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
-        g⁻¹ • x ∈ (pt : PlacedTile ps) := by
+    x ∈ ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+      g⁻¹ • x ∈ (pt : PlacedTile ps) := by
   simp_rw [mem_smul_symmetryGroup_iff, Subgroup.smul_def, Subgroup.coe_inv,
            PlacedTile.mem_smul_iff_smul_inv_mem]
 
 lemma mem_inv_smul_symmetryGroup_iff_smul_mem {t : TileSet ps ιₜ} (g : t.symmetryGroup)
     {pt : (t : Set (PlacedTile ps))} {x : X} :
-      x ∈ ((g⁻¹ • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
-        g • x ∈ (pt : PlacedTile ps) := by
+    x ∈ ((g⁻¹ • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) ↔
+      g • x ∈ (pt : PlacedTile ps) := by
   simp_rw [mem_smul_symmetryGroup_iff, Subgroup.smul_def, Subgroup.coe_inv,
            PlacedTile.mem_inv_smul_iff_smul_mem]
 
@@ -221,8 +221,8 @@ instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup
 
 lemma coe_smul_tilePoint {t : TileSet ps ιₜ} (g : t.symmetryGroup)
     (x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) :
-      ((g • x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) : Prod _ _) =
-        g • (x : Prod (t : Set (PlacedTile ps)) X) :=
+    ((g • x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) : Prod _ _) =
+      g • (x : Prod (t : Set (PlacedTile ps)) X) :=
   rfl
 
 /-- Map from the quotient by the action of the symmetry group on pairs of a tile and a point in
@@ -255,7 +255,7 @@ def quotientPointOfquotientTilePoint (t : TileSet ps ιₜ) :
 
 @[simp] lemma quotientPlacedTileOfquotientTilePoint_apply_mk {t : TileSet ps ιₜ}
     (x : {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) :
-      t.quotientPlacedTileOfquotientTilePoint ⟦x⟧ = ⟦(Subtype.val x).1⟧ :=
+    t.quotientPlacedTileOfquotientTilePoint ⟦x⟧ = ⟦(Subtype.val x).1⟧ :=
   rfl
 
 @[simp] lemma quotientPointOfquotientTilePoint_apply_mk {t : TileSet ps ιₜ}
@@ -265,7 +265,7 @@ def quotientPointOfquotientTilePoint (t : TileSet ps ιₜ) :
 
 lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
     (h : ∀ i, (t i : Set X).Nonempty) :
-      Function.Surjective t.quotientPlacedTileOfquotientTilePoint := by
+    Function.Surjective t.quotientPlacedTileOfquotientTilePoint := by
   intro x
   induction' x using Quotient.inductionOn' with pt
   rcases pt with ⟨pt, i, rfl⟩
