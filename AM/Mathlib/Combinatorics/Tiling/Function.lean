@@ -5,9 +5,9 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.TileSet
 import AM.Mathlib.Data.Set.Pairwise.Basic
-import AM.Mathlib.Logic.Equiv.Pairwise
 import AM.Mathlib.Logic.Equiv.Set
 import Mathlib.Algebra.Pointwise.Stabilizer
+import Mathlib.Logic.Equiv.Pairwise
 
 /-!
 # Bundled functions on tilings
