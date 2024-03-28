@@ -104,7 +104,8 @@ lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : Str
   refine Finite.Set.finite_biUnion _ _ fun x _ ↦ ?_
   induction' x using Quotient.inductionOn' with x
   rw [@Quotient.mk''_eq_mk]
-  exact finite_preimage_quotientPointOfquotientTilePoint x hf
+  exact finite_preimage_quotientPointOfquotientTilePoint x
+    (FiniteDistinctIntersections.finiteDistinctIntersectionsOn {x} hf)
 
 lemma stronglyPeriodic_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
     (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup

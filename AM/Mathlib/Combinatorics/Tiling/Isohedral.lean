@@ -328,12 +328,10 @@ lemma finite_preimage_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ι�
   rw [preimage_quotientPlacedTileOfquotientTilePoint_eq_range]
   exact Set.finite_range _
 
--- TODO: this only actually needs the FiniteDistinctIntersections property at the point x
--- (for which we don't yet have a separate definition).
 lemma finite_preimage_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (x : X)
-    (h : FiniteDistinctIntersections t) :
+    (h : FiniteDistinctIntersectionsOn {x} t) :
     (t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧}).Finite := by
-  have hf := (h x).to_subtype
+  have hf := (h x (Set.mem_singleton _)).to_subtype
   rw [Set.coe_setOf] at hf
   rw [preimage_quotientPointOfquotientTilePoint_eq_range]
   exact Set.finite_range _
