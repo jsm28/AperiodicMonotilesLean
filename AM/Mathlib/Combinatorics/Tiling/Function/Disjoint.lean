@@ -5,7 +5,6 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Basic
 import AM.Mathlib.Data.Set.Pairwise.Basic
-import AM.Mathlib.Logic.Equiv.Set
 import Mathlib.Logic.Equiv.Pairwise
 
 /-!

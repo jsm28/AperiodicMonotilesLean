@@ -11,4 +11,3 @@ import AM.Mathlib.Data.Set.Pairwise.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Quotient
 import AM.Mathlib.GroupTheory.Index
-import AM.Mathlib.Logic.Equiv.Set
