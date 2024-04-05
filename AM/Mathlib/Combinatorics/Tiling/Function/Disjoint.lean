@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Basic
-import AM.Mathlib.Data.Set.Pairwise.Basic
 import Mathlib.Logic.Equiv.Pairwise
 
 /-!
