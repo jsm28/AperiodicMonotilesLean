@@ -15,8 +15,8 @@ This file defines disjointness properties for tiles in a discrete context.
 
 * `TileSet.Disjoint t`: A `TileSetFunction` for whether the tiles of `t` are disjoint.
 
-* `TileSet.Disjoint s t`: A `VarTileSetFunction` for whether the tiles of `t` are disjoint within
-the set `s`.
+* `TileSet.DisjointOn s t`: A `VarTileSetFunction` for whether the tiles of `t` are disjoint
+within the set `s`.
 
 * `TileSet.FiniteIntersections t`: A `TileSetFunction` for whether only finitely many of the
 tiles of `t` contain any point.
@@ -118,6 +118,18 @@ lemma DisjointOn.reindex_of_surjective {s : Set X} {t : TileSet ps ιₜ} {e : �
     TileSet.DisjointOn s t := by
   simp [TileSet.disjointOn_iff, Subsingleton.pairwise]
 
+lemma DisjointOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ} (hd : TileSet.DisjointOn s₂ t)
+    (hs : s₁ ⊆ s₂) : TileSet.DisjointOn s₁ t :=
+  fun _ _ h ↦ Set.disjoint_of_subset (Set.inter_subset_inter_right _ hs)
+    (Set.inter_subset_inter_right _ hs) (hd h)
+
+@[simp] lemma disjointOn_empty (t : TileSet ps ιₜ) : TileSet.DisjointOn ∅ t := by
+  simp [TileSet.DisjointOn, Pairwise]
+
+@[simp] lemma disjointOn_univ_iff {t : TileSet ps ιₜ} :
+    TileSet.DisjointOn Set.univ t ↔ TileSet.Disjoint t := by
+  simp [TileSet.Disjoint, TileSet.DisjointOn]
+
 lemma Disjoint.disjointOn (s : Set X) {t : TileSet ps ιₜ} (hd : TileSet.Disjoint t) :
     TileSet.DisjointOn s t :=
   fun _ _ h ↦ ((hd h).inter_left _).inter_right _
@@ -204,6 +216,19 @@ lemma FiniteIntersectionsOn.reindex_of_surjective {s : Set X} {t : TileSet ps ι
 @[simp] lemma finiteIntersectionsOn_of_subsingleton [Subsingleton ιₜ] (s : Set X)
     (t : TileSet ps ιₜ) : FiniteIntersectionsOn s t :=
   fun _ _ ↦ Set.subsingleton_of_subsingleton.finite
+
+lemma FiniteIntersectionsOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ}
+    (hfi : TileSet.FiniteIntersectionsOn s₂ t) (hs : s₁ ⊆ s₂) :
+    TileSet.FiniteIntersectionsOn s₁ t :=
+  fun x hx ↦ hfi x (Set.mem_of_mem_of_subset hx hs)
+
+@[simp] lemma finiteIntersectionsOn_empty (t : TileSet ps ιₜ) :
+    TileSet.FiniteIntersectionsOn ∅ t := by
+  simp [TileSet.FiniteIntersectionsOn, Pairwise]
+
+@[simp] lemma finiteIntersectionsOn_univ_iff {t : TileSet ps ιₜ} :
+    TileSet.FiniteIntersectionsOn Set.univ t ↔ TileSet.FiniteIntersections t := by
+  simp [TileSet.FiniteIntersections, TileSet.FiniteIntersectionsOn]
 
 lemma DisjointOn.finiteIntersectionsOn {s : Set X} {t : TileSet ps ιₜ}
     (h : TileSet.DisjointOn s t) : FiniteIntersectionsOn s t := by
@@ -329,6 +354,19 @@ lemma FiniteIntersectionsOn.finiteDistinctIntersectionsOn {s : Set X} {t : TileS
 @[simp] lemma finiteDistinctIntersectionsOn_of_subsingleton [Subsingleton ιₜ] (s : Set X)
     (t : TileSet ps ιₜ) : FiniteDistinctIntersectionsOn s t :=
   FiniteIntersectionsOn.finiteDistinctIntersectionsOn (finiteIntersectionsOn_of_subsingleton s t)
+
+lemma FiniteDistinctIntersectionsOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ}
+    (hfi : TileSet.FiniteDistinctIntersectionsOn s₂ t) (hs : s₁ ⊆ s₂) :
+    TileSet.FiniteDistinctIntersectionsOn s₁ t :=
+  fun x hx ↦ hfi x (Set.mem_of_mem_of_subset hx hs)
+
+@[simp] lemma finiteDistinctIntersectionsOn_empty (t : TileSet ps ιₜ) :
+    TileSet.FiniteDistinctIntersectionsOn ∅ t := by
+  simp [TileSet.FiniteDistinctIntersectionsOn, Pairwise]
+
+@[simp] lemma finiteDistinctIntersectionsOn_univ_iff {t : TileSet ps ιₜ} :
+    TileSet.FiniteDistinctIntersectionsOn Set.univ t ↔ TileSet.FiniteDistinctIntersections t := by
+  simp [TileSet.FiniteDistinctIntersections, TileSet.FiniteDistinctIntersectionsOn]
 
 lemma DisjointOn.finiteDistinctIntersectionsOn {s : Set X} {t : TileSet ps ιₜ}
     (h : TileSet.DisjointOn s t) : FiniteDistinctIntersectionsOn s t :=
