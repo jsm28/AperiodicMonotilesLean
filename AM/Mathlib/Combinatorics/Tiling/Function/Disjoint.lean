@@ -142,7 +142,7 @@ def FiniteIntersections : TileSetFunction ps Prop ⊤ :=
      refine forall_congr ?_
      simp only [eq_iff_iff]
      intro x
-     convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f) _)
+     convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f))
      exact Equiv.setOf_apply_symm_eq_image_setOf f fun i ↦ x ∈ t i,
    by
      intro ιₜ g t _
@@ -159,7 +159,7 @@ lemma finiteIntersections_iff {t : TileSet ps ιₜ} :
 lemma FiniteIntersections.reindex_of_injective {t : TileSet ps ιₜ}
     (hfi : FiniteIntersections t) {e : ιₜ' → ιₜ} (h : Injective e) :
     FiniteIntersections (t.reindex e) :=
-  fun x ↦ Set.Finite.preimage (Set.injOn_of_injective h _) (hfi x)
+  fun x ↦ Set.Finite.preimage (Set.injOn_of_injective h) (hfi x)
 
 lemma FiniteIntersections.reindex_of_embeddingLike {t : TileSet ps ιₜ}
     (hfi : FiniteIntersections t) (e : F) : FiniteIntersections (t.reindex e) :=
@@ -185,7 +185,7 @@ def FiniteIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
      intro ιₜ ιₜ' f s t
      simp only [eq_iff_iff]
      refine forall₂_congr (fun x _ ↦ ?_)
-     convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f) _)
+     convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f))
      exact Equiv.setOf_apply_symm_eq_image_setOf f fun i ↦ x ∈ t i,
    by
      intro ιₜ g s t _
@@ -202,7 +202,7 @@ lemma finiteIntersectionsOn_iff {s : Set X} {t : TileSet ps ιₜ} :
 lemma FiniteIntersectionsOn.reindex_of_injective {s : Set X} {t : TileSet ps ιₜ}
     (hfi : FiniteIntersectionsOn s t) {e : ιₜ' → ιₜ} (h : Injective e) :
     FiniteIntersectionsOn s (t.reindex e) :=
-  fun x hx ↦ Set.Finite.preimage (Set.injOn_of_injective h _) (hfi x hx)
+  fun x hx ↦ Set.Finite.preimage (Set.injOn_of_injective h) (hfi x hx)
 
 lemma FiniteIntersectionsOn.reindex_of_embeddingLike {s : Set X} {t : TileSet ps ιₜ}
     (hfi : FiniteIntersectionsOn s t) (e : F) : FiniteIntersectionsOn s (t.reindex e) :=
@@ -255,12 +255,12 @@ def FiniteDistinctIntersections : TileSetFunction ps Prop ⊤ :=
      refine ⟨fun h ↦ fun x ↦ ?_, fun h ↦ fun x ↦ ?_⟩
      · convert h (g • x) using 0
        convert (Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
-         (β := PlacedTile ps) g) _)).symm using 2
+         (β := PlacedTile ps) g))).symm using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
              PlacedTile.mem_inv_smul_iff_smul_mem]
      · convert h (g⁻¹ • x) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
-         (β := PlacedTile ps) g) _) using 2
+         (β := PlacedTile ps) g)) using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
              PlacedTile.mem_inv_smul_iff_smul_mem]⟩
 
@@ -312,12 +312,12 @@ def FiniteDistinctIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
      refine ⟨fun h ↦ fun x hx ↦ ?_, fun h ↦ fun x hx ↦ ?_⟩
      · convert h (g • x) (by simp [hx]) using 0
        convert (Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
-         (β := PlacedTile ps) g) _)).symm using 2
+         (β := PlacedTile ps) g))).symm using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
              PlacedTile.mem_inv_smul_iff_smul_mem]
      · convert h (g⁻¹ • x) (Set.mem_smul_set_iff_inv_smul_mem.1 hx) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
-         (β := PlacedTile ps) g) _) using 2
+         (β := PlacedTile ps) g)) using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
              PlacedTile.mem_inv_smul_iff_smul_mem]⟩
 

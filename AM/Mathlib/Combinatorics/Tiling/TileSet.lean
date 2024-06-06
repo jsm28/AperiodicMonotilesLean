@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Tile
-import Mathlib.GroupTheory.Subgroup.Pointwise
+import Mathlib.Algebra.Group.Subgroup.Pointwise
 
 /-!
 # Tilings
