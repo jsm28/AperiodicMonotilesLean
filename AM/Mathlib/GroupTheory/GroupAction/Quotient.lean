@@ -1,4 +1,3 @@
-import AM.Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.GroupTheory.GroupAction.Quotient
 
 universe u v w

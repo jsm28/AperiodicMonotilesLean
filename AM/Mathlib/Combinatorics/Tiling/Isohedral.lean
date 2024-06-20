@@ -5,7 +5,6 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
 import AM.Mathlib.Combinatorics.Tiling.Function.Union
-import AM.Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.GroupTheory.GroupAction.SubMulAction
 
 /-!
