@@ -84,9 +84,9 @@ lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :
   Iff.rfl
 
 lemma stronglyPeriodic_of_finite_quotient_of_index_ne_zero {t : TileSet ps ιₜ}
-    (hq : Finite <| MulAction.orbitRel.Quotient G X) (hi : t.symmetryGroup.index ≠ 0) :
+    [Finite <| MulAction.orbitRel.Quotient G X] (hi : t.symmetryGroup.index ≠ 0) :
     StronglyPeriodic t :=
-  Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hq hi
+  Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hi
 
 lemma stronglyPeriodic_of_pretransitive_of_index_ne_zero {t : TileSet ps ιₜ}
     [MulAction.IsPretransitive G X] (hi : t.symmetryGroup.index ≠ 0) :

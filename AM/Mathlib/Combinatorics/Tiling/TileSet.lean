@@ -136,8 +136,8 @@ def reindex (t : TileSet ps ιₜ) (f : ιₜ' → ιₜ) : TileSet ps ιₜ' wh
 
 @[simp] lemma reindex_id (t : TileSet ps ιₜ) : t.reindex id = t := rfl
 
-@[simp] lemma injective_reindex_iff_injective {t : TileSet ps ιₜ} {f : ιₜ' → ιₜ} (ht : Injective t) :
-    Injective (↑t ∘ f) ↔ Injective f :=
+@[simp] lemma injective_reindex_iff_injective {t : TileSet ps ιₜ} {f : ιₜ' → ιₜ}
+    (ht : Injective t) : Injective (↑t ∘ f) ↔ Injective f :=
   ht.of_comp_iff _
 
 lemma injective_reindex_of_embeddingLike {t : TileSet ps ιₜ} (f : F) (ht : Injective t) :
