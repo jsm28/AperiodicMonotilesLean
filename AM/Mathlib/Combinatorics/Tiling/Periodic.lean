@@ -5,7 +5,6 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
-import AM.Mathlib.GroupTheory.Index
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!
