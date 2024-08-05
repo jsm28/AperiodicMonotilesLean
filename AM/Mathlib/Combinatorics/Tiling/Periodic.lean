@@ -5,6 +5,9 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
+import AM.Mathlib.GroupTheory.GroupAction.Basic
+import AM.Mathlib.GroupTheory.GroupAction.Quotient
+import AM.Mathlib.GroupTheory.Index
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!
@@ -91,6 +94,52 @@ lemma stronglyPeriodic_of_pretransitive_of_index_ne_zero {t : TileSet ps ιₜ}
     [MulAction.IsPretransitive G X] (hi : t.symmetryGroup.index ≠ 0) :
     StronglyPeriodic t :=
   Subgroup.finite_quotient_of_pretransitive_of_index_ne_zero hi
+
+lemma StronglyPeriodic.finite_quotient {t : TileSet ps ιₜ} (h : StronglyPeriodic t) :
+    Finite <| MulAction.orbitRel.Quotient G X := by
+  rw [stronglyPeriodic_iff, (MulAction.equivSubgroupOrbits X t.symmetryGroup).finite_iff] at h
+  by_contra hi
+  revert h
+  rw [imp_false]
+  rw [not_finite_iff_infinite] at hi ⊢
+  suffices ∀ ω : MulAction.orbitRel.Quotient G X, Nonempty
+      (MulAction.orbitRel.Quotient t.symmetryGroup (MulAction.orbitRel.Quotient.orbit ω)) by
+    infer_instance
+  intro ω
+  rw [nonempty_quotient_iff]
+  simpa using ω.orbit_nonempty
+
+lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
+    (h : StronglyPeriodic t) {H : Subgroup G} (free : ∀ x : X, MulAction.stabilizer H x = ⊥)
+    (hi : H.index ≠ 0) : t.symmetryGroup.index ≠ 0 := by
+  rw [stronglyPeriodic_iff] at h
+  have hr : H.relindex t.symmetryGroup ≠ 0 := mt Subgroup.index_eq_zero_of_relindex_eq_zero hi
+  suffices t.symmetryGroup.relindex H ≠ 0 by
+    rw [← Subgroup.relindex_top_right] at hi ⊢
+    exact Subgroup.relindex_ne_zero_trans this hi
+  rw [Subgroup.relindex] at hr ⊢
+  have hf := Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hr (X := X)
+  rw [MulAction.orbitRel.Quotient, MulAction.orbitRel_subgroupOf, inf_comm,
+      ← MulAction.orbitRel_subgroupOf, ← MulAction.orbitRel.Quotient,
+      (MulAction.equivSubgroupOrbits X _).finite_iff] at hf
+  intro h0
+  rw [Subgroup.index_eq_zero_iff_infinite] at h0
+  revert hf
+  rw [imp_false, not_finite_iff_infinite]
+  have hne : Nonempty (MulAction.orbitRel.Quotient H X) := by simpa [nonempty_quotient_iff]
+  have x := Classical.arbitrary (MulAction.orbitRel.Quotient H X)
+  convert Infinite.sigma_of_right (a := x)
+  have y : MulAction.orbitRel.Quotient.orbit x :=
+    (MulAction.orbitRel.Quotient.orbit_nonempty x).to_subtype.some
+  rw [(MulAction.equivSubgroupOrbitsQuotientGroup y _ _).infinite_iff]
+  · exact h0
+  · intro z
+    ext g
+    simp only [MulAction.mem_stabilizer_iff, Subgroup.mem_bot]
+    refine ⟨fun hs ↦ ?_, fun hs ↦ by simp [hs]⟩
+    suffices g ∈ MulAction.stabilizer H (z : X) by
+      simpa [free] using this
+    rw [MulAction.mem_stabilizer_iff, ← MulAction.orbitRel.Quotient.orbit.coe_smul, hs]
 
 lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : StronglyPeriodic t)
     (hf : FiniteDistinctIntersections t) :
