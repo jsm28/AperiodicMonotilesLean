@@ -7,7 +7,6 @@ import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
 import AM.Mathlib.GroupTheory.GroupAction.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Quotient
-import AM.Mathlib.GroupTheory.Index
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!

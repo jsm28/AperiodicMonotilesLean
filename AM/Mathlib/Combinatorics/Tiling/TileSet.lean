@@ -63,7 +63,7 @@ instance [Nonempty ιₚ] : Nonempty (TileSet ps ιₜ) := ⟨⟨fun _ ↦ Class
 
 instance [IsEmpty ιₜ] : Unique (TileSet ps ιₜ) where
   default := ⟨isEmptyElim⟩
-  uniq := fun _ ↦ TileSet.ext _ _ <| funext isEmptyElim
+  uniq := fun _ ↦ TileSet.ext <| funext isEmptyElim
 
 instance : CoeFun (TileSet ps ιₜ) (fun _ ↦ ιₜ → PlacedTile ps) where
   coe := tiles
@@ -150,7 +150,7 @@ lemma injective_reindex_of_embeddingLike {t : TileSet ps ιₜ} (f : F) (ht : In
 
 @[simp] lemma reindex_eq_reindex_iff_of_surjective {t₁ t₂ : TileSet ps ιₜ} {f : ιₜ' → ιₜ}
     (h : Surjective f) : t₁.reindex f = t₂.reindex f ↔ t₁ = t₂ := by
-  refine ⟨fun he ↦ TileSet.ext _ _ <| funext <| h.forall.2 fun i ↦ ?_,
+  refine ⟨fun he ↦ TileSet.ext <| funext <| h.forall.2 fun i ↦ ?_,
           fun he ↦ congrArg₂ _ he rfl⟩
   simp_rw [← reindex_apply, he]
 
@@ -239,8 +239,8 @@ def equivOfCoeSetEqOfInjective {t₁ : TileSet ps ιₜ} {t₂ : TileSet ps ι�
 
 instance : MulAction G (TileSet ps ιₜ) where
   smul := fun g t ↦ ⟨(g • ·) ∘ ↑t⟩
-  one_smul := fun _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ one_smul _ _
-  mul_smul := fun _ _ _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ mul_smul _ _ _
+  one_smul := fun _ ↦ TileSet.ext <| funext <| fun _ ↦ one_smul _ _
+  mul_smul := fun _ _ _ ↦ TileSet.ext <| funext <| fun _ ↦ mul_smul _ _ _
 
 lemma smul_coe (g : G) (t : TileSet ps ιₜ) : (g • t : TileSet ps ιₜ) = (g • ·) ∘ ↑t := rfl
 
@@ -289,8 +289,8 @@ lemma mem_inv_smul_iff_smul_mem {pt : PlacedTile ps} {g : G} {t : TileSet ps ι�
 in defining the symmetry group. -/
 instance : MulAction (G × Equiv.Perm ιₜ) (TileSet ps ιₜ) where
   smul := fun g t ↦ (g.fst • t).reindex g.snd.symm
-  one_smul := fun _ ↦ TileSet.ext _ _ <| funext <| fun _ ↦ one_smul _ _
-  mul_smul := fun g h t ↦ TileSet.ext _ _ <| funext <| fun i ↦ by
+  one_smul := fun _ ↦ TileSet.ext <| funext <| fun _ ↦ one_smul _ _
+  mul_smul := fun g h t ↦ TileSet.ext <| funext <| fun i ↦ by
     change (g.1 * h.1) • t ((g.2 * h.2)⁻¹ i) = g.1 • h.1 • t (h.2⁻¹ (g.2⁻¹ i))
     simp [mul_smul]
 

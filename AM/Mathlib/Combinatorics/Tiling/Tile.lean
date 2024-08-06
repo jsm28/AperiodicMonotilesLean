@@ -235,7 +235,7 @@ instance : MulAction G (PlacedTile ps) where
   smul := fun g pt ↦ Quotient.liftOn' pt.groupElts (fun h ↦ ⟨pt.index, g * h⟩)
     fun a b r ↦ by
       rw [QuotientGroup.leftRel_eq] at r
-      refine PlacedTile.ext _ _ rfl ?_
+      refine PlacedTile.ext rfl ?_
       simpa [QuotientGroup.eq, ← mul_assoc] using r
   one_smul := fun pt ↦ by
     simp only [HSMul.hSMul]

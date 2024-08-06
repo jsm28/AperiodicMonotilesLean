@@ -9,4 +9,3 @@ import AM.Mathlib.Combinatorics.Tiling.Tile
 import AM.Mathlib.Combinatorics.Tiling.TileSet
 import AM.Mathlib.GroupTheory.GroupAction.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Quotient
-import AM.Mathlib.GroupTheory.Index
