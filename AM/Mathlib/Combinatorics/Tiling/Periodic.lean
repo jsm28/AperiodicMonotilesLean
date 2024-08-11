@@ -3,10 +3,15 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
+import AM.Mathlib.Algebra.Group.Subgroup.Basic
+import AM.Mathlib.Algebra.Group.Submonoid.Operations
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
 import AM.Mathlib.GroupTheory.GroupAction.Basic
 import AM.Mathlib.GroupTheory.GroupAction.Quotient
+import AM.Mathlib.GroupTheory.Index
+import Mathlib.Algebra.Order.Group.Basic
+import Mathlib.Algebra.Order.Group.TypeTags
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!
@@ -51,7 +56,7 @@ noncomputable section
 namespace Discrete
 
 open Function
-open scoped Cardinal Pointwise
+open scoped Cardinal Nat Pointwise
 
 variable {G X ιₚ ιₜ : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
 
@@ -236,6 +241,38 @@ lemma weaklyPeriodic_of_le {t : TileSet ps ιₜ} {m n : ℕ} (h : WeaklyPeriodi
   rcases h with ⟨f, hf⟩
   exact ⟨f.comp (ExtendByOne.hom (Multiplicative ℤ) (Fin.castLE hle)),
          hf.comp (extend_injective (Fin.strictMono_castLE hle).injective _)⟩
+
+lemma weaklyPeriodic_iff_of_relindex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : Subgroup G}
+    (hi : H.relindex t.symmetryGroup ≠ 0) :
+    WeaklyPeriodic n t ↔
+      ∃ f : (Fin n → Multiplicative ℤ) →* (H ⊓ t.symmetryGroup : Subgroup G), Injective f := by
+  refine ⟨fun ⟨f, hf⟩ ↦ ?_,
+    fun ⟨f, hf⟩ ↦ ⟨(Subgroup.inclusion inf_le_right).comp f, fun x y hxy ↦ hf (by simpa using hxy)⟩⟩
+  let f' : (Fin n → Multiplicative ℤ) →* (Fin n → Multiplicative ℤ) :=
+    powMonoidHom (H.relindex t.symmetryGroup)!
+  have hf' : Injective f' := by
+    intro x₁ x₂ he
+    simp only [powMonoidHom_apply, f'] at he
+    ext i
+    suffices (x₁ i) ^ (H.relindex t.symmetryGroup)! = (x₂ i) ^ (H.relindex t.symmetryGroup)! by
+      rwa [← zpow_natCast, ← zpow_natCast, zpow_left_inj (mod_cast (Nat.factorial_ne_zero _))]
+        at this
+    simp_rw [← Pi.pow_apply, he]
+  have h : ∀ x : Fin n → Multiplicative ℤ,
+      (((Subgroup.subtype _).comp f).comp f') x ∈ H ⊓ t.symmetryGroup := by
+    simp only [MonoidHom.coe_comp, Subgroup.coeSubtype, comp_apply, f', powMonoidHom_apply,
+               map_pow, SubmonoidClass.coe_pow]
+    exact fun x ↦ Subgroup.pow_mem_of_relindex_ne_zero_of_dvd hi (SetLike.coe_mem _)
+      (fun _ ↦ Nat.dvd_factorial)
+  refine ⟨(((Subgroup.subtype _).comp f).comp f').codRestrict _ h, ?_⟩
+  simp only [MonoidHom.injective_codRestrict, MonoidHom.coe_comp, Subgroup.coeSubtype]
+  exact (Subtype.val_injective.comp hf).comp hf'
+
+lemma weaklyPeriodic_iff_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : Subgroup G}
+    (hi : H.index ≠ 0) :
+    WeaklyPeriodic n t ↔
+      ∃ f : (Fin n → Multiplicative ℤ) →* (H ⊓ t.symmetryGroup : Subgroup G), Injective f :=
+  weaklyPeriodic_iff_of_relindex_ne_zero (mt Subgroup.index_eq_zero_of_relindex_eq_zero hi)
 
 end TileSet
 
