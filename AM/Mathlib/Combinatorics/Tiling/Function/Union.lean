@@ -72,13 +72,13 @@ lemma UnionEq.exists_mem_mem_iff {t : TileSet ps ιₜ} {s : Set X} (h : UnionEq
 lemma unionEq_smul_set_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
     UnionEq (g • s) t ↔ UnionEq s (g⁻¹ • t) := by
   nth_rewrite 1 [← one_smul G t]
-  rw [← mul_inv_self g, mul_smul, VarTileSetFunction.smul_iff]
+  rw [← mul_inv_cancel g, mul_smul, VarTileSetFunction.smul_iff]
   exact Subgroup.mem_top _
 
 lemma unionEq_smul_tileSet_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
     UnionEq s (g • t) ↔ UnionEq (g⁻¹ • s) t := by
   nth_rewrite 2 [← one_smul G t]
-  rw [← mul_left_inv g, mul_smul, VarTileSetFunction.smul_iff]
+  rw [← inv_mul_cancel g, mul_smul, VarTileSetFunction.smul_iff]
   exact Subgroup.mem_top _
 
 @[simp] lemma unionEq_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) : UnionEq ∅ t := by

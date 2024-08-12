@@ -64,13 +64,13 @@ lemma isTilingOf_iff_of_injective {t : TileSet ps ιₜ} {s : Set X} (h : Inject
 lemma isTilingOf_smul_set_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
     IsTilingOf (g • s) t ↔ IsTilingOf s (g⁻¹ • t) := by
   nth_rewrite 1 [← one_smul G t]
-  rw [← mul_inv_self g, mul_smul, VarTileSetFunction.smul_iff]
+  rw [← mul_inv_cancel g, mul_smul, VarTileSetFunction.smul_iff]
   exact Subgroup.mem_top _
 
 lemma isTilingOf_smul_tileSet_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
     IsTilingOf s (g • t) ↔ IsTilingOf (g⁻¹ • s) t := by
   nth_rewrite 2 [← one_smul G t]
-  rw [← mul_left_inv g, mul_smul, VarTileSetFunction.smul_iff]
+  rw [← inv_mul_cancel g, mul_smul, VarTileSetFunction.smul_iff]
   exact Subgroup.mem_top _
 
 @[simp] lemma isTilingOf_empty [IsEmpty ιₜ] (t : TileSet ps ιₜ) : IsTilingOf ∅ t := by
