@@ -6,6 +6,7 @@ Authors: Joseph Myers
 import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
 import AM.Mathlib.Combinatorics.Tiling.Function.Union
 import Mathlib.GroupTheory.GroupAction.SubMulAction
+import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Isohedral numbers of tilings and protosets

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import Mathlib.Data.Set.Pointwise.Finite
-import Mathlib.GroupTheory.Coset
+import Mathlib.GroupTheory.Coset.Basic
 
 /-!
 # Tiles for tilings
