@@ -22,13 +22,4 @@ lemma index_pi {ι : Type*} [Fintype ι] (H : ι → Subgroup G) :
     ((Quotient.congrRight (fun x y ↦ ?_)).trans (Setoid.piQuotientEquiv _).symm)
   rw [QuotientGroup.leftRel_pi]
 
-@[simp]
-lemma index_toAddSubgroup : (Subgroup.toAddSubgroup H).index = H.index :=
-  rfl
-
-@[simp]
-lemma _root_.AddSubgroup.index_toSubgroup {G : Type*} [AddGroup G] (H : AddSubgroup G) :
-    (AddSubgroup.toSubgroup H).index = H.index :=
-  rfl
-
 end Subgroup
