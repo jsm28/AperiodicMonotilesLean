@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Algebra.Module.Submodule.Map
-import AM.Mathlib.Data.ZMod.Quotient
 import AM.Mathlib.GroupTheory.Index
+import Mathlib.Data.ZMod.Quotient
 import Mathlib.LinearAlgebra.FreeModule.PID
 
 /-! # Index of submodules of free ℤ-modules (considered as an `AddSubgroup`).
