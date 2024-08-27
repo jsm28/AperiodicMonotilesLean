@@ -18,16 +18,14 @@ index.
 
 namespace Basis.SmithNormalForm
 
-lemma toAddSubgroup_index_ne_zero_iff {M : Type*} {m n : ℕ} [AddCommGroup M] [Module ℤ M]
-    {N : Submodule ℤ M} (snf : Basis.SmithNormalForm N (Fin m) n) :
-    N.toAddSubgroup.index ≠ 0 ↔ n = m := by
+lemma toAddSubgroup_index_ne_zero_iff {M : Type*} {m n : ℕ} [AddCommGroup M] {N : Submodule ℤ M}
+    (snf : Basis.SmithNormalForm N (Fin m) n) : N.toAddSubgroup.index ≠ 0 ↔ n = m := by
   rcases snf with ⟨bM, bN, f, a, snf⟩
-  letI := N.module
   have ha : ∀ i, a i ≠ 0 := by
     intro i hi
     apply Basis.ne_zero bN i
     specialize snf i
-    simpa [hi, Module.zero_smul] using snf
+    simpa [hi] using snf
   let N' : Submodule ℤ (Fin m → ℤ) := N.map bM.equivFun
   let bN' : Basis (Fin n) ℤ N' := bN.map (bM.equivFun.submoduleMap N)
   have snf' : ∀ i, (bN' i : Fin m → ℤ) = Pi.single (f i) (a i) := by
