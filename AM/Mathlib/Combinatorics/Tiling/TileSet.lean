@@ -80,7 +80,7 @@ instance : CoeOut (TileSet ps ιₜ) (Set (PlacedTile ps)) where
   coe := coeSet
 
 instance : Membership (PlacedTile ps) (TileSet ps ιₜ) where
-  mem := fun pt t ↦ pt ∈ (t : Set (PlacedTile ps))
+  mem := fun t pt ↦ pt ∈ (t : Set (PlacedTile ps))
 
 @[simp] lemma mem_coeSet {pt : PlacedTile ps} {t : TileSet ps ιₜ} :
     pt ∈ (t : Set (PlacedTile ps)) ↔ pt ∈ t :=

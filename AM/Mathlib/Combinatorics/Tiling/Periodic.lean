@@ -3,7 +3,6 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Algebra.Group.Submonoid.Operations
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
 import AM.Mathlib.GroupTheory.GroupAction.Quotient
@@ -80,6 +79,7 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
        exact ⟨g⁻¹ * a * g, ha, by simp [mul_smul]⟩
      · rcases ha with ⟨ha, ha'⟩
        rw [← mem_symmetryGroup_smul_iff g] at ha
+       simp only [Subgroup.mk_smul] at ha'
        exact ⟨g * a * g⁻¹, ha, by simp [mul_smul, ha']⟩⟩
 
 lemma stronglyPeriodic_iff {t : TileSet ps ιₜ} :

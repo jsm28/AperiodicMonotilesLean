@@ -1,4 +1,3 @@
-import AM.Mathlib.Algebra.Group.Submonoid.Operations
 import AM.Mathlib.Combinatorics.Tiling.Function.Basic
 import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling

@@ -95,7 +95,7 @@ instance : CoeOut (Prototile G X) (Set X) where
 attribute [coe] carrier
 
 instance : Membership X (Prototile G X) where
-  mem := fun x p ↦ x ∈ (p : Set X)
+  mem := fun p x ↦ x ∈ (p : Set X)
 
 lemma coe_mk (c s) : (⟨c, s⟩ : Prototile G X) = c := rfl
 
@@ -201,7 +201,7 @@ instance : CoeOut (PlacedTile ps) (Set X) where
   coe := coeSet
 
 instance : Membership X (PlacedTile ps) where
-  mem := fun x p ↦ x ∈ (p : Set X)
+  mem := fun p x ↦ x ∈ (p : Set X)
 
 @[simp] lemma mem_coe {x : X} {pt : PlacedTile ps} : x ∈ (pt : Set X) ↔ x ∈ pt := Iff.rfl
 

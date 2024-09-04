@@ -279,7 +279,7 @@ lemma FiniteDistinctIntersections.reindex_of_surjective {t : TileSet ps ιₜ} {
     (hfi : FiniteDistinctIntersections (t.reindex e)) (h : Surjective e) :
     FiniteDistinctIntersections t := by
   intro x
-  convert hfi x
+  convert hfi x using 4
   exact (mem_reindex_iff_of_surjective h).symm
 
 lemma FiniteIntersections.finiteDistinctIntersections {t : TileSet ps ιₜ}
@@ -336,7 +336,7 @@ lemma FiniteDistinctIntersectionsOn.reindex_of_surjective {s : Set X} {t : TileS
     {e : ιₜ' → ιₜ} (hfi : FiniteDistinctIntersectionsOn s (t.reindex e)) (h : Surjective e) :
     FiniteDistinctIntersectionsOn s t := by
   intro x
-  convert hfi x
+  convert hfi x using 5
   exact (mem_reindex_iff_of_surjective h).symm
 
 lemma FiniteIntersectionsOn.finiteDistinctIntersectionsOn {s : Set X} {t : TileSet ps ιₜ}
