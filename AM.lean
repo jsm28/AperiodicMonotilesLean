@@ -9,6 +9,5 @@ import AM.Mathlib.Combinatorics.Tiling.Tile
 import AM.Mathlib.Combinatorics.Tiling.TileSet
 import AM.Mathlib.Data.Setoid.Basic
 import AM.Mathlib.GroupTheory.Coset.Basic
-import AM.Mathlib.GroupTheory.GroupAction.Quotient
 import AM.Mathlib.GroupTheory.Index
 import AM.Mathlib.LinearAlgebra.FreeModule.PIDIndex
