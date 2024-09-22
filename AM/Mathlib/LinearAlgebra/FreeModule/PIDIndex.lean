@@ -3,6 +3,7 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
+import AM.Mathlib.Algebra.Group.Equiv.TypeTags
 import AM.Mathlib.GroupTheory.Index
 import Mathlib.Data.ZMod.Quotient
 import Mathlib.LinearAlgebra.FreeModule.PID
@@ -122,3 +123,36 @@ lemma toAddSubgroup_index_ne_zero_iff {M : Type*} {m n : ℕ} [AddCommGroup M] {
     exact ha _
 
 end Basis.SmithNormalForm
+
+namespace Int
+
+lemma submodule_toAddSubgroup_index_ne_zero_iff {m : ℕ} {N : Submodule ℤ (Fin m → ℤ)} :
+    N.toAddSubgroup.index ≠ 0 ↔ Nonempty (N ≃ₗ[ℤ] (Fin m → ℤ)) := by
+  obtain ⟨n, snf⟩ := N.smithNormalForm <| Basis.ofEquivFun <| LinearEquiv.refl _ _
+  rw [snf.toAddSubgroup_index_ne_zero_iff]
+  rcases snf with ⟨-, bN, -, -, -⟩
+  refine ⟨fun h ↦ ?_, fun ⟨e⟩ ↦ ?_⟩
+  · subst h
+    exact ⟨bN.equivFun⟩
+  · have hc := card_eq_of_linearEquiv ℤ <| bN.equivFun.symm.trans e
+    simpa using hc
+
+lemma addSubgroup_index_ne_zero_iff {m : ℕ} {H : AddSubgroup (Fin m → ℤ)} :
+    H.index ≠ 0 ↔ Nonempty (H ≃+ (Fin m → ℤ)) := by
+  convert submodule_toAddSubgroup_index_ne_zero_iff (N := AddSubgroup.toIntSubmodule H) using 1
+  exact ⟨fun ⟨e⟩ ↦ ⟨e.toIntLinearEquiv⟩, fun ⟨e⟩ ↦ ⟨e.toAddEquiv⟩⟩
+
+lemma subgroup_index_ne_zero_iff {m : ℕ} {H : Subgroup (Fin m → Multiplicative ℤ)} :
+    H.index ≠ 0 ↔ Nonempty (H ≃* (Fin m → Multiplicative ℤ)) := by
+  let em : Multiplicative (Fin m → ℤ) ≃* (Fin m → Multiplicative ℤ) :=
+    MulEquiv.funMultiplicative _ _
+  let H' : Subgroup (Multiplicative (Fin m → ℤ)) := H.comap em
+  let eH' : H' ≃* H := (MulEquiv.subgroupCongr <| Subgroup.comap_equiv_eq_map_symm em H).trans
+    (MulEquiv.subgroupMap em.symm _).symm
+  have h : H'.index = H.index := Subgroup.index_comap_of_surjective _ em.surjective
+  rw [← h, ← Subgroup.index_toAddSubgroup, addSubgroup_index_ne_zero_iff]
+  refine ⟨fun ⟨e⟩ ↦ ⟨(eH'.symm.trans (AddEquiv.toMultiplicative e)).trans em⟩,
+    fun ⟨e⟩ ↦ ⟨(MulEquiv.toAdditive ((eH'.trans e).trans em.symm)).trans
+      (AddEquiv.additiveMultiplicative _)⟩⟩
+
+end Int
