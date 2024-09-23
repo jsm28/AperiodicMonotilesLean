@@ -150,7 +150,7 @@ lemma subgroup_index_ne_zero_iff {m : ℕ} {H : Subgroup (Fin m → Multiplicati
     (MulEquiv.subgroupMap em.symm _).symm
   have h : H'.index = H.index := Subgroup.index_comap_of_surjective _ em.surjective
   rw [← h, ← Subgroup.index_toAddSubgroup, addSubgroup_index_ne_zero_iff]
-  refine ⟨fun ⟨e⟩ ↦ ⟨(eH'.symm.trans (AddEquiv.toMultiplicative e)).trans em⟩,
+  exact ⟨fun ⟨e⟩ ↦ ⟨(eH'.symm.trans (AddEquiv.toMultiplicative e)).trans em⟩,
     fun ⟨e⟩ ↦ ⟨(MulEquiv.toAdditive ((eH'.trans e).trans em.symm)).trans
       (AddEquiv.additiveMultiplicative _)⟩⟩
 
