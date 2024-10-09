@@ -1,4 +1,3 @@
-import AM.Mathlib.Data.Setoid.Basic
 import Mathlib.GroupTheory.Coset.Basic
 
 open Function MulOpposite Set

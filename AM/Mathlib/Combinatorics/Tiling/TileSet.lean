@@ -370,10 +370,10 @@ lemma exists_smul_eq_of_mem_of_mem_symmetryGroup {t : TileSet ps ιₜ} {g : G} 
   refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨e, he⟩ ↦ ?_⟩
   · refine ⟨((EquivLike.toEquiv f).symm.trans e).trans (EquivLike.toEquiv f), ?_⟩
     rw [← reindex_eq_reindex_iff_of_equivLike f, ← he]
-    simp [comp.assoc]
+    simp [comp_assoc]
   · refine ⟨((EquivLike.toEquiv f).trans e).trans (EquivLike.toEquiv f).symm, ?_⟩
     nth_rewrite 2 [← he]
-    simp [← comp.assoc]
+    simp [← comp_assoc]
 
 @[simp] lemma symmetryGroup_reindex_of_bijective (t : TileSet ps ιₜ) {f : ιₜ' → ιₜ}
     (h : Bijective f) : (t.reindex f).symmetryGroup = t.symmetryGroup :=
