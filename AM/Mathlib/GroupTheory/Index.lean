@@ -1,4 +1,3 @@
-import AM.Mathlib.GroupTheory.Coset.Basic
 import Mathlib.GroupTheory.Index
 
 namespace Subgroup

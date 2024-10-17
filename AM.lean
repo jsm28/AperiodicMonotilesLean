@@ -7,6 +7,5 @@ import AM.Mathlib.Combinatorics.Tiling.Patch
 import AM.Mathlib.Combinatorics.Tiling.Periodic
 import AM.Mathlib.Combinatorics.Tiling.Tile
 import AM.Mathlib.Combinatorics.Tiling.TileSet
-import AM.Mathlib.GroupTheory.Coset.Basic
 import AM.Mathlib.GroupTheory.Index
 import AM.Mathlib.LinearAlgebra.FreeModule.PIDIndex
