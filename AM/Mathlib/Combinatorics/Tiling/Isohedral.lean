@@ -361,15 +361,15 @@ end TileSet
 
 namespace Protoset
 
-variable (ιₜ) {s : Subgroup G}
+variable (ιₜ) {H : Subgroup G}
 
 /-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`. -/
-def isohedralNumber (p : TileSetFunction ps Prop s) : Cardinal :=
+def isohedralNumber (p : TileSetFunction ps Prop H) : Cardinal :=
   ⨅ (t : {x : TileSet ps ιₜ // p x}), TileSet.isohedralNumber (t : TileSet ps ιₜ)
 
 variable {ιₜ}
 
-lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop s} :
+lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p = 0 ↔ IsEmpty ιₜ ∨ ∀ t : TileSet ps ιₜ, ¬ p t := by
   simp_rw [isohedralNumber, Cardinal.iInf_eq_zero_iff, TileSet.isohedralNumber_eq_zero_iff]
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
@@ -382,11 +382,11 @@ lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop s} :
       exact (Classical.em _).symm
     · simp [h]
 
-lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop s} :
+lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p ≠ 0 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t := by
   simp [isohedralNumber_eq_zero_iff, not_or]
 
-lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop s} {c : Cardinal} (h : c ≠ 0) :
+lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop H} {c : Cardinal} (h : c ≠ 0) :
     c ≤ isohedralNumber ιₜ p ↔
       (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → c ≤ TileSet.isohedralNumber t := by
   rw [isohedralNumber]
@@ -404,7 +404,7 @@ lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop s} {c : Cardinal} (h :
     convert Cardinal.sInf_empty
     simpa using he
 
-lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop s} :
+lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t
       ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
   rw [isohedralNumber, iInf]
@@ -433,12 +433,12 @@ variable (ιₜ)
 
 /-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`,
 as a natural number; zero if infinite or if no such `TileSet` exists. -/
-def isohedralNumberNat (p : TileSetFunction ps Prop s) : ℕ :=
+def isohedralNumberNat (p : TileSetFunction ps Prop H) : ℕ :=
   Cardinal.toNat <| isohedralNumber ιₜ p
 
 variable {ιₜ}
 
-lemma isohedralNumberNat_eq_one_iff {p : TileSetFunction ps Prop s} :
+lemma isohedralNumberNat_eq_one_iff {p : TileSetFunction ps Prop H} :
     isohedralNumberNat ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t
       ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
   rw [← isohedralNumber_eq_one_iff]

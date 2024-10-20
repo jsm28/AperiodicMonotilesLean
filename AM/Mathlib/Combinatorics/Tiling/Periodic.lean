@@ -301,21 +301,21 @@ end TileSet
 
 namespace Protoset
 
-variable (ιₜ) {s : Subgroup G}
+variable (ιₜ) {H : Subgroup G}
 
 /-- Whether `ps` is weakly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that is,
 whether it has such a `TileSet`, but none is strongly periodic. -/
-def WeaklyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
+def WeaklyAperiodic (p : TileSetFunction ps Prop H) : Prop :=
   (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ TileSet.StronglyPeriodic t
 
 /-- Whether `ps` is strongly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that
 is, whether it has such a `TileSet`, but none is weakly periodic. -/
-def StronglyAperiodic (p : TileSetFunction ps Prop s) : Prop :=
+def StronglyAperiodic (p : TileSetFunction ps Prop H) : Prop :=
   (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ TileSet.WeaklyPeriodic 1 t
 
 variable {ιₜ}
 
-lemma WeaklyAperiodic.aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+lemma WeaklyAperiodic.aleph0_le_isohedralNumber {p : TileSetFunction ps Prop H}
     (h : ps.WeaklyAperiodic ιₜ p) (hf : ∀ i, (ps i : Set X).Finite)
     (hu : ∀ t : TileSet ps ιₜ, p t → TileSet.UnionEqUniv t) : ℵ₀ ≤ ps.isohedralNumber ιₜ p := by
   rw [le_isohedralNumber_iff Cardinal.aleph0_ne_zero]
@@ -326,7 +326,7 @@ lemma WeaklyAperiodic.aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
   refine hnp t hpt (TileSet.stronglyPeriodic_of_isohedralNumber_lt_aleph0 hi
     (t.finite_apply_of_forall_finite hf) (hu t hpt))
 
-lemma weaklyAperiodic_of_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+lemma weaklyAperiodic_of_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop H}
     (h : ℵ₀ ≤ ps.isohedralNumber ιₜ p)
     (hf : ∀ t : TileSet ps ιₜ, p t → TileSet.FiniteDistinctIntersections t)
     (hn : ∀ i, (ps i : Set X).Nonempty) : ps.WeaklyAperiodic ιₜ p := by
@@ -339,7 +339,7 @@ lemma weaklyAperiodic_of_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop 
   refine TileSet.StronglyPeriodic.isohedralNumber_lt_aleph0 hp (hf t hpt)
     (t.nonempty_apply_of_forall_nonempty hn)
 
-lemma weaklyAperiodic_iff_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop s}
+lemma weaklyAperiodic_iff_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop H}
     (ht : ∀ t : TileSet ps ιₜ, p t → TileSet.IsTiling t) (hf : ∀ i, (ps i : Set X).Finite)
     (hn : ∀ i, (ps i : Set X).Nonempty) : ps.WeaklyAperiodic ιₜ p ↔ ℵ₀ ≤ ps.isohedralNumber ιₜ p :=
   ⟨fun h ↦ h.aleph0_le_isohedralNumber hf fun t hpt ↦ TileSet.IsTiling.unionEqUniv (ht t hpt),
