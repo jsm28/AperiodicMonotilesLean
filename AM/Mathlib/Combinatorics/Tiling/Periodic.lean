@@ -5,6 +5,7 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
+import AM.Mathlib.LinearAlgebra.FreeModule.Int
 import Mathlib.Algebra.Order.Group.Basic
 import Mathlib.Algebra.Order.Group.TypeTags
 import Mathlib.GroupTheory.OrderOfElement
@@ -269,6 +270,32 @@ lemma weaklyPeriodic_iff_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : 
     WeaklyPeriodic n t ↔
       ∃ f : (Fin n → Multiplicative ℤ) →* (H ⊓ t.symmetryGroup : Subgroup G), Injective f :=
   weaklyPeriodic_iff_of_relindex_ne_zero (mt Subgroup.index_eq_zero_of_relindex_eq_zero hi)
+
+/-- In a space with a ℤ^n subgroup of finite index, where `X` has finite quotient by the action
+of `G`, a weakly `n`-periodic `TileSet` is strongly periodic. -/
+lemma WeaklyPeriodic.stronglyPeriodic_of_equiv_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ}
+    (h : WeaklyPeriodic n t) [Finite <| MulAction.orbitRel.Quotient G X] {H : Subgroup G}
+    (e : H ≃* (Fin n → Multiplicative ℤ)) (hi : H.index ≠ 0) : StronglyPeriodic t := by
+  refine stronglyPeriodic_of_finite_quotient_of_index_ne_zero ?_
+  rw [weaklyPeriodic_iff_of_index_ne_zero hi] at h
+  rcases h with ⟨f, hf⟩
+  rw [← Subgroup.relindex_top_right] at hi ⊢
+  refine Subgroup.relindex_ne_zero_trans ?_ hi
+  rw [← Subgroup.inf_relindex_left]
+  suffices (f.range.map (Subgroup.subtype _)).relindex H ≠ 0 from
+    mt (Subgroup.relindex_eq_zero_of_le_left (Subgroup.map_subtype_le f.range)) this
+  let f' : f.range ≃* (Fin n → Multiplicative ℤ) :=
+    ((MulEquiv.subgroupCongr f.range_eq_map).trans (Subgroup.equivMapOfInjective _ _ hf).symm).trans
+    Subgroup.topEquiv
+  let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
+  have he' : Function.Surjective e' := e.symm.surjective
+  rw [Subgroup.relindex, ← Subgroup.index_comap_of_surjective _ he',
+      Int.subgroup_index_ne_zero_iff]
+  exact ⟨((((MulEquiv.subgroupCongr
+    (((Subgroup.map (H ⊓ t.symmetryGroup).subtype f.range).subgroupOf H).map_equiv_eq_comap_symm
+      e).symm).trans (Subgroup.equivMapOfInjective _ _ e.injective).symm).trans
+    (Subgroup.subgroupOfEquivOfLe ((Subgroup.map_subtype_le _).trans inf_le_left))).trans
+    (Subgroup.equivMapOfInjective _ _ (Subgroup.subtype_injective _)).symm).trans f'⟩
 
 end TileSet
 
