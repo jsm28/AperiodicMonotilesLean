@@ -307,6 +307,30 @@ lemma WeaklyPeriodic.stronglyPeriodic_of_pretransitive_of_equiv_of_index_ne_zero
     (MulAction.pretransitive_iff_subsingleton_quotient _ _).1 inferInstance
   exact WeaklyPeriodic.stronglyPeriodic_of_finite_quotient_of_equiv_of_index_ne_zero h e hi
 
+/-- In a space with a ℤ^n subgroup of finite index acting freely, a strongly periodic `TileSet`
+is weakly `n`-periodic. -/
+lemma StronglyPeriodic.weaklyPeriodic_of_equiv_of_free [Nonempty X] {n : ℕ} {t : TileSet ps ιₜ}
+    (h : StronglyPeriodic t) {H : Subgroup G} (e : H ≃* (Fin n → Multiplicative ℤ))
+    (free : ∀ x : X, MulAction.stabilizer H x = ⊥) (hi : H.index ≠ 0) : WeaklyPeriodic n t := by
+  let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
+  have he' : Function.Surjective e' := e.symm.surjective
+  have hsi := Subgroup.index_inf_ne_zero (StronglyPeriodic.index_ne_zero_of_free h free hi) hi
+  rw [← Subgroup.relindex_top_right, ← Subgroup.relindex_inf_mul_relindex, mul_ne_zero_iff,
+      Subgroup.relindex_top_right, and_iff_left hi, inf_top_eq, Subgroup.relindex,
+      ← Subgroup.index_comap_of_surjective _ he', Int.subgroup_index_ne_zero_iff] at hsi
+  rcases hsi with ⟨f⟩
+  let f₁ : (Fin n → Multiplicative ℤ) ≃* (t.symmetryGroup ⊓ H : Subgroup G) :=
+    (((f.symm.trans
+    (MulEquiv.subgroupCongr (Subgroup.map_equiv_eq_comap_symm _ _).symm)).trans
+    (Subgroup.equivMapOfInjective _ _ e.injective).symm).trans
+    (MulEquiv.subgroupCongr (Subgroup.inf_subgroupOf_right _ _).symm)).trans
+    (Subgroup.subgroupOfEquivOfLe inf_le_right)
+  let f₂ : (Fin n → Multiplicative ℤ) →* (t.symmetryGroup ⊓ H : Subgroup G) := ↑f₁
+  have hf₂ : Function.Injective f₂ := f₁.injective
+  let f₃ : (t.symmetryGroup ⊓ H : Subgroup G) →* t.symmetryGroup := Subgroup.inclusion inf_le_left
+  have hf₃ : Function.Injective f₃ := Subgroup.inclusion_injective _
+  exact ⟨f₃.comp f₂, hf₃.comp hf₂⟩
+
 end TileSet
 
 namespace Protoset
