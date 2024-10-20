@@ -273,9 +273,10 @@ lemma weaklyPeriodic_iff_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : 
 
 /-- In a space with a ℤ^n subgroup of finite index, where `X` has finite quotient by the action
 of `G`, a weakly `n`-periodic `TileSet` is strongly periodic. -/
-lemma WeaklyPeriodic.stronglyPeriodic_of_equiv_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ}
-    (h : WeaklyPeriodic n t) [Finite <| MulAction.orbitRel.Quotient G X] {H : Subgroup G}
-    (e : H ≃* (Fin n → Multiplicative ℤ)) (hi : H.index ≠ 0) : StronglyPeriodic t := by
+lemma WeaklyPeriodic.stronglyPeriodic_of_finite_quotient_of_equiv_of_index_ne_zero {n : ℕ}
+    {t : TileSet ps ιₜ} (h : WeaklyPeriodic n t) [Finite <| MulAction.orbitRel.Quotient G X]
+    {H : Subgroup G} (e : H ≃* (Fin n → Multiplicative ℤ)) (hi : H.index ≠ 0) :
+    StronglyPeriodic t := by
   refine stronglyPeriodic_of_finite_quotient_of_index_ne_zero ?_
   rw [weaklyPeriodic_iff_of_index_ne_zero hi] at h
   rcases h with ⟨f, hf⟩
@@ -296,6 +297,15 @@ lemma WeaklyPeriodic.stronglyPeriodic_of_equiv_of_index_ne_zero {n : ℕ} {t : T
       e).symm).trans (Subgroup.equivMapOfInjective _ _ e.injective).symm).trans
     (Subgroup.subgroupOfEquivOfLe ((Subgroup.map_subtype_le _).trans inf_le_left))).trans
     (Subgroup.equivMapOfInjective _ _ (Subgroup.subtype_injective _)).symm).trans f'⟩
+
+/-- In a space with a ℤ^n subgroup of finite index, where `G` acts transitively on `X`, a weakly
+`n`-periodic `TileSet` is strongly periodic. -/
+lemma WeaklyPeriodic.stronglyPeriodic_of_pretransitive_of_equiv_of_index_ne_zero {n : ℕ}
+    {t : TileSet ps ιₜ} (h : WeaklyPeriodic n t) [MulAction.IsPretransitive G X] {H : Subgroup G}
+    (e : H ≃* (Fin n → Multiplicative ℤ)) (hi : H.index ≠ 0) : StronglyPeriodic t := by
+  have : Subsingleton <| MulAction.orbitRel.Quotient G X :=
+    (MulAction.pretransitive_iff_subsingleton_quotient _ _).1 inferInstance
+  exact WeaklyPeriodic.stronglyPeriodic_of_finite_quotient_of_equiv_of_index_ne_zero h e hi
 
 end TileSet
 
