@@ -98,7 +98,7 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
     (fun x ↦ ⟦⟨g⁻¹ • ↑x, mem_smul_iff_smul_inv_mem.1 x.property⟩⟧)
     (fun x y h ↦ by
       convert Quotient.eq''.2 ?_
-      rw [MulAction.orbitRel_r_apply] at h ⊢
+      rw [MulAction.orbitRel_apply] at h ⊢
       simp only [MulAction.mem_orbit_iff, Subtype.exists, Subtype.ext_iff] at h
       simp only [MulAction.mem_orbit_iff, Subtype.exists, Subtype.ext_iff]
       rcases h with ⟨a, ha, haa⟩
@@ -110,7 +110,7 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
     (fun x ↦ ⟦⟨g • ↑x, (smul_mem_smul_iff g).2 x.property⟩⟧)
     (fun x y h ↦ by
       convert Quotient.eq''.2 ?_
-      rw [MulAction.orbitRel_r_apply] at h ⊢
+      rw [MulAction.orbitRel_apply] at h ⊢
       simp only [MulAction.mem_orbit_iff, Subtype.exists, Subtype.ext_iff] at h
       simp only [MulAction.mem_orbit_iff, Subtype.exists, Subtype.ext_iff]
       rcases h with ⟨a, ha, haa⟩
@@ -122,14 +122,14 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
     intro x
     induction x using Quotient.inductionOn'
     simp only [Quotient.liftOn'_mk'']
-    convert Quotient.liftOn'_mk _ _ _
+    convert rfl
     change (_ : PlacedTile ps) = g • (g⁻¹ • _)
     simp
   right_inv := by
     intro x
     induction x using Quotient.inductionOn'
     simp only [Quotient.liftOn'_mk'']
-    convert Quotient.liftOn'_mk _ _ _
+    convert rfl
     change (_ : PlacedTile ps) = g⁻¹ • (g • _)
     simp
 
@@ -143,7 +143,7 @@ def isohedralNumber : TileSetFunction ps Cardinal ⊤ :=
   by
     refine fun {ιₜ ιₜ'} (f t) ↦
       Cardinal.eq.2 ⟨Quotient.congr (Equiv.setCongr (by simp)) fun x y ↦ ?_⟩
-    simp_rw [MulAction.orbitRel_r_apply]
+    simp_rw [MulAction.orbitRel_apply]
     simp only [MulAction.mem_orbit_iff, Subtype.exists, symmetryGroup_reindex,
                Equiv.setCongr_apply, Subtype.ext_iff]
     exact Iff.rfl,
@@ -294,7 +294,7 @@ lemma preimage_quotientPlacedTileOfquotientTilePoint_eq_range {t : TileSet ps ι
   rw [mem_smul_symmetryGroup_iff_smul_inv_mem] at hx
   refine ⟨⟨g⁻¹ • x, hx⟩, ?_⟩
   simp only
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_r_apply]
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
   refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
   simp [coe_smul_tilePoint]
 
@@ -315,7 +315,7 @@ lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} 
   refine ⟨⟨(g⁻¹ • pt' : (t : Set (PlacedTile ps))),
            (g⁻¹ • pt' : (t : Set (PlacedTile ps))).property, hy⟩, ?_⟩
   simp only
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_r_apply]
+  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
   refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
   simp [coe_smul_tilePoint]
 
