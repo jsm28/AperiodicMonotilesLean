@@ -3,8 +3,8 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.GroupTheory.Index
 import Mathlib.Data.ZMod.Quotient
+import Mathlib.GroupTheory.Index
 import Mathlib.LinearAlgebra.FreeModule.PID
 
 /-! # Index of submodules of free ℤ-modules (considered as an `AddSubgroup`).
