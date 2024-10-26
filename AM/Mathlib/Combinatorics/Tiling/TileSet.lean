@@ -72,6 +72,13 @@ attribute [coe] tiles
 
 lemma coe_mk (t) : (⟨t⟩ : TileSet ps ιₜ) = t := rfl
 
+@[simp, norm_cast] lemma coe_inj {t₁ t₂ : TileSet ps ιₜ} :
+    (t₁ : ιₜ → PlacedTile ps) = t₂ ↔ t₁ = t₂ :=
+  TileSet.ext_iff.symm
+
+lemma coe_injective : Injective (TileSet.tiles : TileSet ps ιₜ → ιₜ → PlacedTile ps) :=
+  fun _ _ ↦ coe_inj.1
+
 /-- Coercion from a `TileSet` to a set of tiles (losing information about the presence of
 duplicate tiles in the `TileSet`). Use the coercion rather than using `coeSet` directly. -/
 @[coe] def coeSet : TileSet ps ιₜ → Set (PlacedTile ps) := fun t ↦ Set.range t

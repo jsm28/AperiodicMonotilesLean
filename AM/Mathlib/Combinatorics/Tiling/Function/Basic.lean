@@ -94,6 +94,14 @@ lemma coe_mk (f : {ιₜ : Type*} → TileSet ps ιₜ → α) (hr hs) :
     (⟨f, hr, hs⟩ : TileSetFunction ps α H) = @f :=
   rfl
 
+@[simp, norm_cast] lemma coe_inj {f₁ f₂ : TileSetFunction ps α H} :
+    (@f₁ : {ιₜ : Type*} → TileSet ps ιₜ → α) = f₂ ↔ f₁ = f₂ :=
+  TileSetFunction.ext_iff.symm
+
+lemma coe_injective :
+    Injective (TileSetFunction.toFun : TileSetFunction ps α H → {ιₜ : Type*} → TileSet ps ιₜ → α) :=
+  fun _ _ ↦ coe_inj.1
+
 lemma reindex_iff {f : TileSetFunction ps Prop H} {t : TileSet ps ιᵤ} (e : Eᵤ) :
     f (t.reindex e) ↔ f t :=
   by simp
@@ -202,6 +210,15 @@ variable {Y ps α H}
 lemma coe_mk (f : {ιₜ : Type*} → Y → TileSet ps ιₜ → α) (hr hs) :
     (⟨f, hr, hs⟩ : VarTileSetFunction Y ps α H) = @f :=
   rfl
+
+@[simp, norm_cast] lemma coe_inj {f₁ f₂ : VarTileSetFunction Y ps α H} :
+    (@f₁ : {ιₜ : Type*} → Y → TileSet ps ιₜ → α) = f₂ ↔ f₁ = f₂ :=
+  VarTileSetFunction.ext_iff.symm
+
+lemma coe_injective :
+    Injective (VarTileSetFunction.toFun :
+      VarTileSetFunction Y ps α H → {ιₜ : Type*} → Y → TileSet ps ιₜ → α) :=
+  fun _ _ ↦ coe_inj.1
 
 lemma reindex_iff {f : VarTileSetFunction Y ps Prop H} {y : Y} {t : TileSet ps ιᵤ} (e : Eᵤ) :
     f y (t.reindex e) ↔ f y t :=

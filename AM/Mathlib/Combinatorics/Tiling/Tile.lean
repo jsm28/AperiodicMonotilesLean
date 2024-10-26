@@ -127,6 +127,13 @@ attribute [coe] tiles
 
 lemma coe_mk (t) : (⟨t⟩ : Protoset G X ιₚ) = t := rfl
 
+@[simp, norm_cast] lemma coe_inj {ps₁ ps₂ : Protoset G X ιₚ} :
+    (ps₁ : ιₚ → Prototile G X) = ps₂ ↔ ps₁ = ps₂ :=
+  Protoset.ext_iff.symm
+
+lemma coe_injective : Injective (Protoset.tiles : Protoset G X ιₚ → ιₚ → Prototile G X) :=
+  fun _ _ ↦ coe_inj.1
+
 end Protoset
 
 variable (ps : Protoset G X ιₚ)
