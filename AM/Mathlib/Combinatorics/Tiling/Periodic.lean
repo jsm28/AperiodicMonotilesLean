@@ -212,7 +212,7 @@ lemma weaklyPeriodic_iff {n : ℕ} {t : TileSet ps ιₜ} :
   Iff.rfl
 
 lemma weaklyPeriodic_zero (t : TileSet ps ιₜ) : WeaklyPeriodic 0 t :=
-  ⟨1, Function.injective_of_subsingleton _⟩
+  ⟨1, injective_of_subsingleton _⟩
 
 lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
     WeaklyPeriodic 1 t ↔ ∃ g ∈ t.symmetryGroup, ¬IsOfFinOrder g := by
@@ -289,7 +289,7 @@ lemma WeaklyPeriodic.stronglyPeriodic_of_finite_quotient_of_equiv_of_index_ne_ze
     ((MulEquiv.subgroupCongr f.range_eq_map).trans (Subgroup.equivMapOfInjective _ _ hf).symm).trans
     Subgroup.topEquiv
   let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
-  have he' : Function.Surjective e' := e.symm.surjective
+  have he' : Surjective e' := e.symm.surjective
   rw [Subgroup.relindex, ← Subgroup.index_comap_of_surjective _ he',
       Int.subgroup_index_ne_zero_iff]
   exact ⟨((((MulEquiv.subgroupCongr
@@ -313,7 +313,7 @@ lemma StronglyPeriodic.weaklyPeriodic_of_equiv_of_free [Nonempty X] {n : ℕ} {t
     (h : StronglyPeriodic t) {H : Subgroup G} (e : H ≃* (Fin n → Multiplicative ℤ))
     (free : ∀ x : X, MulAction.stabilizer H x = ⊥) (hi : H.index ≠ 0) : WeaklyPeriodic n t := by
   let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
-  have he' : Function.Surjective e' := e.symm.surjective
+  have he' : Surjective e' := e.symm.surjective
   have hsi := Subgroup.index_inf_ne_zero (StronglyPeriodic.index_ne_zero_of_free h free hi) hi
   rw [← Subgroup.relindex_top_right, ← Subgroup.relindex_inf_mul_relindex, mul_ne_zero_iff,
       Subgroup.relindex_top_right, and_iff_left hi, inf_top_eq, Subgroup.relindex,
@@ -326,9 +326,9 @@ lemma StronglyPeriodic.weaklyPeriodic_of_equiv_of_free [Nonempty X] {n : ℕ} {t
     (MulEquiv.subgroupCongr (Subgroup.inf_subgroupOf_right _ _).symm)).trans
     (Subgroup.subgroupOfEquivOfLe inf_le_right)
   let f₂ : (Fin n → Multiplicative ℤ) →* (t.symmetryGroup ⊓ H : Subgroup G) := ↑f₁
-  have hf₂ : Function.Injective f₂ := f₁.injective
+  have hf₂ : Injective f₂ := f₁.injective
   let f₃ : (t.symmetryGroup ⊓ H : Subgroup G) →* t.symmetryGroup := Subgroup.inclusion inf_le_left
-  have hf₃ : Function.Injective f₃ := Subgroup.inclusion_injective _
+  have hf₃ : Injective f₃ := Subgroup.inclusion_injective _
   exact ⟨f₃.comp f₂, hf₃.comp hf₂⟩
 
 end TileSet

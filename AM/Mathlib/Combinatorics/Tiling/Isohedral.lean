@@ -265,7 +265,7 @@ def quotientPointOfquotientTilePoint (t : TileSet ps ιₜ) :
 
 lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
     (h : ∀ i, (t i : Set X).Nonempty) :
-    Function.Surjective t.quotientPlacedTileOfquotientTilePoint := by
+    Surjective t.quotientPlacedTileOfquotientTilePoint := by
   intro x
   induction' x using Quotient.inductionOn' with pt
   rcases pt with ⟨pt, i, rfl⟩
@@ -273,7 +273,7 @@ lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
   exact ⟨⟦⟨(⟨t i, apply_mem _ _⟩, x), hx⟩⟧, rfl⟩
 
 lemma surjective_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (h : UnionEqUniv t) :
-    Function.Surjective t.quotientPointOfquotientTilePoint := by
+    Surjective t.quotientPointOfquotientTilePoint := by
   intro x
   induction' x using Quotient.inductionOn' with p
   obtain ⟨pt, hpt, hp⟩ := UnionEqUniv.exists_mem_mem h p
