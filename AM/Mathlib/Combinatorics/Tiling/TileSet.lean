@@ -42,7 +42,7 @@ open scoped Pointwise
 
 variable {G X ιₚ : Type*} [Group G] [MulAction G X]
 
-variable {ps : Protoset G X ιₚ} {ιₜ ιₜ' ιₜ'' E E' F : Type*}
+variable {ps : Protoset G X ιₚ} {ι ιₜ ιₜ' ιₜ'' ιₜ''' E E' F : Type*} {ιₜι ιₜ'ι : ι → Type*}
 variable [EquivLike E ιₜ' ιₜ] [EquivLike E' ιₜ'' ιₜ'] [FunLike F ιₜ' ιₜ] [EmbeddingLike F ιₜ' ιₜ]
 
 variable (ps ιₜ)
@@ -416,6 +416,53 @@ lemma symmetryGroup_eq_stabilizer_coeSet_of_injective (t : TileSet ps ιₜ) (h 
   intro g hg
   rw [← coeSet_smul] at hg
   exact ⟨equivOfCoeSetEqOfInjective hg ((injective_smul_iff g).2 h) h, by simp⟩
+
+/-- The disjoint union of two `TileSet`s, indexed by the sum of their index types. -/
+protected def sum (t : TileSet ps ιₜ) (t' : TileSet ps ιₜ') : TileSet ps (ιₜ ⊕ ιₜ') where
+  tiles := Sum.elim t.tiles t'.tiles
+
+@[simp] lemma coe_sum (t : TileSet ps ιₜ) (t' : TileSet ps ιₜ') : t.sum t' = Sum.elim (↑t) (↑t') :=
+  rfl
+
+@[simp] lemma coeSet_sum (t : TileSet ps ιₜ) (t' : TileSet ps ιₜ') :
+    (t.sum t' : Set (PlacedTile ps)) = (↑t) ∪ (↑t') :=
+  Set.Sum.elim_range _ _
+
+@[simp] lemma mem_sum {pt : PlacedTile ps} {t : TileSet ps ιₜ} {t' : TileSet ps ιₜ'} :
+    pt ∈ t.sum t' ↔ pt ∈ t ∨ pt ∈ t' := by
+  simp [← mem_coeSet]
+
+lemma reindex_sum (t : TileSet ps ιₜ) (t' : TileSet ps ιₜ'') (f : ιₜ' → ιₜ) (f' : ιₜ''' → ιₜ'') :
+    (t.sum t').reindex (Sum.map f f') = (t.reindex f).sum (t'.reindex f') :=
+  TileSet.ext <| funext fun x ↦ Sum.recOn x (fun _ ↦ rfl) (fun _ ↦ rfl)
+
+lemma smul_sum (g : G) (t : TileSet ps ιₜ) (t' : TileSet ps ιₜ') :
+    g • (t.sum t') = (g • t).sum (g • t') :=
+  TileSet.ext <| funext fun x ↦ Sum.recOn x (fun _ ↦ rfl) (fun _ ↦ rfl)
+
+/-- The disjoint union of an indexed family of `TileSet`s, indexed by a sigma type. -/
+protected def sigma (t : (i : ι) → TileSet ps (ιₜι i)) : TileSet ps (Σ i, ιₜι i) where
+  tiles := Sigma.uncurry (fun i ↦ ↑(t i))
+
+@[simp] lemma coe_sigma (t : (i : ι) → TileSet ps (ιₜι i)) :
+    TileSet.sigma t = Sigma.uncurry (fun i ↦ ↑(t i)) :=
+  rfl
+
+@[simp] lemma coeSet_sigma (t : (i : ι) → TileSet ps (ιₜι i)) :
+    (TileSet.sigma t : Set (PlacedTile ps)) = ⋃ i, (t i : Set (PlacedTile ps)) :=
+  Set.range_sigma_eq_iUnion_range _
+
+lemma mem_sigma {pt : PlacedTile ps} {t : (i : ι) → TileSet ps (ιₜι i)} :
+    pt ∈ TileSet.sigma t ↔ ∃ i, pt ∈ t i := by
+  simp [← mem_coeSet]
+
+lemma reindex_sigma (t : (i : ι) → TileSet ps (ιₜι i)) (f : (i : ι) → (ιₜ'ι i) → (ιₜι i)) :
+    (TileSet.sigma t).reindex (Sigma.map id f) = TileSet.sigma fun i ↦ (t i).reindex (f i) :=
+  rfl
+
+lemma smul_sigma (g : G) (t : (i : ι) → TileSet ps (ιₜι i)) :
+    g • TileSet.sigma t = TileSet.sigma (g • t) :=
+  rfl
 
 end TileSet
 
