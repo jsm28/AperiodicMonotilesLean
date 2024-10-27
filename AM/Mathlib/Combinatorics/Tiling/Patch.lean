@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
+import AM.Mathlib.Combinatorics.Tiling.TileSetCard
 
 /-!
 # Patches in tilings
@@ -34,7 +35,9 @@ namespace Discrete
 open Function
 open scoped Pointwise
 
-variable {G X ιₚ ιₜ ιₜ' : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
+variable {G X ιₚ ιₜ ιₜ' Eᵤ : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
+universe u
+variable {ιᵤ ιᵤ' : Type u} [EquivLike Eᵤ ιᵤ' ιᵤ]
 
 namespace TileSet
 
@@ -82,6 +85,9 @@ lemma smul_subtype (g : G) (t : TileSet ps ιₜ) (p : ιₜ → Prop) :
     g • (t.subtype p) = (g • t).subtype p :=
   t.smul_reindex _ _
 
+lemma card_subtype_le (t : TileSet ps ιₜ) (p : ιₜ → Prop) : (t.subtype p).card ≤ t.card :=
+  t.card_reindex_le_of_injective Subtype.val_injective
+
 protected lemma Disjoint.subtype {t : TileSet ps ιₜ} (hd : TileSet.Disjoint t) (p : ιₜ → Prop) :
     TileSet.Disjoint (t.subtype p) :=
   TileSet.Disjoint.reindex_of_injective hd Subtype.val_injective
@@ -126,7 +132,7 @@ lemma injective_patch_of_injective {t : TileSet ps ιₜ} (s : Set X) (ht : Inje
     Injective (t.patch s) :=
   injective_subtype_of_injective _ ht
 
-lemma patch_reindex_subtypeEquiv (t : TileSet ps ιₜ) (s : Set X) {e : ιₜ' ≃ ιₜ} :
+lemma patch_reindex_subtypeEquiv (t : TileSet ps ιₜ) (s : Set X) (e : ιₜ' ≃ ιₜ) :
     (t.patch s).reindex (Equiv.subtypeEquiv e fun _ ↦ Iff.rfl) = (t.reindex e).patch s :=
   rfl
 
@@ -134,6 +140,12 @@ lemma patch_reindex_subtypeEquivRight (t : TileSet ps ιₜ) {s₁ s₂ : Set X}
     (h : ∀ i, (s₂ ∩ t i).Nonempty ↔ (s₁ ∩ t i).Nonempty) :
     (t.patch s₁).reindex (Equiv.subtypeEquivRight h) = t.patch s₂ :=
   t.reindex_subtypeEquivRight h
+
+@[simp] lemma card_patch_reindex_of_equivLike (t : TileSet ps ιᵤ) (s : Set X) (e : Eᵤ) :
+    ((t.reindex e).patch s).card = (t.patch s).card := by
+  change ((t.reindex (e : ιᵤ' ≃ ιᵤ)).patch s).card = _
+  rw [← patch_reindex_subtypeEquiv]
+  exact card_reindex_of_equivLike _ _
 
 lemma coeSet_patch (t : TileSet ps ιₜ) (s : Set X) :
     t.patch s = t '' {i | (s ∩ t i).Nonempty} :=
@@ -164,6 +176,13 @@ def smulPatchEquiv (g : G) (t : TileSet ps ιₜ) (s : Set X) :
 lemma smul_patch (g : G) (t : TileSet ps ιₜ) (s : Set X) :
     (g • (t.patch s)).reindex (smulPatchEquiv g t s) = (g • t).patch (g • s) :=
   rfl
+
+@[simp] lemma card_smul_patch (g : G) (t : TileSet ps ιₜ) (s : Set X) :
+    ((g • t).patch (g • s)).card = g • (t.patch s).card := by
+  rw [← smul_patch, ← card_smul, card_reindex_of_equivLike]
+
+lemma card_patch_le (t : TileSet ps ιₜ) (s : Set X) : (t.patch s).card ≤ t.card :=
+  t.card_subtype_le _
 
 lemma Disjoint.patch {t : TileSet ps ιₜ} (hd : TileSet.Disjoint t) (s : Set X) :
     TileSet.Disjoint (t.patch s) :=
@@ -199,6 +218,11 @@ def patchPatchEquiv (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s�
 lemma patch_patch_reindex (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s₁) :
     (t.patch s₂).reindex (t.patchPatchEquiv h) = (t.patch s₁).patch s₂ :=
   rfl
+
+lemma card_patch_le_of_subset (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s₁) :
+    (t.patch s₂).card ≤ (t.patch s₁).card := by
+  rw [← card_reindex_of_equivLike _ (t.patchPatchEquiv h), t.patch_patch_reindex h]
+  exact card_patch_le _ _
 
 end TileSet
 

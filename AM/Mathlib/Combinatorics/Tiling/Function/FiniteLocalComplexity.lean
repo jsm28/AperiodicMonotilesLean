@@ -49,11 +49,7 @@ def FiniteLocalComplexityOn (H : Subgroup G) : VarTileSetFunction (Set (Set X)) 
   ⟨fun {ιₜ : Type*} (s : Set (Set X)) (t : TileSet ps ιₜ) ↦
     ((fun x ↦ Quotient.mk (MulAction.orbitRel H (Set X × TileSetCard ps))
       (x, (t.patch x).card)) '' s).Finite,
-   by
-     intro ιₜ ιₜ' f s t
-     simp only [← patch_reindex_subtypeEquiv]
-     convert rfl with x
-     erw [(t.patch x).card_reindex_of_equivLike],
+   by simp,
    by
      rintro ιₜ g x t hg
      dsimp only [← Set.image_smul]
@@ -62,9 +58,7 @@ def FiniteLocalComplexityOn (H : Subgroup G) : VarTileSetFunction (Set (Set X)) 
      refine Set.image_congr ?_
      rintro s -
      rw [Quotient.eq, MulAction.orbitRel_apply, MulAction.mem_orbit_symm]
-     refine ⟨⟨g, hg⟩, ?_⟩
-     simp only [Prod.smul_mk, Set.image_smul, Prod.mk.injEq, ← smul_patch,
-                card_reindex_of_equivLike, card_smul, Subgroup.mk_smul]⟩
+     exact ⟨⟨g, hg⟩, by simp⟩⟩
 
 lemma finiteLocalComplexityOn_iff {H : Subgroup G} {s : Set (Set X)} {t : TileSet ps ιₜ} :
     FiniteLocalComplexityOn H s t ↔
