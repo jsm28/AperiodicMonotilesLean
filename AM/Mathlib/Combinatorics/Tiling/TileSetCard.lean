@@ -67,7 +67,14 @@ lemma coe_injective :
     Injective (TileSetCard.tilesCard : TileSetCard ps → PlacedTile ps → Cardinal) :=
   fun _ _ ↦ coe_inj.1
 
-instance : PartialOrder (TileSetCard ps) := PartialOrder.lift _ coe_injective
+instance : Sup (TileSetCard ps) :=
+  ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊔ ↑t₂⟩⟩
+
+instance : Inf (TileSetCard ps) :=
+  ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊓ ↑t₂⟩⟩
+
+instance : DistribLattice (TileSetCard ps) :=
+  coe_injective.distribLattice _ (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
 
 lemma le_def {t₁ t₂ : TileSetCard ps} : t₁ ≤ t₂ ↔ ∀ i, t₁ i ≤ t₂ i :=
   Iff.rfl
