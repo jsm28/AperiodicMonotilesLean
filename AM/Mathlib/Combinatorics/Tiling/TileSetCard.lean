@@ -115,7 +115,7 @@ lemma card_reindex_of_bijective (t : TileSet ps ιᵤ) {f : ιᵤ' → ιᵤ} (h
   le_antisymm (t.card_reindex_le_of_injective hf.injective)
               (t.card_le_card_reindex_of_surjective hf.surjective)
 
-lemma card_reindex_of_equivLike (t : TileSet ps ιᵤ) (f : E) : (t.reindex f).card = t.card :=
+@[simp] lemma card_reindex_of_equivLike (t : TileSet ps ιᵤ) (f : E) : (t.reindex f).card = t.card :=
   t.card_reindex_of_bijective (EquivLike.bijective f)
 
 lemma card_eq_iff_exists_reindex_eq {t₁ : TileSet ps ιᵤ} {t₂ : TileSet ps ιᵤ'} :
