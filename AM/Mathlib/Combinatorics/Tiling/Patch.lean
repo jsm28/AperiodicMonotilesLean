@@ -33,7 +33,7 @@ noncomputable section
 namespace Discrete
 
 open Function
-open scoped Pointwise
+open scoped Cardinal Pointwise
 
 variable {G X ιₚ ιₜ ιₜ' Eᵤ : Type*} [Group G] [MulAction G X] {ps : Protoset G X ιₚ}
 universe u
@@ -127,6 +127,24 @@ def patch (t : TileSet ps ιₜ) (s : Set X) :
 @[simp] lemma patch_apply (t : TileSet ps ιₜ) (s : Set X) (i) :
     t.patch s i = t i :=
   t.subtype_apply _ _
+
+lemma card_patch_apply_of_inter_nonempty (t : TileSet ps ιₜ) {s : Set X} {pt : PlacedTile ps}
+    (h : (s ∩ pt).Nonempty) : (t.patch s).card pt = #(↑t ⁻¹' {pt}) := by
+  rw [card_apply, Cardinal.eq]
+  let f : (t.patch s) ⁻¹' {pt} → t ⁻¹' {pt} := fun ⟨⟨i, _⟩, hi'⟩ ↦ ⟨i, hi'⟩
+  refine ⟨Equiv.ofBijective f ⟨fun i j h ↦ ?_, fun i ↦ ⟨⟨⟨i, ?_⟩, ?_⟩, rfl⟩⟩⟩
+  · simpa [coe_patch, Subtype.ext_iff, f] using h
+  · convert h
+    exact i.property
+  · exact i.property
+
+lemma card_patch_apply_of_inter_eq_empty (t : TileSet ps ιₜ) {s : Set X} {pt : PlacedTile ps}
+    (h : (s ∩ pt) = ∅) : (t.patch s).card pt = 0 := by
+  rw [card_apply, Cardinal.mk_eq_zero_iff]
+  simp only [coe_patch, isEmpty_subtype, Set.mem_preimage, comp_apply, Set.mem_singleton_iff,
+             Subtype.forall]
+  rintro i hne rfl
+  simp [h] at hne
 
 lemma injective_patch_of_injective {t : TileSet ps ιₜ} (s : Set X) (ht : Injective t) :
     Injective (t.patch s) :=
@@ -223,6 +241,31 @@ lemma card_patch_le_of_subset (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s�
     (t.patch s₂).card ≤ (t.patch s₁).card := by
   rw [← card_reindex_of_equivLike _ (t.patchPatchEquiv h), t.patch_patch_reindex h]
   exact card_patch_le _ _
+
+lemma card_patch_union (t : TileSet ps ιₜ) (s₁ s₂ : Set X) :
+    (t.patch (s₁ ∪ s₂)).card = (t.patch s₁).card ⊔ (t.patch s₂).card := by
+  ext pt
+  rw [TileSetCard.coe_sup, Pi.sup_apply]
+  rcases Set.eq_empty_or_nonempty (s₁ ∩ pt) with h₁ | h₁
+  · rw [t.card_patch_apply_of_inter_eq_empty h₁]
+    rcases Set.eq_empty_or_nonempty (s₂ ∩ pt) with h₂ | h₂
+    · rw [t.card_patch_apply_of_inter_eq_empty h₂]
+      have h₁₂ : (s₁ ∪ s₂) ∩ pt = ∅ := by simp [Set.union_inter_distrib_right, h₁, h₂]
+      simp [t.card_patch_apply_of_inter_eq_empty h₁₂]
+    · rw [t.card_patch_apply_of_inter_nonempty h₂]
+      have h₁₂ : ((s₁ ∪ s₂) ∩ pt).Nonempty :=
+        h₂.mono (Set.inter_subset_inter_left _ Set.subset_union_right)
+      simp [t.card_patch_apply_of_inter_nonempty h₁₂]
+  · rw [t.card_patch_apply_of_inter_nonempty h₁]
+    rcases Set.eq_empty_or_nonempty (s₂ ∩ pt) with h₂ | h₂
+    · rw [t.card_patch_apply_of_inter_eq_empty h₂]
+      have h₁₂ : ((s₁ ∪ s₂) ∩ pt).Nonempty :=
+        h₁.mono (Set.inter_subset_inter_left _ Set.subset_union_left)
+      simp [t.card_patch_apply_of_inter_nonempty h₁₂]
+    · rw [t.card_patch_apply_of_inter_nonempty h₂]
+      have h₁₂ : ((s₁ ∪ s₂) ∩ pt).Nonempty :=
+        h₁.mono (Set.inter_subset_inter_left _ Set.subset_union_left)
+      simp [t.card_patch_apply_of_inter_nonempty h₁₂]
 
 end TileSet
 

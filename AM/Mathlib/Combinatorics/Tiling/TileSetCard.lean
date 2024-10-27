@@ -70,8 +70,16 @@ lemma coe_injective :
 instance : Sup (TileSetCard ps) :=
   ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊔ ↑t₂⟩⟩
 
+lemma coe_sup (t₁ t₂ : TileSetCard ps) :
+    (t₁ ⊔ t₂ : TileSetCard ps) = (t₁ : PlacedTile ps → Cardinal) ⊔ ↑t₂ :=
+  rfl
+
 instance : Inf (TileSetCard ps) :=
   ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊓ ↑t₂⟩⟩
+
+lemma coe_inf (t₁ t₂ : TileSetCard ps) :
+    (t₁ ⊓ t₂ : TileSetCard ps) = (t₁ : PlacedTile ps → Cardinal) ⊓ ↑t₂ :=
+  rfl
 
 instance : DistribLattice (TileSetCard ps) :=
   coe_injective.distribLattice _ (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
