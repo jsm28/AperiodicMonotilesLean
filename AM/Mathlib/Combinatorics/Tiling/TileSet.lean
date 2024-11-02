@@ -5,6 +5,7 @@ Authors: Joseph Myers
 -/
 import AM.Mathlib.Combinatorics.Tiling.Tile
 import Mathlib.Algebra.Group.Subgroup.Pointwise
+import Mathlib.GroupTheory.GroupAction.Basic
 
 /-!
 # Tilings
