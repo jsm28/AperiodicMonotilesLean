@@ -192,7 +192,7 @@ lemma ext_iff_of_preimage {pt₁ pt₂ : PlacedTile ps} :
     ext
     · rfl
     · exact heq_of_eq (Set.singleton_eq_singleton_iff.1
-        ((Set.preimage_eq_preimage Quotient.surjective_Quotient_mk'').1 hq))
+        ((Set.preimage_eq_preimage Quotient.mk''_surjective).1 hq))
 
 /-- Coercion from a `PlacedTile` to a set of points. Use the coercion rather than using `coeSet`
 directly. -/
