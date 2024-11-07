@@ -22,10 +22,10 @@ protoset (that satisfy those matching rules).
 
 ## Main definitions
 
-* `TileSet.isohedralNumber t`: A `TileSetFunction` for the isohedral number of `t`, as a
+* `t.isohedralNumber`: A `TileSetFunction` for the isohedral number of `t`, as a
 `Cardinal`.
 
-* `TileSet.isohedralNumberNat t`: A `TileSetFunction` for the isohedral number of `t`, as a
+* `t.isohedralNumberNat`: A `TileSetFunction` for the isohedral number of `t`, as a
 natural number.
 
 * `Protoset.isohedralNumber`: The isohedral number of a protoset, as a `Cardinal`.
@@ -150,25 +150,25 @@ def isohedralNumber : TileSetFunction ps Cardinal ⊤ :=
   fun {ιₜ g} (t _) ↦ Cardinal.eq.2 ⟨smulOrbitEquiv g t⟩⟩
 
 lemma isohedralNumber_eq_card (t : TileSet ps ιₜ) :
-    isohedralNumber t = #(MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) :=
+    t.isohedralNumber = #(MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) :=
   rfl
 
 lemma isohedralNumber_le_one_iff {t : TileSet ps ιₜ} :
-    isohedralNumber t ≤ 1 ↔ MulAction.IsPretransitive t.symmetryGroup
+    t.isohedralNumber ≤ 1 ↔ MulAction.IsPretransitive t.symmetryGroup
     (t : Set (PlacedTile ps)) := by
   rw [isohedralNumber_eq_card, Cardinal.le_one_iff_subsingleton,
       MulAction.pretransitive_iff_subsingleton_quotient]
 
-lemma isohedralNumber_ne_zero_iff (t : TileSet ps ιₜ) : isohedralNumber t ≠ 0 ↔ Nonempty ιₜ := by
+lemma isohedralNumber_ne_zero_iff (t : TileSet ps ιₜ) : t.isohedralNumber ≠ 0 ↔ Nonempty ιₜ := by
   rw [isohedralNumber_eq_card, Cardinal.mk_ne_zero_iff, nonempty_quotient_iff,
       Set.nonempty_coe_sort, coeSet_apply, Set.range_nonempty_iff_nonempty]
 
-lemma isohedralNumber_eq_zero_iff (t : TileSet ps ιₜ) : isohedralNumber t = 0 ↔ IsEmpty ιₜ := by
+lemma isohedralNumber_eq_zero_iff (t : TileSet ps ιₜ) : t.isohedralNumber = 0 ↔ IsEmpty ιₜ := by
   rw [← not_iff_not, not_isEmpty_iff]
   exact t.isohedralNumber_ne_zero_iff
 
 lemma isohedralNumber_eq_one_iff {t : TileSet ps ιₜ} :
-    isohedralNumber t = 1
+    t.isohedralNumber = 1
       ↔ Nonempty ιₜ ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
   refine ⟨fun h ↦ ⟨t.isohedralNumber_ne_zero_iff.1 ?_, isohedralNumber_le_one_iff.1 h.le⟩,
           fun ⟨hn, ht⟩ ↦ (le_antisymm
@@ -177,12 +177,12 @@ lemma isohedralNumber_eq_one_iff {t : TileSet ps ιₜ} :
   simp [h]
 
 lemma aleph0_le_isohedralNumber_iff {t : TileSet ps ιₜ} :
-    ℵ₀ ≤ isohedralNumber t ↔
+    ℵ₀ ≤ t.isohedralNumber ↔
       Infinite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
   rw [Cardinal.infinite_iff, isohedralNumber_eq_card]
 
 lemma isohedralNumber_lt_aleph0_iff {t : TileSet ps ιₜ} :
-    isohedralNumber t < ℵ₀ ↔
+    t.isohedralNumber < ℵ₀ ↔
       Finite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
   rw [isohedralNumber_eq_card, Cardinal.lt_aleph0_iff_finite]
 
@@ -191,18 +191,18 @@ natural number; zero if infinite. -/
 def isohedralNumberNat : TileSetFunction ps ℕ ⊤ := isohedralNumber.comp Cardinal.toNat
 
 lemma isohedralNumberNat_eq_card (t : TileSet ps ιₜ) :
-    isohedralNumberNat t =
+    t.isohedralNumberNat =
       Nat.card (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) :=
   rfl
 
 lemma isohedralNumberNat_eq_one_iff {t : TileSet ps ιₜ} :
-    isohedralNumberNat t = 1
+    t.isohedralNumberNat = 1
       ↔ Nonempty ιₜ ∧ MulAction.IsPretransitive t.symmetryGroup (t : Set (PlacedTile ps)) := by
   rw [← isohedralNumber_eq_one_iff]
   simp [isohedralNumberNat]
 
 lemma isohedralNumberNat_eq_zero_iff {t : TileSet ps ιₜ} :
-    isohedralNumberNat t = 0 ↔ IsEmpty ιₜ ∨
+    t.isohedralNumberNat = 0 ↔ IsEmpty ιₜ ∨
       Infinite (MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))) := by
   simp [isohedralNumberNat, isohedralNumber_eq_zero_iff, aleph0_le_isohedralNumber_iff]
 
@@ -272,7 +272,7 @@ lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
   obtain ⟨x, hx⟩ := h i
   exact ⟨⟦⟨(⟨t i, apply_mem _ _⟩, x), hx⟩⟧, rfl⟩
 
-lemma surjective_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (h : UnionEqUniv t) :
+lemma surjective_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (h : t.UnionEqUniv) :
     Surjective t.quotientPointOfquotientTilePoint := by
   intro x
   induction' x using Quotient.inductionOn' with p
@@ -327,7 +327,7 @@ lemma finite_preimage_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ι�
   exact Set.finite_range _
 
 lemma finite_preimage_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (x : X)
-    (h : FiniteDistinctIntersectionsOn {x} t) :
+    (h : t.FiniteDistinctIntersectionsOn {x}) :
     (t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧}).Finite := by
   have hf := (h x (Set.mem_singleton _)).to_subtype
   rw [Set.coe_setOf] at hf
@@ -335,7 +335,7 @@ lemma finite_preimage_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (x
   exact Set.finite_range _
 
 lemma finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ}
-    (h : isohedralNumber t < ℵ₀) (hf : ∀ i, (t i : Set X).Finite) :
+    (h : t.isohedralNumber < ℵ₀) (hf : ∀ i, (t i : Set X).Finite) :
     Finite (MulAction.orbitRel.Quotient t.symmetryGroup
       {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) := by
   rw [← Set.finite_univ_iff, ← Set.preimage_univ (f := t.quotientPlacedTileOfquotientTilePoint),
@@ -351,7 +351,7 @@ lemma finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 {t : TileSet ps ι�
 lemma isohedralNumber_lt_aleph0_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
     (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup
       {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}))
-    (hn : ∀ i, (t i : Set X).Nonempty) : isohedralNumber t < ℵ₀ := by
+    (hn : ∀ i, (t i : Set X).Nonempty) : t.isohedralNumber < ℵ₀ := by
   rw [isohedralNumber_lt_aleph0_iff]
   rw [← Set.finite_univ_iff] at hf ⊢
   exact Set.Finite.of_surjOn t.quotientPlacedTileOfquotientTilePoint
@@ -388,7 +388,7 @@ lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop H} :
 
 lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop H} {c : Cardinal} (h : c ≠ 0) :
     c ≤ isohedralNumber ιₜ p ↔
-      (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → c ≤ TileSet.isohedralNumber t := by
+      (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → c ≤ t.isohedralNumber := by
   rw [isohedralNumber]
   by_cases he : ∃ t : TileSet ps ιₜ, p t
   · simp only [he, true_and]
