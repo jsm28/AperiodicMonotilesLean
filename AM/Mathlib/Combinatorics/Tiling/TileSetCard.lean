@@ -67,14 +67,14 @@ lemma coe_injective :
     Injective (TileSetCard.tilesCard : TileSetCard ps → PlacedTile ps → Cardinal) :=
   fun _ _ ↦ coe_inj.1
 
-instance : Sup (TileSetCard ps) :=
+instance : Max (TileSetCard ps) :=
   ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊔ ↑t₂⟩⟩
 
 lemma coe_sup (t₁ t₂ : TileSetCard ps) :
     (t₁ ⊔ t₂ : TileSetCard ps) = (t₁ : PlacedTile ps → Cardinal) ⊔ ↑t₂ :=
   rfl
 
-instance : Inf (TileSetCard ps) :=
+instance : Min (TileSetCard ps) :=
   ⟨fun t₁ t₂ ↦ ⟨↑t₁ ⊓ ↑t₂⟩⟩
 
 lemma coe_inf (t₁ t₂ : TileSetCard ps) :
