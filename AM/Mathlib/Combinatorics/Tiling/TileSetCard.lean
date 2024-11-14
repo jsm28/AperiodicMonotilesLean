@@ -123,7 +123,7 @@ lemma card_le_card_reindex_of_surjective (t : TileSet ps ιᵤ) {f : ιᵤ' → 
     t.card ≤ (t.reindex f).card := by
   simp_rw [TileSetCard.le_def, card_apply, TileSet.coe_reindex, Set.preimage_comp]
   refine fun pt ↦ Cardinal.mk_preimage_of_subset_range _ _ ?_
-  simp [Set.range_iff_surjective.2 hf]
+  simp [Set.range_eq_univ.2 hf]
 
 lemma card_reindex_of_bijective (t : TileSet ps ιᵤ) {f : ιᵤ' → ιᵤ} (hf : Bijective f) :
     (t.reindex f).card = t.card :=

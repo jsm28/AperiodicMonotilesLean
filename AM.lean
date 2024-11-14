@@ -9,4 +9,3 @@ import AM.Mathlib.Combinatorics.Tiling.Periodic
 import AM.Mathlib.Combinatorics.Tiling.Tile
 import AM.Mathlib.Combinatorics.Tiling.TileSet
 import AM.Mathlib.Combinatorics.Tiling.TileSetCard
-import AM.Mathlib.LinearAlgebra.FreeModule.Int
