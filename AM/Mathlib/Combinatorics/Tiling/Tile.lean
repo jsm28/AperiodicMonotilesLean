@@ -167,8 +167,8 @@ lemma ext_iff_of_exists {pt₁ pt₂ : PlacedTile ps} :
   refine ⟨fun h ↦ ?_, fun ⟨h, g, hg₁, hg₂⟩ ↦ ?_⟩
   · subst h
     simp only [and_self, true_and]
-    refine ⟨pt₁.groupElts.out', ?_⟩
-    rw [← @Quotient.mk''_eq_mk, Quotient.out_eq']
+    refine ⟨pt₁.groupElts.out, ?_⟩
+    rw [Quotient.out_eq]
   · rcases pt₁ with ⟨i₁, g₁⟩
     rcases pt₂ with ⟨i₂, g₂⟩
     dsimp only at h
