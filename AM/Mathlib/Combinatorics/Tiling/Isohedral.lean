@@ -380,7 +380,7 @@ lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop H} :
     · simp only [isEmpty_subtype, h, Subtype.exists, exists_prop, and_true]
       rw [← not_exists]
       exact (Classical.em _).symm
-    · simp [h]
+    · simp [h, isEmpty_subtype]
 
 lemma isohedralNumber_ne_zero_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p ≠ 0 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t := by
@@ -402,7 +402,7 @@ lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop H} {c : Cardinal} (h :
     rw [← pos_iff_ne_zero] at h
     convert h
     convert Cardinal.sInf_empty
-    simpa using he
+    simpa [isEmpty_subtype] using he
 
 lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t
