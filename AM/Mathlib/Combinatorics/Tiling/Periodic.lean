@@ -257,12 +257,12 @@ lemma weaklyPeriodic_iff_of_relindex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H
     simp_rw [← Pi.pow_apply, he]
   have h : ∀ x : Fin n → Multiplicative ℤ,
       (((Subgroup.subtype _).comp f).comp f') x ∈ H ⊓ t.symmetryGroup := by
-    simp only [MonoidHom.coe_comp, Subgroup.coeSubtype, comp_apply, f', powMonoidHom_apply,
+    simp only [MonoidHom.coe_comp, Subgroup.coe_subtype, comp_apply, f', powMonoidHom_apply,
                map_pow, SubmonoidClass.coe_pow]
     exact fun x ↦ Subgroup.pow_mem_of_relindex_ne_zero_of_dvd hi (SetLike.coe_mem _)
       (fun _ ↦ Nat.dvd_factorial)
   refine ⟨(((Subgroup.subtype _).comp f).comp f').codRestrict _ h, ?_⟩
-  simp only [MonoidHom.injective_codRestrict, MonoidHom.coe_comp, Subgroup.coeSubtype]
+  simp only [MonoidHom.injective_codRestrict, MonoidHom.coe_comp, Subgroup.coe_subtype]
   exact (Subtype.val_injective.comp hf).comp hf'
 
 lemma weaklyPeriodic_iff_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : Subgroup G}
