@@ -6,8 +6,6 @@ Authors: Joseph Myers
 import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
 import AM.Mathlib.Combinatorics.Tiling.Isohedral
 import Mathlib.Algebra.Order.Group.Basic
-import Mathlib.Algebra.Order.Group.TypeTags
-import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.LinearAlgebra.FreeModule.Int
 
 /-!
