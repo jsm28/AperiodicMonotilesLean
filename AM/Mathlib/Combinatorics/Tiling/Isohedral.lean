@@ -286,8 +286,7 @@ lemma preimage_quotientPlacedTileOfquotientTilePoint_eq_range {t : TileSet ps ι
   rw [Set.mem_preimage] at h
   induction' x using Quotient.inductionOn' with pt'
   rcases pt' with ⟨⟨pt', x⟩, hx⟩
-  simp only [Quotient.mk''_eq_mk, quotientPlacedTileOfquotientTilePoint_apply_mk,
-             Set.mem_singleton_iff] at h
+  simp only [quotientPlacedTileOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
   rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
   rcases h with ⟨g, rfl⟩
   dsimp only at hx
@@ -306,8 +305,7 @@ lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} 
   rw [Set.mem_preimage] at h
   induction' y using Quotient.inductionOn' with pt'
   rcases pt' with ⟨⟨pt', y⟩, hy⟩
-  simp only [Quotient.mk''_eq_mk, quotientPointOfquotientTilePoint_apply_mk,
-             Set.mem_singleton_iff] at h
+  simp only [quotientPointOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
   rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
   rcases h with ⟨g, rfl⟩
   dsimp only at hy

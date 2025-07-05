@@ -70,7 +70,7 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
      simp only [eq_iff_iff]
      refine Equiv.finite_iff (Quotient.congr (MulAction.toPerm g⁻¹) fun x y ↦ ?_)
      simp only [MulAction.orbitRel_apply, MulAction.mem_orbit_iff, Subtype.exists,
-                Submonoid.mk_smul, exists_prop, MulAction.toPerm_apply]
+                MulAction.toPerm_apply]
      refine ⟨fun ⟨a, ha⟩ ↦ ?_, fun ⟨a, ha⟩ ↦ ?_⟩
      · rcases ha with ⟨ha, rfl⟩
        rw [mem_symmetryGroup_smul_iff'] at ha

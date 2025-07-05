@@ -224,7 +224,7 @@ lemma FiniteIntersectionsOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ}
 
 @[simp] lemma finiteIntersectionsOn_empty (t : TileSet ps ιₜ) :
     t.FiniteIntersectionsOn ∅ := by
-  simp [TileSet.FiniteIntersectionsOn, Pairwise]
+  simp [TileSet.FiniteIntersectionsOn]
 
 @[simp] lemma finiteIntersectionsOn_univ_iff {t : TileSet ps ιₜ} :
     t.FiniteIntersectionsOn Set.univ ↔ t.FiniteIntersections := by
@@ -261,8 +261,7 @@ def FiniteDistinctIntersections : TileSetFunction ps Prop ⊤ :=
      · convert h (g⁻¹ • x) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g)) using 2
-       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
-             PlacedTile.mem_inv_smul_iff_smul_mem]⟩
+       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem]⟩
 
 lemma finiteDistinctIntersections_iff {t : TileSet ps ιₜ} :
     t.FiniteDistinctIntersections ↔ ∀ x, {pt | pt ∈ t ∧ x ∈ pt}.Finite :=
@@ -318,8 +317,7 @@ def FiniteDistinctIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
      · convert h (g⁻¹ • x) (Set.mem_smul_set_iff_inv_smul_mem.1 hx) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g)) using 2
-       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
-             PlacedTile.mem_inv_smul_iff_smul_mem]⟩
+       simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem]⟩
 
 lemma finiteDistinctIntersectionsOn_iff {s : Set X} {t : TileSet ps ιₜ} :
     t.FiniteDistinctIntersectionsOn s ↔ ∀ x ∈ s, {pt | pt ∈ t ∧ x ∈ pt}.Finite :=
@@ -362,7 +360,7 @@ lemma FiniteDistinctIntersectionsOn.subset {s₁ s₂ : Set X} {t : TileSet ps �
 
 @[simp] lemma finiteDistinctIntersectionsOn_empty (t : TileSet ps ιₜ) :
     t.FiniteDistinctIntersectionsOn ∅ := by
-  simp [TileSet.FiniteDistinctIntersectionsOn, Pairwise]
+  simp [TileSet.FiniteDistinctIntersectionsOn]
 
 @[simp] lemma finiteDistinctIntersectionsOn_univ_iff {t : TileSet ps ιₜ} :
     t.FiniteDistinctIntersectionsOn Set.univ ↔ t.FiniteDistinctIntersections := by
