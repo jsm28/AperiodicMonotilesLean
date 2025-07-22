@@ -377,7 +377,7 @@ lemma toVarTileSetFunction_comp₂ (f : TileSetFunction ps α H) (f' : TileSetFu
       (f.toVarTileSetFunction Y).comp₂ (f'.toVarTileSetFunction Y) fabg :=
   rfl
 
-lemma toVarTileSetFunction_ofLE  (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H) :
+lemma toVarTileSetFunction_ofLE (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H) :
     (f.ofLE h).toVarTileSetFunction Y = (f.toVarTileSetFunction Y).ofLE h :=
   rfl
 
