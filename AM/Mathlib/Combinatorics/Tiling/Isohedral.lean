@@ -267,35 +267,38 @@ lemma surjective_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
     (h : ∀ i, (t i : Set X).Nonempty) :
     Surjective t.quotientPlacedTileOfquotientTilePoint := by
   intro x
-  induction' x using Quotient.inductionOn' with pt
-  rcases pt with ⟨pt, i, rfl⟩
-  obtain ⟨x, hx⟩ := h i
-  exact ⟨⟦⟨(⟨t i, apply_mem _ _⟩, x), hx⟩⟧, rfl⟩
+  induction x using Quotient.inductionOn' with
+  | h pt =>
+    rcases pt with ⟨pt, i, rfl⟩
+    obtain ⟨x, hx⟩ := h i
+    exact ⟨⟦⟨(⟨t i, apply_mem _ _⟩, x), hx⟩⟧, rfl⟩
 
 lemma surjective_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (h : t.UnionEqUniv) :
     Surjective t.quotientPointOfquotientTilePoint := by
   intro x
-  induction' x using Quotient.inductionOn' with p
-  obtain ⟨pt, hpt, hp⟩ := UnionEqUniv.exists_mem_mem h p
-  exact ⟨⟦⟨(⟨pt, hpt⟩, p), hp⟩⟧, rfl⟩
+  induction x using Quotient.inductionOn' with
+  | h p =>
+    obtain ⟨pt, hpt, hp⟩ := UnionEqUniv.exists_mem_mem h p
+    exact ⟨⟦⟨(⟨pt, hpt⟩, p), hp⟩⟧, rfl⟩
 
 lemma preimage_quotientPlacedTileOfquotientTilePoint_eq_range {t : TileSet ps ιₜ}
     (pt : (t : Set (PlacedTile ps))) : t.quotientPlacedTileOfquotientTilePoint ⁻¹' {⟦pt⟧} =
       Set.range (fun x : {x // x ∈ (pt : PlacedTile ps)} ↦ ⟦⟨(pt, x), x.property⟩⟧) := by
   refine Set.Subset.antisymm (fun x h ↦ ?_) (Set.range_subset_iff.2 fun x ↦ (Set.mem_singleton _))
   rw [Set.mem_preimage] at h
-  induction' x using Quotient.inductionOn' with pt'
-  rcases pt' with ⟨⟨pt', x⟩, hx⟩
-  simp only [quotientPlacedTileOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
-  rcases h with ⟨g, rfl⟩
-  dsimp only at hx
-  rw [mem_smul_symmetryGroup_iff_smul_inv_mem] at hx
-  refine ⟨⟨g⁻¹ • x, hx⟩, ?_⟩
-  simp only
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
-  refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
-  simp [coe_smul_tilePoint]
+  induction x using Quotient.inductionOn' with
+  | h pt' =>
+    rcases pt' with ⟨⟨pt', x⟩, hx⟩
+    simp only [quotientPlacedTileOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
+    rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
+    rcases h with ⟨g, rfl⟩
+    dsimp only at hx
+    rw [mem_smul_symmetryGroup_iff_smul_inv_mem] at hx
+    refine ⟨⟨g⁻¹ • x, hx⟩, ?_⟩
+    simp only
+    rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
+    refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
+    simp [coe_smul_tilePoint]
 
 lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} (x : X) :
     t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧} =
@@ -303,19 +306,20 @@ lemma preimage_quotientPointOfquotientTilePoint_eq_range {t : TileSet ps ιₜ} 
         ⟦⟨(⟨pt, pt.property.1⟩, x), pt.property.2⟩⟧) := by
   refine Set.Subset.antisymm (fun y h ↦ ?_) (Set.range_subset_iff.2 fun y ↦ (Set.mem_singleton _))
   rw [Set.mem_preimage] at h
-  induction' y using Quotient.inductionOn' with pt'
-  rcases pt' with ⟨⟨pt', y⟩, hy⟩
-  simp only [quotientPointOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
-  rcases h with ⟨g, rfl⟩
-  dsimp only at hy
-  rw [← mem_inv_smul_symmetryGroup_iff_smul_mem] at hy
-  refine ⟨⟨(g⁻¹ • pt' : (t : Set (PlacedTile ps))),
-           (g⁻¹ • pt' : (t : Set (PlacedTile ps))).property, hy⟩, ?_⟩
-  simp only
-  rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
-  refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
-  simp [coe_smul_tilePoint]
+  induction y using Quotient.inductionOn' with
+  | h pt' =>
+    rcases pt' with ⟨⟨pt', y⟩, hy⟩
+    simp only [quotientPointOfquotientTilePoint_apply_mk, Set.mem_singleton_iff] at h
+    rw [← @Quotient.mk''_eq_mk, Quotient.eq''] at h
+    rcases h with ⟨g, rfl⟩
+    dsimp only at hy
+    rw [← mem_inv_smul_symmetryGroup_iff_smul_mem] at hy
+    refine ⟨⟨(g⁻¹ • pt' : (t : Set (PlacedTile ps))),
+             (g⁻¹ • pt' : (t : Set (PlacedTile ps))).property, hy⟩, ?_⟩
+    simp only
+    rw [← @Quotient.mk''_eq_mk, Quotient.eq'', MulAction.orbitRel_apply]
+    refine ⟨g⁻¹, Subtype.ext_iff.2 ?_⟩
+    simp [coe_smul_tilePoint]
 
 lemma finite_preimage_quotientPlacedTileOfquotientTilePoint {t : TileSet ps ιₜ}
     {pt : (t : Set (PlacedTile ps))} (h : ((pt : PlacedTile ps) : Set X).Finite) :
@@ -340,11 +344,12 @@ lemma finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 {t : TileSet ps ι�
       ← Set.biUnion_preimage_singleton]
   rw [isohedralNumber_lt_aleph0_iff] at h
   refine Finite.Set.finite_biUnion _ _ fun pt _ ↦ ?_
-  induction' pt using Quotient.inductionOn' with pt
-  rw [@Quotient.mk''_eq_mk]
-  refine finite_preimage_quotientPlacedTileOfquotientTilePoint ?_
-  rcases pt with ⟨pt, i, rfl⟩
-  exact hf i
+  induction pt using Quotient.inductionOn' with
+  | h pt =>
+    rw [@Quotient.mk''_eq_mk]
+    refine finite_preimage_quotientPlacedTileOfquotientTilePoint ?_
+    rcases pt with ⟨pt, i, rfl⟩
+    exact hf i
 
 lemma isohedralNumber_lt_aleph0_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
     (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup

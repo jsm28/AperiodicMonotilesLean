@@ -112,11 +112,11 @@ lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
     (h : t.StronglyPeriodic) {H : Subgroup G} (free : ∀ x : X, MulAction.stabilizer H x = ⊥)
     (hi : H.index ≠ 0) : t.symmetryGroup.index ≠ 0 := by
   rw [stronglyPeriodic_iff] at h
-  have hr : H.relindex t.symmetryGroup ≠ 0 := mt Subgroup.index_eq_zero_of_relindex_eq_zero hi
-  suffices t.symmetryGroup.relindex H ≠ 0 by
-    rw [← Subgroup.relindex_top_right] at hi ⊢
-    exact Subgroup.relindex_ne_zero_trans this hi
-  rw [Subgroup.relindex] at hr ⊢
+  have hr : H.relIndex t.symmetryGroup ≠ 0 := mt Subgroup.index_eq_zero_of_relIndex_eq_zero hi
+  suffices t.symmetryGroup.relIndex H ≠ 0 by
+    rw [← Subgroup.relIndex_top_right] at hi ⊢
+    exact Subgroup.relIndex_ne_zero_trans this hi
+  rw [Subgroup.relIndex] at hr ⊢
   have hf := Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hr (X := X)
   rw [MulAction.orbitRel.Quotient, MulAction.orbitRel_subgroupOf, inf_comm,
       ← MulAction.orbitRel_subgroupOf, ← MulAction.orbitRel.Quotient,
@@ -148,10 +148,11 @@ lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : t.S
       ← Set.biUnion_preimage_singleton]
   rw [stronglyPeriodic_iff] at h
   refine Finite.Set.finite_biUnion _ _ fun x _ ↦ ?_
-  induction' x using Quotient.inductionOn' with x
-  rw [@Quotient.mk''_eq_mk]
-  exact finite_preimage_quotientPointOfquotientTilePoint x
-    (FiniteDistinctIntersections.finiteDistinctIntersectionsOn {x} hf)
+  induction x using Quotient.inductionOn' with
+  | h x =>
+    rw [@Quotient.mk''_eq_mk]
+    exact finite_preimage_quotientPointOfquotientTilePoint x
+      (FiniteDistinctIntersections.finiteDistinctIntersectionsOn {x} hf)
 
 lemma stronglyPeriodic_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
     (hf : Finite (MulAction.orbitRel.Quotient t.symmetryGroup
@@ -237,19 +238,19 @@ lemma weaklyPeriodic_of_le {t : TileSet ps ιₜ} {m n : ℕ} (h : t.WeaklyPerio
   exact ⟨f.comp (ExtendByOne.hom (Multiplicative ℤ) (Fin.castLE hle)),
          hf.comp (extend_injective (Fin.strictMono_castLE hle).injective _)⟩
 
-lemma weaklyPeriodic_iff_of_relindex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : Subgroup G}
-    (hi : H.relindex t.symmetryGroup ≠ 0) :
+lemma weaklyPeriodic_iff_of_relIndex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : Subgroup G}
+    (hi : H.relIndex t.symmetryGroup ≠ 0) :
     t.WeaklyPeriodic n ↔
       ∃ f : (Fin n → Multiplicative ℤ) →* (H ⊓ t.symmetryGroup : Subgroup G), Injective f := by
   refine ⟨fun ⟨f, hf⟩ ↦ ?_,
     fun ⟨f, hf⟩ ↦ ⟨(Subgroup.inclusion inf_le_right).comp f, fun x y hxy ↦ hf (by simpa using hxy)⟩⟩
   let f' : (Fin n → Multiplicative ℤ) →* (Fin n → Multiplicative ℤ) :=
-    powMonoidHom (H.relindex t.symmetryGroup)!
+    powMonoidHom (H.relIndex t.symmetryGroup)!
   have hf' : Injective f' := by
     intro x₁ x₂ he
     simp only [powMonoidHom_apply, f'] at he
     ext i
-    suffices (x₁ i) ^ (H.relindex t.symmetryGroup)! = (x₂ i) ^ (H.relindex t.symmetryGroup)! by
+    suffices (x₁ i) ^ (H.relIndex t.symmetryGroup)! = (x₂ i) ^ (H.relIndex t.symmetryGroup)! by
       rwa [← zpow_natCast, ← zpow_natCast, zpow_left_inj (mod_cast (Nat.factorial_ne_zero _))]
         at this
     simp_rw [← Pi.pow_apply, he]
@@ -257,7 +258,7 @@ lemma weaklyPeriodic_iff_of_relindex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H
       (((Subgroup.subtype _).comp f).comp f') x ∈ H ⊓ t.symmetryGroup := by
     simp only [MonoidHom.coe_comp, Subgroup.coe_subtype, comp_apply, f', powMonoidHom_apply,
                map_pow, SubmonoidClass.coe_pow]
-    exact fun x ↦ Subgroup.pow_mem_of_relindex_ne_zero_of_dvd hi (SetLike.coe_mem _)
+    exact fun x ↦ Subgroup.pow_mem_of_relIndex_ne_zero_of_dvd hi (SetLike.coe_mem _)
       (fun _ ↦ Nat.dvd_factorial)
   refine ⟨(((Subgroup.subtype _).comp f).comp f').codRestrict _ h, ?_⟩
   simp only [MonoidHom.injective_codRestrict, MonoidHom.coe_comp, Subgroup.coe_subtype]
@@ -267,7 +268,7 @@ lemma weaklyPeriodic_iff_of_index_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H : 
     (hi : H.index ≠ 0) :
     t.WeaklyPeriodic n ↔
       ∃ f : (Fin n → Multiplicative ℤ) →* (H ⊓ t.symmetryGroup : Subgroup G), Injective f :=
-  weaklyPeriodic_iff_of_relindex_ne_zero (mt Subgroup.index_eq_zero_of_relindex_eq_zero hi)
+  weaklyPeriodic_iff_of_relIndex_ne_zero (mt Subgroup.index_eq_zero_of_relIndex_eq_zero hi)
 
 /-- In a space with a ℤ^n subgroup of finite index, where `X` has finite quotient by the action
 of `G`, a weakly `n`-periodic `TileSet` is strongly periodic. -/
@@ -278,17 +279,17 @@ lemma WeaklyPeriodic.stronglyPeriodic_of_finite_quotient_of_equiv_of_index_ne_ze
   refine stronglyPeriodic_of_finite_quotient_of_index_ne_zero ?_
   rw [weaklyPeriodic_iff_of_index_ne_zero hi] at h
   rcases h with ⟨f, hf⟩
-  rw [← Subgroup.relindex_top_right] at hi ⊢
-  refine Subgroup.relindex_ne_zero_trans ?_ hi
-  rw [← Subgroup.inf_relindex_left]
-  suffices (f.range.map (Subgroup.subtype _)).relindex H ≠ 0 from
-    mt (Subgroup.relindex_eq_zero_of_le_left (Subgroup.map_subtype_le f.range)) this
+  rw [← Subgroup.relIndex_top_right] at hi ⊢
+  refine Subgroup.relIndex_ne_zero_trans ?_ hi
+  rw [← Subgroup.inf_relIndex_left]
+  suffices (f.range.map (Subgroup.subtype _)).relIndex H ≠ 0 from
+    mt (Subgroup.relIndex_eq_zero_of_le_left (Subgroup.map_subtype_le f.range)) this
   let f' : f.range ≃* (Fin n → Multiplicative ℤ) :=
     ((MulEquiv.subgroupCongr f.range_eq_map).trans (Subgroup.equivMapOfInjective _ _ hf).symm).trans
     Subgroup.topEquiv
   let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
   have he' : Surjective e' := e.symm.surjective
-  rw [Subgroup.relindex, ← Subgroup.index_comap_of_surjective _ he',
+  rw [Subgroup.relIndex, ← Subgroup.index_comap_of_surjective _ he',
       Int.subgroup_index_ne_zero_iff]
   exact ⟨((((MulEquiv.subgroupCongr
     (((Subgroup.map (H ⊓ t.symmetryGroup).subtype f.range).subgroupOf H).map_equiv_eq_comap_symm
@@ -313,8 +314,8 @@ lemma StronglyPeriodic.weaklyPeriodic_of_equiv_of_free [Nonempty X] {n : ℕ} {t
   let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
   have he' : Surjective e' := e.symm.surjective
   have hsi := Subgroup.index_inf_ne_zero (StronglyPeriodic.index_ne_zero_of_free h free hi) hi
-  rw [← Subgroup.relindex_top_right, ← Subgroup.relindex_inf_mul_relindex, mul_ne_zero_iff,
-      Subgroup.relindex_top_right, and_iff_left hi, inf_top_eq, Subgroup.relindex,
+  rw [← Subgroup.relIndex_top_right, ← Subgroup.relIndex_inf_mul_relIndex, mul_ne_zero_iff,
+      Subgroup.relIndex_top_right, and_iff_left hi, inf_top_eq, Subgroup.relIndex,
       ← Subgroup.index_comap_of_surjective _ he', Int.subgroup_index_ne_zero_iff] at hsi
   rcases hsi with ⟨f⟩
   let f₁ : (Fin n → Multiplicative ℤ) ≃* (t.symmetryGroup ⊓ H : Subgroup G) :=
