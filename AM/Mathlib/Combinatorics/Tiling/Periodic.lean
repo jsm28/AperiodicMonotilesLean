@@ -106,7 +106,7 @@ lemma StronglyPeriodic.finite_quotient {t : TileSet ps ιₜ} (h : t.StronglyPer
     infer_instance
   intro ω
   rw [nonempty_quotient_iff]
-  simpa using ω.orbit_nonempty
+  simpa using ω.nonempty_orbit
 
 lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
     (h : t.StronglyPeriodic) {H : Subgroup G} (free : ∀ x : X, MulAction.stabilizer H x = ⊥)
@@ -129,7 +129,7 @@ lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
   have x := Classical.arbitrary (MulAction.orbitRel.Quotient H X)
   convert Infinite.sigma_of_right (a := x)
   have y : MulAction.orbitRel.Quotient.orbit x :=
-    (MulAction.orbitRel.Quotient.orbit_nonempty x).to_subtype.some
+    (MulAction.orbitRel.Quotient.nonempty_orbit x).to_subtype.some
   rw [(MulAction.equivSubgroupOrbitsQuotientGroup y _ _).infinite_iff]
   · exact h0
   · intro z
