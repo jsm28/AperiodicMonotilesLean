@@ -130,15 +130,17 @@ lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
   convert Infinite.sigma_of_right (a := x)
   have y : MulAction.orbitRel.Quotient.orbit x :=
     (MulAction.orbitRel.Quotient.nonempty_orbit x).to_subtype.some
-  rw [(MulAction.equivSubgroupOrbitsQuotientGroup y _ _).infinite_iff]
-  · exact h0
-  · intro z
+  have : IsCancelSMul H x.orbit := by
+    rw [isCancelSMul_iff_stabilizer_eq_bot]
+    intro z
     ext g
     simp only [MulAction.mem_stabilizer_iff, Subgroup.mem_bot]
     refine ⟨fun hs ↦ ?_, fun hs ↦ by simp [hs]⟩
     suffices g ∈ MulAction.stabilizer H (z : X) by
       simpa [free] using this
     rw [MulAction.mem_stabilizer_iff, ← MulAction.orbitRel.Quotient.orbit.coe_smul, hs]
+  rw [(MulAction.equivSubgroupOrbitsQuotientGroup y _).infinite_iff]
+  exact h0
 
 lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : t.StronglyPeriodic)
     (hf : t.FiniteDistinctIntersections) :
@@ -161,7 +163,7 @@ lemma stronglyPeriodic_of_finite_quotient_tilePoint {t : TileSet ps ιₜ}
   rw [stronglyPeriodic_iff]
   rw [← Set.finite_univ_iff] at hf ⊢
   exact Set.Finite.of_surjOn t.quotientPointOfquotientTilePoint
-    (Set.surjective_iff_surjOn_univ.1 (surjective_quotientPointOfquotientTilePoint hu)) hf
+    (Set.surjOn_univ.2 (surjective_quotientPointOfquotientTilePoint hu)) hf
 
 lemma stronglyPeriodic_of_isohedralNumber_lt_aleph0 {t : TileSet ps ιₜ} (h : t.isohedralNumber < ℵ₀)
     (hf : ∀ i, (t i : Set X).Finite) (hu : t.UnionEqUniv) : t.StronglyPeriodic :=

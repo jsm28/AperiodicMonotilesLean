@@ -358,7 +358,7 @@ lemma isohedralNumber_lt_aleph0_of_finite_quotient_tilePoint {t : TileSet ps ι�
   rw [isohedralNumber_lt_aleph0_iff]
   rw [← Set.finite_univ_iff] at hf ⊢
   exact Set.Finite.of_surjOn t.quotientPlacedTileOfquotientTilePoint
-    (Set.surjective_iff_surjOn_univ.1 (surjective_quotientPlacedTileOfquotientTilePoint hn)) hf
+    (Set.surjOn_univ.2 (surjective_quotientPlacedTileOfquotientTilePoint hn)) hf
 
 end TileSet
 
