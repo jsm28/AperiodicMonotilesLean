@@ -49,19 +49,20 @@ variable {G X ιₚ ιₜ : Type*} [Group G] [MulAction G X] {ps : Protoset G X 
 
 namespace TileSet
 
-instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup (t : Set (PlacedTile ps)) where
+instance (t : TileSet ps ιₜ) : SMul t.symmetryGroup (t : Set (PlacedTile ps)) where
   smul g pt := ⟨(g : G) • ↑pt, smul_mem_of_mem_of_mem_symmetryGroup g.property pt.property⟩
-  one_smul pt := by
-    simp only [HSMul.hSMul, Subtype.ext_iff]
-    exact one_smul _ _
-  mul_smul x y pt := by
-    simp only [HSMul.hSMul, Subtype.ext_iff]
-    exact mul_smul _ _ _
 
 lemma coe_symmetryGroup_smul (t : TileSet ps ιₜ) (g : t.symmetryGroup)
     (pt : (t : Set (PlacedTile ps))) : ((g • pt : (t : Set (PlacedTile ps))) : PlacedTile ps) =
       g • (pt : PlacedTile ps) :=
   rfl
+
+instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup (t : Set (PlacedTile ps)) where
+  __ : SMul t.symmetryGroup (t : Set (PlacedTile ps)) := inferInstance
+  one_smul pt := by
+    simp [Subtype.ext_iff, coe_symmetryGroup_smul]
+  mul_smul x y pt := by
+    simp [Subtype.ext_iff, coe_symmetryGroup_smul, mul_smul]
 
 lemma mem_smul_symmetryGroup_iff {t : TileSet ps ιₜ} {g : t.symmetryGroup}
     {pt : (t : Set (PlacedTile ps))} {x : X} :
