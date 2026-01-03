@@ -70,7 +70,7 @@ def StronglyPeriodic : TileSetFunction ps Prop ⊤ :=
      simp only [eq_iff_iff]
      refine Equiv.finite_iff (Quotient.congr (MulAction.toPerm g⁻¹) fun x y ↦ ?_)
      simp only [MulAction.orbitRel_apply, MulAction.mem_orbit_iff, Subtype.exists,
-                MulAction.toPerm_apply]
+       MulAction.toPerm_apply]
      refine ⟨fun ⟨a, ha⟩ ↦ ?_, fun ⟨a, ha⟩ ↦ ?_⟩
      · rcases ha with ⟨ha, rfl⟩
        rw [mem_symmetryGroup_smul_iff'] at ha
@@ -119,8 +119,8 @@ lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
   rw [Subgroup.relIndex] at hr ⊢
   have hf := Subgroup.finite_quotient_of_finite_quotient_of_index_ne_zero hr (X := X)
   rw [MulAction.orbitRel.Quotient, MulAction.orbitRel_subgroupOf, inf_comm,
-      ← MulAction.orbitRel_subgroupOf, ← MulAction.orbitRel.Quotient,
-      (MulAction.equivSubgroupOrbits X _).finite_iff] at hf
+    ← MulAction.orbitRel_subgroupOf, ← MulAction.orbitRel.Quotient,
+    (MulAction.equivSubgroupOrbits X _).finite_iff] at hf
   intro h0
   rw [Subgroup.index_eq_zero_iff_infinite] at h0
   revert hf
@@ -147,7 +147,7 @@ lemma StronglyPeriodic.finite_quotient_tilePoint {t : TileSet ps ιₜ} (h : t.S
     Finite (MulAction.orbitRel.Quotient t.symmetryGroup
       {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) := by
   rw [← Set.finite_univ_iff, ← Set.preimage_univ (f := t.quotientPointOfquotientTilePoint),
-      ← Set.biUnion_preimage_singleton]
+    ← Set.biUnion_preimage_singleton]
   rw [stronglyPeriodic_iff] at h
   refine Finite.Set.finite_biUnion _ _ fun x _ ↦ ?_
   induction x using Quotient.inductionOn' with
@@ -224,12 +224,12 @@ lemma weaklyPeriodic_one_iff {t : TileSet ps ιₜ} :
     intro a₁ a₂ h
     dsimp only at h
     simp_rw [← SubgroupClass.coe_zpow, ← map_zpow, ← Subtype.ext_iff, hf.eq_iff, funext_iff,
-             Pi.pow_apply, forall_const, ← ofAdd_zsmul] at h
+      Pi.pow_apply, forall_const, ← ofAdd_zsmul] at h
     simpa using h
   · refine ⟨(zpowersHom (t.symmetryGroup) ⟨g, hg⟩).comp (Pi.evalMonoidHom _ 0), ?_⟩
     rw [← injective_zpow_iff_not_isOfFinOrder] at ho
     simp only [Injective, MonoidHom.coe_comp, comp_apply, Pi.evalMonoidHom_apply,
-               zpowersHom_apply, Subtype.ext_iff, SubgroupClass.coe_zpow]
+      zpowersHom_apply, Subtype.ext_iff, SubgroupClass.coe_zpow]
     intro a₁ a₂ h
     have h' := ho h
     simpa [funext_iff_of_subsingleton] using h'
@@ -259,7 +259,7 @@ lemma weaklyPeriodic_iff_of_relIndex_ne_zero {n : ℕ} {t : TileSet ps ιₜ} {H
   have h : ∀ x : Fin n → Multiplicative ℤ,
       (((Subgroup.subtype _).comp f).comp f') x ∈ H ⊓ t.symmetryGroup := by
     simp only [MonoidHom.coe_comp, Subgroup.coe_subtype, comp_apply, f', powMonoidHom_apply,
-               map_pow, SubmonoidClass.coe_pow]
+      map_pow, SubmonoidClass.coe_pow]
     exact fun x ↦ Subgroup.pow_mem_of_relIndex_ne_zero_of_dvd hi (SetLike.coe_mem _)
       (fun _ ↦ Nat.dvd_factorial)
   refine ⟨(((Subgroup.subtype _).comp f).comp f').codRestrict _ h, ?_⟩

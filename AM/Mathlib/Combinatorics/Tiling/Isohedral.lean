@@ -341,7 +341,7 @@ lemma finite_quotient_tilePoint_of_isohedralNumber_lt_aleph0 {t : TileSet ps ι�
     Finite (MulAction.orbitRel.Quotient t.symmetryGroup
       {x : Prod (t : Set (PlacedTile ps)) X // x.2 ∈ (x.1 : PlacedTile ps)}) := by
   rw [← Set.finite_univ_iff, ← Set.preimage_univ (f := t.quotientPlacedTileOfquotientTilePoint),
-      ← Set.biUnion_preimage_singleton]
+    ← Set.biUnion_preimage_singleton]
   rw [isohedralNumber_lt_aleph0_iff] at h
   refine Finite.Set.finite_biUnion _ _ fun pt _ ↦ ?_
   induction pt using Quotient.inductionOn' with
@@ -401,7 +401,7 @@ lemma le_isohedralNumber_iff {p : TileSetFunction ps Prop H} {c : Cardinal} (h :
     exact ⟨fun h ↦ fun t ht ↦ h ⟨t, ht⟩, fun h ⟨t, ht⟩ ↦ h t ht⟩
   · simp only [not_exists] at he
     simp only [he, exists_false, IsEmpty.forall_iff, implies_true, and_true, iff_false, not_le,
-               iInf]
+      iInf]
     rw [← pos_iff_ne_zero] at h
     convert h
     convert Cardinal.sInf_empty
@@ -417,7 +417,7 @@ lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop H} :
     · simp [he] at h
     · have h' := csInf_mem hn
       simp only [h, Set.mem_range, Subtype.exists, exists_prop,
-                 TileSet.isohedralNumber_eq_one_iff] at h'
+        TileSet.isohedralNumber_eq_one_iff] at h'
       rcases h' with ⟨t, hp, hni, hm⟩
       exact ⟨hni, t, hp, hm⟩
   · rcases h with ⟨hn, t, hp, ht⟩

@@ -145,7 +145,7 @@ lemma card_eq_iff_exists_reindex_eq {t₁ : TileSet ps ιᵤ} {t₂ : TileSet ps
 lemma card_smul (g : G) (t : TileSet ps ιₜ) : (g • t).card = g • (t.card) := by
   refine TileSetCard.ext <| funext fun pt ↦ ?_
   simp_rw [TileSetCard.smul_apply, card_apply, smul_coe, Set.preimage_comp, Set.preimage_smul,
-           Set.smul_set_singleton]
+    Set.smul_set_singleton]
 
 end TileSet
 

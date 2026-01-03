@@ -237,7 +237,7 @@ def equivOfCoeSetEqOfInjective {t₁ : TileSet ps ιₜ} {t₂ : TileSet ps ι�
     t₁.reindex (equivOfCoeSetEqOfInjective h h₁ h₂) = t₂ := by
   ext i : 2
   simp only [equivOfCoeSetEqOfInjective, Equiv.coe_trans, reindex_apply, comp_apply,
-             Equiv.ofInjective_apply, Equiv.cast_apply]
+    Equiv.ofInjective_apply, Equiv.cast_apply]
   erw [Equiv.apply_ofInjective_symm h₁]
   rw [Subtype.coe_eq_iff]
   simp_rw [coeSet_apply] at h
@@ -393,10 +393,9 @@ lemma symmetryGroup_smul (t : TileSet ps ιₜ) (g : G) :
   simp_rw [← smul_prod_one, symmetryGroup, MulAction.stabilizer_smul_eq_stabilizer_map_conj]
   ext h
   simp only [Subgroup.mem_map, MulAction.mem_stabilizer_iff, MulEquiv.coe_toMonoidHom,
-             MulAut.conj_apply, Prod.inv_mk, inv_one, Prod.exists, Prod.mk_mul_mk, one_mul,
-             mul_one, MonoidHom.coe_fst, Prod.mk.injEq, exists_eq_right_right, exists_and_right,
-             exists_eq_right, Subgroup.mem_smul_pointwise_iff_exists, ConjAct.smul_def,
-             ConjAct.ofConjAct_toConjAct]
+    MulAut.conj_apply, Prod.inv_mk, inv_one, Prod.exists, Prod.mk_mul_mk, one_mul, mul_one,
+    MonoidHom.coe_fst, Prod.mk.injEq, exists_eq_right_right, exists_and_right, exists_eq_right,
+    Subgroup.mem_smul_pointwise_iff_exists, ConjAct.smul_def, ConjAct.ofConjAct_toConjAct]
   rw [exists_comm]
   convert Iff.rfl
   rw [exists_and_right]

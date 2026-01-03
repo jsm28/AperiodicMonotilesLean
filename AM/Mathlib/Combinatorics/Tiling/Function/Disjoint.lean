@@ -257,7 +257,7 @@ def FiniteDistinctIntersections : TileSetFunction ps Prop ⊤ :=
        convert (Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g))).symm using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
-             PlacedTile.mem_inv_smul_iff_smul_mem]
+         PlacedTile.mem_inv_smul_iff_smul_mem]
      · convert h (g⁻¹ • x) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g)) using 2
@@ -313,7 +313,7 @@ def FiniteDistinctIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
        convert (Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g))).symm using 2
        simp [← Set.preimage_smul_inv, mem_smul_iff_smul_inv_mem,
-             PlacedTile.mem_inv_smul_iff_smul_mem]
+         PlacedTile.mem_inv_smul_iff_smul_mem]
      · convert h (g⁻¹ • x) (Set.mem_smul_set_iff_inv_smul_mem.1 hx) using 0
        convert Set.finite_image_iff (Set.injOn_of_injective (MulAction.injective
          (β := PlacedTile ps) g)) using 2

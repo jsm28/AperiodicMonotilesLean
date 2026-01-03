@@ -59,7 +59,7 @@ lemma isTilingOf_iff_of_injective {t : TileSet ps ιₜ} {s : Set X} (h : Inject
     t.IsTilingOf s ↔ ((t : Set (PlacedTile ps)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
       (⋃ pt ∈ t, (pt : Set X)) = s := by
   rw [isTilingOf_iff, ← TileSet.disjoint_iff, ← coeSet_disjoint_iff_disjoint_of_injective h,
-      union_of_mem_eq_iUnion]
+    union_of_mem_eq_iUnion]
 
 lemma isTilingOf_smul_set_iff {s : Set X} {t : TileSet ps ιₜ} {g : G} :
     t.IsTilingOf (g • s) ↔ (g⁻¹ • t).IsTilingOf s := by
@@ -90,7 +90,7 @@ lemma isTiling_iff_of_injective {t : TileSet ps ιₜ} (h : Injective t) :
     t.IsTiling ↔ ((t : Set (PlacedTile ps)).Pairwise fun x y ↦ Disjoint (x : Set X) y) ∧
       (⋃ pt ∈ t, (pt : Set X)) = Set.univ := by
   rw [isTiling_iff, ← TileSet.disjoint_iff, ← coeSet_disjoint_iff_disjoint_of_injective h,
-      union_of_mem_eq_iUnion]
+    union_of_mem_eq_iUnion]
 
 lemma IsTiling.disjoint {t : TileSet ps ιₜ} (h : t.IsTiling) : t.Disjoint :=
   And.left h
