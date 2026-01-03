@@ -30,7 +30,7 @@ indices.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 
@@ -46,8 +46,7 @@ variable {G X ιₚ : Type*} [Group G] [MulAction G X]
 variable {ps : Protoset G X ιₚ} {ι ιₜ ιₜ' ιₜ'' ιₜ''' E E' F : Type*} {ιₜι ιₜ'ι : ι → Type*}
 variable [EquivLike E ιₜ' ιₜ] [EquivLike E' ιₜ'' ιₜ'] [FunLike F ιₜ' ιₜ] [EmbeddingLike F ιₜ' ιₜ]
 
-variable (ps ιₜ)
-
+variable (ps ιₜ) in
 /-- A `TileSet ps ιₜ` is an indexed family of `PlacedTile ps`. This is a separate definition
 rather than just using plain functions to facilitate defining associated API that can be used
 with dot notation. -/
@@ -56,15 +55,13 @@ with dot notation. -/
       directly. -/
   tiles : ιₜ → PlacedTile ps
 
-variable {ps ιₜ}
-
 namespace TileSet
 
 instance [Nonempty ιₚ] : Nonempty (TileSet ps ιₜ) := ⟨⟨fun _ ↦ Classical.arbitrary _⟩⟩
 
 instance [IsEmpty ιₜ] : Unique (TileSet ps ιₜ) where
   default := ⟨isEmptyElim⟩
-  uniq := fun _ ↦ TileSet.ext <| funext isEmptyElim
+  uniq _ := TileSet.ext <| funext isEmptyElim
 
 instance : CoeFun (TileSet ps ιₜ) (fun _ ↦ ιₜ → PlacedTile ps) where
   coe := tiles
@@ -82,13 +79,13 @@ lemma coe_injective : Injective (TileSet.tiles : TileSet ps ιₜ → ιₜ → 
 
 /-- Coercion from a `TileSet` to a set of tiles (losing information about the presence of
 duplicate tiles in the `TileSet`). Use the coercion rather than using `coeSet` directly. -/
-@[coe] def coeSet : TileSet ps ιₜ → Set (PlacedTile ps) := fun t ↦ Set.range t
+@[coe] def coeSet (t : TileSet ps ιₜ) : Set (PlacedTile ps) := Set.range t
 
 instance : CoeOut (TileSet ps ιₜ) (Set (PlacedTile ps)) where
   coe := coeSet
 
 instance : Membership (PlacedTile ps) (TileSet ps ιₜ) where
-  mem := fun t pt ↦ pt ∈ (t : Set (PlacedTile ps))
+  mem t pt := pt ∈ (t : Set (PlacedTile ps))
 
 @[simp] lemma mem_coeSet {pt : PlacedTile ps} {t : TileSet ps ιₜ} :
     pt ∈ (t : Set (PlacedTile ps)) ↔ pt ∈ t :=
@@ -246,9 +243,9 @@ def equivOfCoeSetEqOfInjective {t₁ : TileSet ps ιₜ} {t₂ : TileSet ps ι�
   simp [h]
 
 instance : MulAction G (TileSet ps ιₜ) where
-  smul := fun g t ↦ ⟨(g • ·) ∘ ↑t⟩
-  one_smul := fun _ ↦ TileSet.ext <| funext <| fun _ ↦ one_smul _ _
-  mul_smul := fun _ _ _ ↦ TileSet.ext <| funext <| fun _ ↦ mul_smul _ _ _
+  smul g t := ⟨(g • ·) ∘ ↑t⟩
+  one_smul _ := TileSet.ext <| funext <| fun _ ↦ one_smul _ _
+  mul_smul _ _ _ := TileSet.ext <| funext <| fun _ ↦ mul_smul _ _ _
 
 lemma smul_coe (g : G) (t : TileSet ps ιₜ) : (g • t : TileSet ps ιₜ) = (g • ·) ∘ ↑t := rfl
 
@@ -296,9 +293,9 @@ lemma mem_inv_smul_iff_smul_mem {pt : PlacedTile ps} {g : G} {t : TileSet ps ι�
 /-- The action of both a group element and a permutation of the index type on a `TileSet`, used
 in defining the symmetry group. -/
 instance : MulAction (G × Equiv.Perm ιₜ) (TileSet ps ιₜ) where
-  smul := fun g t ↦ (g.fst • t).reindex g.snd.symm
-  one_smul := fun _ ↦ TileSet.ext <| funext <| fun _ ↦ one_smul _ _
-  mul_smul := fun g h t ↦ TileSet.ext <| funext <| fun i ↦ by
+  smul g t := (g.fst • t).reindex g.snd.symm
+  one_smul _ := TileSet.ext <| funext <| fun _ ↦ one_smul _ _
+  mul_smul g h t := TileSet.ext <| funext <| fun i ↦ by
     change (g.1 * h.1) • t ((g.2 * h.2)⁻¹ i) = g.1 • h.1 • t (h.2⁻¹ (g.2⁻¹ i))
     simp [mul_smul]
 

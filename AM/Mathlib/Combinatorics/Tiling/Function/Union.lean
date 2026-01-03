@@ -21,7 +21,7 @@ whole of `X`.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 

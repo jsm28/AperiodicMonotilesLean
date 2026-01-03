@@ -17,7 +17,7 @@ This file defines a type for the number of copies of each possible tile in a `Ti
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 
@@ -34,8 +34,7 @@ variable {ps : Protoset G X ιₚ} {ιₜ E F : Type*}
 universe u
 variable {ιᵤ ιᵤ' : Type u} [EquivLike E ιᵤ' ιᵤ] [FunLike F ιᵤ' ιᵤ] [EmbeddingLike F ιᵤ' ιᵤ]
 
-variable (ps)
-
+variable (ps) in
 /-- A `TileSetCard ps` associates a `Cardinal` to each `PlacedTile ps`. This is a separate
 definition rather than just using plain functions because of the action by `G`. The main
 definition used for tilings is `TileSet`, which uses indexed families; this definition is
@@ -45,8 +44,6 @@ equal. -/
   /-- The number of each tile. Use the coercion to a function rather than using `tilesCard`
       directly. -/
   tilesCard : PlacedTile ps → Cardinal
-
-variable {ps}
 
 namespace TileSetCard
 
@@ -88,11 +85,11 @@ lemma le_def {t₁ t₂ : TileSetCard ps} : t₁ ≤ t₂ ↔ ∀ i, t₁ i ≤ 
   Iff.rfl
 
 instance : MulAction G (TileSetCard ps) where
-  smul := fun g t ↦ ⟨fun pt ↦ t (g⁻¹ • pt)⟩
-  one_smul := fun t ↦ TileSetCard.ext <| funext <| fun pt ↦ by
+  smul g t := ⟨fun pt ↦ t (g⁻¹ • pt)⟩
+  one_smul t := TileSetCard.ext <| funext <| fun pt ↦ by
     change t _ = _
     simp
-  mul_smul := fun g₁ g₂ t ↦ TileSetCard.ext <| funext <| fun pt ↦ by
+  mul_smul g₁ g₂ t := TileSetCard.ext <| funext <| fun pt ↦ by
     change t _ = t _
     convert rfl using 2
     rw [mul_inv_rev, mul_smul]

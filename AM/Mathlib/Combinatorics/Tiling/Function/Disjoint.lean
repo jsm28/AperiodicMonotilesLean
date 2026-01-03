@@ -32,7 +32,7 @@ many distinct tiles of `t` contain any point of `s`.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 

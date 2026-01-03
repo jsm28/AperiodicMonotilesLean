@@ -34,7 +34,7 @@ natural number.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 
@@ -50,11 +50,11 @@ variable {G X ιₚ ιₜ : Type*} [Group G] [MulAction G X] {ps : Protoset G X 
 namespace TileSet
 
 instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup (t : Set (PlacedTile ps)) where
-  smul := fun g pt ↦ ⟨(g : G) • ↑pt, smul_mem_of_mem_of_mem_symmetryGroup g.property pt.property⟩
-  one_smul := fun pt ↦ by
+  smul g pt := ⟨(g : G) • ↑pt, smul_mem_of_mem_of_mem_symmetryGroup g.property pt.property⟩
+  one_smul pt := by
     simp only [HSMul.hSMul, Subtype.ext_iff]
     exact one_smul _ _
-  mul_smul := fun x y pt ↦ by
+  mul_smul x y pt := by
     simp only [HSMul.hSMul, Subtype.ext_iff]
     exact mul_smul _ _ _
 
@@ -94,7 +94,7 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
     MulAction.orbitRel.Quotient (g • t).symmetryGroup
       ((g • t : TileSet ps ιₜ) : Set (PlacedTile ps)) ≃
         MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps)) where
-  toFun := fun pt ↦ Quotient.liftOn' pt
+  toFun pt := Quotient.liftOn' pt
     (fun x ↦ ⟦⟨g⁻¹ • ↑x, mem_smul_iff_smul_inv_mem.1 x.property⟩⟧)
     (fun x y h ↦ by
       convert Quotient.eq''.2 ?_
@@ -106,7 +106,7 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
       refine ⟨g⁻¹ * a * g, mem_symmetryGroup_smul_iff'.1 ha, ?_⟩
       change (g⁻¹ * a * g) • (g⁻¹ • (y : PlacedTile ps)) = g⁻¹ • ↑x
       simpa [mul_smul] using haa)
-  invFun := fun pt ↦ Quotient.liftOn' pt
+  invFun pt := Quotient.liftOn' pt
     (fun x ↦ ⟦⟨g • ↑x, (smul_mem_smul_iff g).2 x.property⟩⟧)
     (fun x y h ↦ by
       convert Quotient.eq''.2 ?_
@@ -210,7 +210,7 @@ lemma isohedralNumberNat_eq_zero_iff {t : TileSet ps ιₜ} :
 def subMulActionTilePoint (t : TileSet ps ιₜ) :
     SubMulAction t.symmetryGroup (Prod (t : Set (PlacedTile ps)) X) where
   carrier := {x | x.2 ∈ (x.1 : PlacedTile ps)}
-  smul_mem' := fun g x h ↦ by
+  smul_mem' g x h := by
     rcases x with ⟨pt, x⟩
     simp only [Prod.smul_mk, Set.mem_setOf_eq, coe_symmetryGroup_smul, Subgroup.smul_def] at h ⊢
     exact (PlacedTile.smul_mem_smul_iff ↑g).2 h
@@ -364,13 +364,12 @@ end TileSet
 
 namespace Protoset
 
-variable (ιₜ) {H : Subgroup G}
+variable {H : Subgroup G}
 
+variable (ιₜ) in
 /-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`. -/
 def isohedralNumber (p : TileSetFunction ps Prop H) : Cardinal :=
   ⨅ (t : {x : TileSet ps ιₜ // p x}), TileSet.isohedralNumber (t : TileSet ps ιₜ)
-
-variable {ιₜ}
 
 lemma isohedralNumber_eq_zero_iff {p : TileSetFunction ps Prop H} :
     isohedralNumber ιₜ p = 0 ↔ IsEmpty ιₜ ∨ ∀ t : TileSet ps ιₜ, ¬ p t := by
@@ -432,14 +431,11 @@ lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop H} :
       rintro ⟨t', rfl⟩
       rwa [TileSet.isohedralNumber_ne_zero_iff]
 
-variable (ιₜ)
-
+variable (ιₜ) in
 /-- The minimum number of orbits of tiles in any `TileSet ps ιₜ` that satisfies the property `p`,
 as a natural number; zero if infinite or if no such `TileSet` exists. -/
 def isohedralNumberNat (p : TileSetFunction ps Prop H) : ℕ :=
   Cardinal.toNat <| isohedralNumber ιₜ p
-
-variable {ιₜ}
 
 lemma isohedralNumberNat_eq_one_iff {p : TileSetFunction ps Prop H} :
     isohedralNumberNat ιₜ p = 1 ↔ Nonempty ιₜ ∧ ∃ t : TileSet ps ιₜ, p t

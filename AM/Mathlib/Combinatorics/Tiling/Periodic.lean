@@ -37,11 +37,10 @@ periodic.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
-* Chaim Goodman-Strauss, [Open Questions in
-  Tiling](https://strauss.hosted.uark.edu/papers/survey.pdf)
-* Rachel Greenfeld and Terence Tao, [A counterexample to the periodic tiling
-  conjecture](https://arxiv.org/abs/2211.15847)
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
+* [Chaim Goodman-Strauss, *Open Questions in Tiling*][GoodmanStrauss2000]
+* [Rachel Greenfeld and Terence Tao, *A counterexample to the periodic tiling
+  conjecture*][GreenfeldTao2024]
 -/
 
 
@@ -336,19 +335,19 @@ end TileSet
 
 namespace Protoset
 
-variable (ιₜ) {H : Subgroup G}
+variable {H : Subgroup G}
 
+variable (ιₜ) in
 /-- Whether `ps` is weakly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that is,
 whether it has such a `TileSet`, but none is strongly periodic. -/
 def WeaklyAperiodic (p : TileSetFunction ps Prop H) : Prop :=
   (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ t.StronglyPeriodic
 
+variable (ιₜ) in
 /-- Whether `ps` is strongly aperiodic (for `TileSet ps ιₜ` that satisfy the property `p`); that
 is, whether it has such a `TileSet`, but none is weakly periodic. -/
 def StronglyAperiodic (p : TileSetFunction ps Prop H) : Prop :=
   (∃ t : TileSet ps ιₜ, p t) ∧ ∀ t : TileSet ps ιₜ, p t → ¬ t.WeaklyPeriodic 1
-
-variable {ιₜ}
 
 lemma WeaklyAperiodic.aleph0_le_isohedralNumber {p : TileSetFunction ps Prop H}
     (h : ps.WeaklyAperiodic ιₜ p) (hf : ∀ i, (ps i : Set X).Finite)

@@ -24,7 +24,7 @@ here.
 
 ## References
 
-* Branko Grünbaum and G. C. Shephard, Tilings and Patterns, 1987
+* [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
 
 
@@ -228,8 +228,8 @@ lemma union_patch' (t : TileSet ps ιₜ) (s : Set X) :
 directly from the original `TileSet`. -/
 def patchPatchEquiv (t : TileSet ps ιₜ) {s₁ s₂ : Set X} (h : s₂ ⊆ s₁) :
     {i // (s₂ ∩ t.patch s₁ i).Nonempty} ≃ {i // (s₂ ∩ t i).Nonempty} where
-  toFun := fun i ↦ ⟨↑↑i, by exact i.property⟩
-  invFun := fun i ↦ ⟨⟨↑i, i.property.mono <| by gcongr⟩, i.property⟩
+  toFun i := ⟨↑↑i, by exact i.property⟩
+  invFun i := ⟨⟨↑i, i.property.mono <| by gcongr⟩, i.property⟩
   left_inv := by simp [LeftInverse]
   right_inv := by simp [Function.RightInverse, LeftInverse]
 
