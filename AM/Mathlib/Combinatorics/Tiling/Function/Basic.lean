@@ -36,12 +36,12 @@ variable {G X Y ιₚ : Type*} [Group G] [MulAction G X] [MulAction G Y]
 
 universe u
 variable {ps : Protoset G X ιₚ} {ιᵤ ιᵤ' : Type u} {ιₜ ιₜ' Eᵤ α β γ : Type*}
+variable {H : Subgroup G}
 variable [EquivLike Eᵤ ιᵤ' ιᵤ]
 
 section
 
-variable (Y ps α) (H : Subgroup G)
-
+variable (Y ps α H) in
 /-- A `TileSetFunction ps α H` is a function from `TileSet ps ιₜ` to `α` that is invariant under
 change or permutation of index type `ιₜ` (within the same universe) and under the action of group
 elements in `H`. -/
@@ -54,6 +54,7 @@ elements in `H`. -/
   /-- The function is invariant under the group action within the subgroup `H`. -/
   smul_eq : ∀ {ιₜ : Type u} {g : G} (t : TileSet ps ιₜ), g ∈ H → toFun (g • t) = toFun t
 
+variable (Y ps α H) in
 /-- A `VarTileSetFunction Y ps α H` is a function from `Y` and `TileSet ps ιₜ` to `α` that is
 invariant under change or permutation of index type `ιₜ` (within the same universe) and under the
 action (on both arguments) of group elements in `H`. -/
@@ -71,16 +72,12 @@ end
 
 namespace TileSetFunction
 
-variable (ps α) (H : Subgroup G)
-
 instance : CoeFun (TileSetFunction ps α H) (fun _ ↦ {ιₜ : Type*} → TileSet ps ιₜ → α) where
   coe := toFun
 
 attribute [coe] toFun
 
 attribute [simp] smul_eq
-
-variable {ps α H}
 
 @[simp] lemma reindex_eq (f : TileSetFunction ps α H) (t : TileSet ps ιᵤ) (e : Eᵤ) :
     f (t.reindex e) = f t :=
@@ -125,15 +122,13 @@ lemma iff_of_coeSet_eq_of_injective (f : TileSetFunction ps Prop H) {t₁ : Tile
     (h₂ : Injective t₂) : f t₁ ↔ f t₂ := by
   simpa using f.eq_of_coeSet_eq_of_injective h h₁ h₂
 
-variable (ps H)
-
+variable (ps H) in
 /-- The constant `TileSetFunction`. -/
 protected def const (a : α) : TileSetFunction ps α H :=
   ⟨fun {ιₜ} ↦ const (TileSet ps ιₜ) a, by simp, by simp⟩
 
+variable (H) in
 @[simp] lemma const_apply (a : α) (t : TileSet ps ιₜ) : TileSetFunction.const ps H a t = a := rfl
-
-variable {ps H}
 
 instance [Nonempty α] : Nonempty (TileSetFunction ps α H) :=
   ⟨TileSetFunction.const ps H <| Classical.arbitrary _⟩
@@ -169,13 +164,10 @@ protected def ofLE {H' : Subgroup G} (h : H' ≤ H) :
     (t : TileSet ps ιₜ) : f.ofLE h t = f t :=
   rfl
 
-variable (ps)
-
+variable (ps) in
 @[simp] lemma ofLE_const (a : α) {H' : Subgroup G} (h : H' ≤ H) :
     (TileSetFunction.const ps H a).ofLE h = TileSetFunction.const ps H' a :=
   rfl
-
-variable {ps}
 
 lemma ofLE_comp (f : TileSetFunction ps α H) (fab : α → β) {H' : Subgroup G} (h : H' ≤ H) :
     (f.comp fab).ofLE h = (f.ofLE h).comp fab :=
@@ -189,16 +181,12 @@ end TileSetFunction
 
 namespace VarTileSetFunction
 
-variable (Y ps α) (H : Subgroup G)
-
 instance : CoeFun (VarTileSetFunction Y ps α H) (fun _ ↦ {ιₜ : Type*} → Y → TileSet ps ιₜ → α) where
   coe := toFun
 
 attribute [coe] toFun
 
 attribute [simp] smul_eq
-
-variable {Y ps α H}
 
 @[simp] lemma reindex_eq (f : VarTileSetFunction Y ps α H) (y : Y) (t : TileSet ps ιᵤ) (e : Eᵤ) :
     f y (t.reindex e) = f y t :=
@@ -244,19 +232,15 @@ lemma iff_of_coeSet_eq_of_injective (f : VarTileSetFunction Y ps Prop H) {y : Y}
     (h₁ : Injective t₁) (h₂ : Injective t₂) : f y t₁ ↔ f y t₂ := by
   simpa using f.eq_of_coeSet_eq_of_injective y h h₁ h₂
 
-variable (Y ps H)
-
+variable (Y ps H) in
 /-- The constant `VarTileSetFunction`. -/
 protected def const (a : α) : VarTileSetFunction Y ps α H :=
   ⟨fun {ιₜ} ↦ const Y (const (TileSet ps ιₜ) a), by simp, by simp⟩
 
-variable {Y}
-
+variable (H) in
 @[simp] lemma const_apply (a : α) (y : Y) (t : TileSet ps ιₜ) :
     VarTileSetFunction.const Y ps H a y t = a :=
   rfl
-
-variable {ps H}
 
 instance [Nonempty α] : Nonempty (VarTileSetFunction Y ps α H) :=
   ⟨VarTileSetFunction.const Y ps H <| Classical.arbitrary _⟩
@@ -293,13 +277,10 @@ protected def ofLE (f : VarTileSetFunction Y ps α H) {H' : Subgroup G} (h : H' 
     (y : Y) (t : TileSet ps ιₜ) : f.ofLE h y t = f y t :=
   rfl
 
-variable (Y ps)
-
+variable (Y ps) in
 @[simp] lemma ofLE_const (a : α) {H' : Subgroup G} (h : H' ≤ H) :
     (VarTileSetFunction.const Y ps H a).ofLE h = VarTileSetFunction.const Y ps H' a :=
   rfl
-
-variable {Y ps}
 
 lemma ofLE_comp (f : VarTileSetFunction Y ps α H) (fab : α → β) {H' : Subgroup G} (h : H' ≤ H) :
     (f.comp fab).ofLE h = (f.ofLE h).comp fab :=
@@ -325,13 +306,10 @@ def toTileSetFunction (f : VarTileSetFunction Y ps α H) (y : Y) :
     (t : TileSet ps ιₜ) : f.toTileSetFunction y t = f y t :=
   rfl
 
-variable (ps H)
-
+variable (ps H) in
 @[simp] lemma toTileSetFunction_const (a : α) (y : Y) :
     (VarTileSetFunction.const Y ps H a).toTileSetFunction y = TileSetFunction.const ps _ a :=
   rfl
-
-variable {ps H}
 
 lemma toTileSetFunction_comp (f : VarTileSetFunction Y ps α H) (fab : α → β) (y : Y) :
     (f.comp fab).toTileSetFunction y = (f.toTileSetFunction y).comp fab :=
@@ -346,43 +324,36 @@ end VarTileSetFunction
 
 namespace TileSetFunction
 
-variable {H : Subgroup G}
-
-variable (Y)
-
+variable (Y) in
 /-- Converting a `TileSetFunction ps α H` to a `VarTileSetFunction Y ps α H` that ignores its
 first argument. -/
 def toVarTileSetFunction (f : TileSetFunction ps α H) : VarTileSetFunction Y ps α H :=
   ⟨fun {ιₜ} ↦ const Y f.toFun, by simp, fun _ _ hg ↦ by simp [hg]⟩
 
-variable {Y}
-
 @[simp] lemma toVarTileSetFunction_apply (f : TileSetFunction ps α H) (y : Y) (t : TileSet ps ιₜ) :
     f.toVarTileSetFunction Y y t = f t :=
   rfl
 
-variable (Y ps H)
-
+variable (Y ps H) in
 @[simp] lemma toVarTileSetFunction_const (a : α) :
     (TileSetFunction.const ps H a).toVarTileSetFunction Y = VarTileSetFunction.const Y ps H a :=
   rfl
 
-variable {ps H}
-
+variable (Y) in
 lemma toVarTileSetFunction_comp (f : TileSetFunction ps α H) (fab : α → β) :
     (f.comp fab).toVarTileSetFunction Y = (f.toVarTileSetFunction Y).comp fab :=
   rfl
 
+variable (Y) in
 lemma toVarTileSetFunction_comp₂ (f : TileSetFunction ps α H) (f' : TileSetFunction ps β H)
     (fabg : α → β → γ) : (f.comp₂ f' fabg).toVarTileSetFunction Y =
       (f.toVarTileSetFunction Y).comp₂ (f'.toVarTileSetFunction Y) fabg :=
   rfl
 
+variable (Y) in
 lemma toVarTileSetFunction_ofLE (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H) :
     (f.ofLE h).toVarTileSetFunction Y = (f.toVarTileSetFunction Y).ofLE h :=
   rfl
-
-variable {Y}
 
 @[simp] lemma toVarTileSetFunction_toTileSetFunction (f : TileSetFunction ps α H) (y : Y) :
     (f.toVarTileSetFunction Y).toTileSetFunction y = f.ofLE inf_le_left :=
