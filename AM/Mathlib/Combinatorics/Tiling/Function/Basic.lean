@@ -160,9 +160,10 @@ protected def comp₂ (f : TileSetFunction ps α H) (f' : TileSetFunction ps β 
   rfl
 
 /-- Converting a `TileSetFunction ps α H` to one using a subgroup of `H`. -/
-protected def ofLE (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H) :
-    TileSetFunction ps α H' :=
-  ⟨f.toFun, by simp, fun _ hg ↦ by simp [SetLike.le_def.1 h hg]⟩
+protected def ofLE {H' : Subgroup G} (h : H' ≤ H) :
+    TileSetFunction ps α H ↪ TileSetFunction ps α H' where
+  toFun f := ⟨f.toFun, by simp, fun _ hg ↦ by simp [SetLike.le_def.1 h hg]⟩
+  inj' := fun f f' h ↦ by simpa using h
 
 @[simp] lemma ofLE_apply (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H)
     (t : TileSet ps ιₜ) : f.ofLE h t = f t :=
