@@ -27,7 +27,7 @@ group elements in `H` on both the value from `Y` and the `TileSet`.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Pointwise
@@ -361,4 +361,4 @@ lemma toVarTileSetFunction_ofLE (f : TileSetFunction ps α H) {H' : Subgroup G} 
 
 end TileSetFunction
 
-end Discrete
+end DiscreteTiling

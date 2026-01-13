@@ -25,7 +25,7 @@ This file defines when tiles in a discrete context make a tiling of the whole sp
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Pointwise
@@ -117,4 +117,4 @@ lemma IsTiling.finiteDistinctIntersections {t : TileSet ps ιₜ}
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

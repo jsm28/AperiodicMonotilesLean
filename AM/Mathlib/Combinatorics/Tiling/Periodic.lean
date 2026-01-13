@@ -46,7 +46,7 @@ periodic.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Cardinal Nat Pointwise
@@ -382,4 +382,4 @@ lemma weaklyAperiodic_iff_aleph0_le_isohedralNumber {p : TileSetFunction ps Prop
 
 end Protoset
 
-end Discrete
+end DiscreteTiling

@@ -23,7 +23,7 @@ This file defines a type for the number of copies of each possible tile in a `Ti
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Cardinal Pointwise
@@ -146,4 +146,4 @@ lemma card_smul (g : G) (t : TileSet ps ιₜ) : (g • t).card = g • (t.card)
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

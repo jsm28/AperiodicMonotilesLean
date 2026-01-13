@@ -48,9 +48,9 @@ the earliest.
 
 1. General definitions about tilings, in a discrete context, with
 lemmas with little to no mathematical content.  In progress in this
-repository (not yet ready to PR to mathlib, but background material
-not specifically related to tilings is being PRed as I go along, once
-all its dependencies are in mathlib).
+repository (PRing parts to mathlib also in progress; background
+material not specifically related to tilings is being PRed as I go
+along, once all its dependencies are in mathlib).
 
 2. Discrete versions of definitions and results about periodicity,
 including relations between weak and strong periodicity of tilings,
@@ -58,9 +58,10 @@ and between weak and strong aperiodicity of protosets, in contexts
 that can be considered two-dimensional (more generally: periodicity in
 (n-1) directions in an n-dimensional space implying existence of a
 strongly periodic tiling); a discrete analogue of Theorem 3.7.1 of
-Tilings and Patterns.  In progress in this repository (not yet ready
-to PR to mathlib; again, background material not specifically related
-to tilings is being PRed as I go along).
+Tilings and Patterns.  In progress in this repository (some parts to
+be PRed to mathlib once dependencies are in mathlib; again, background
+material not specifically related to tilings is being PRed as I go
+along).
 
 3. A discrete version of unique hierarchical structure in a tiling
 implying it is not periodic (for a more limited case for certain

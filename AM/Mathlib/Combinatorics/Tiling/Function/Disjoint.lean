@@ -38,7 +38,7 @@ many distinct tiles of `t` contain any point of `s`.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Pointwise
@@ -376,4 +376,4 @@ lemma FiniteDistinctIntersections.finiteDistinctIntersectionsOn (s : Set X) {t :
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

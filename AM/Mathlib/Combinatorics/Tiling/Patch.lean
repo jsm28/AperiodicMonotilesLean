@@ -30,7 +30,7 @@ here.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Cardinal Pointwise
@@ -269,4 +269,4 @@ lemma card_patch_union (t : TileSet ps ιₜ) (s₁ s₂ : Set X) :
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

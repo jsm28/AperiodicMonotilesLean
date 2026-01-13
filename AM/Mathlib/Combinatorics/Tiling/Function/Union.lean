@@ -27,7 +27,7 @@ whole of `X`.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Pointwise
@@ -115,4 +115,4 @@ lemma UnionEqUniv.exists_mem_mem {t : TileSet ps ιₜ} (h : t.UnionEqUniv) (x :
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

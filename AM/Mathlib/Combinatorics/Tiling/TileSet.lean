@@ -3,8 +3,8 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Tile
 import Mathlib.Algebra.Group.Subgroup.Pointwise
+import Mathlib.Combinatorics.Tiling.Tile
 import Mathlib.GroupTheory.GroupAction.Basic
 
 /-!
@@ -36,7 +36,7 @@ indices.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Pointwise
@@ -470,4 +470,4 @@ lemma smul_sigma (g : G) (t : (i : ι) → TileSet ps (ιₜι i)) :
 
 end TileSet
 
-end Discrete
+end DiscreteTiling

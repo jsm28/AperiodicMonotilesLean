@@ -40,7 +40,7 @@ natural number.
 
 noncomputable section
 
-namespace Discrete
+namespace DiscreteTiling
 
 open Function
 open scoped Cardinal Pointwise
@@ -446,4 +446,4 @@ lemma isohedralNumberNat_eq_one_iff {p : TileSetFunction ps Prop H} :
 
 end Protoset
 
-end Discrete
+end DiscreteTiling
