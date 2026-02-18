@@ -78,8 +78,11 @@ lemma coe_inf (t₁ t₂ : TileSetCard ps) :
     (t₁ ⊓ t₂ : TileSetCard ps) = (t₁ : PlacedTile ps → Cardinal) ⊓ ↑t₂ :=
   rfl
 
+instance : PartialOrder (TileSetCard ps) :=
+  PartialOrder.lift _ coe_injective
+
 instance : DistribLattice (TileSetCard ps) :=
-  coe_injective.distribLattice _ (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
+  coe_injective.distribLattice _ Iff.rfl Iff.rfl (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
 
 lemma le_def {t₁ t₂ : TileSetCard ps} : t₁ ≤ t₂ ↔ ∀ i, t₁ i ≤ t₂ i :=
   Iff.rfl

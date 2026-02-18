@@ -123,6 +123,7 @@ lemma DisjointOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ} (hd : t.Disjo
   fun _ _ h ↦ Set.disjoint_of_subset (Set.inter_subset_inter_right _ hs)
     (Set.inter_subset_inter_right _ hs) (hd h)
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma disjointOn_empty (t : TileSet ps ιₜ) : t.DisjointOn ∅ := by
   simp [TileSet.DisjointOn, Pairwise]
 
@@ -230,6 +231,7 @@ lemma FiniteIntersectionsOn.subset {s₁ s₂ : Set X} {t : TileSet ps ιₜ}
     t.FiniteIntersectionsOn Set.univ ↔ t.FiniteIntersections := by
   simp [TileSet.FiniteIntersections, TileSet.FiniteIntersectionsOn]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma DisjointOn.finiteIntersectionsOn {s : Set X} {t : TileSet ps ιₜ}
     (h : t.DisjointOn s) : t.FiniteIntersectionsOn s := by
   refine fun x hx ↦ Set.Subsingleton.finite fun i hi j hj ↦ ?_

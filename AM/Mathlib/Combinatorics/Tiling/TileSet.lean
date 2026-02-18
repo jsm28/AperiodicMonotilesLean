@@ -229,6 +229,7 @@ def equivOfCoeSetEqOfInjective {t₁ : TileSet ps ιₜ} {t₂ : TileSet ps ι�
   ((Equiv.ofInjective t₂ h₂).trans (Equiv.cast (congrArg _ h.symm))).trans
     (Equiv.ofInjective t₁ h₁).symm
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma reindex_equivOfCoeSetEqOfInjective {t₁ : TileSet ps ιₜ} {t₂ : TileSet ps ιₜ'}
     (h : (t₁ : Set (PlacedTile ps)) = t₂) (h₁ : Injective t₁) (h₂ : Injective t₂) :
     t₁.reindex (equivOfCoeSetEqOfInjective h h₁ h₂) = t₂ := by

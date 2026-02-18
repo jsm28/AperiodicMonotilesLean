@@ -416,7 +416,7 @@ lemma isohedralNumber_eq_one_iff {p : TileSetFunction ps Prop H} :
       TileSet.isohedralNumber (t : TileSet ps ιₜ)) with he | hn
     · simp [he] at h
     · have h' := csInf_mem hn
-      simp only [h, Set.mem_range, Subtype.exists, exists_prop,
+      simp only [h, Set.mem_range, Subtype.exists,
         TileSet.isohedralNumber_eq_one_iff] at h'
       rcases h' with ⟨t, hp, hni, hm⟩
       exact ⟨hni, t, hp, hm⟩
