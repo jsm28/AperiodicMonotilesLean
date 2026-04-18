@@ -31,7 +31,7 @@ open scoped Cardinal Pointwise
 variable {G X ιₚ : Type*} [Group G] [MulAction G X]
 
 variable {ps : Protoset G X ιₚ} {ιₜ E F : Type*}
-universe u
+universe u v
 variable {ιᵤ ιᵤ' : Type u} [EquivLike E ιᵤ' ιᵤ] [FunLike F ιᵤ' ιᵤ] [EmbeddingLike F ιᵤ' ιᵤ]
 
 variable (ps) in
@@ -43,7 +43,7 @@ equal. -/
 @[ext] structure TileSetCard where
   /-- The number of each tile. Use the coercion to a function rather than using `tilesCard`
       directly. -/
-  tilesCard : PlacedTile ps → Cardinal
+  tilesCard : PlacedTile ps → Cardinal.{v}
 
 namespace TileSetCard
 
