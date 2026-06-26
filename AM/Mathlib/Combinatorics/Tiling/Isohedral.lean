@@ -124,14 +124,12 @@ def smulOrbitEquiv (g : G) (t : TileSet ps ιₜ) :
     induction x using Quotient.inductionOn'
     simp only [Quotient.liftOn'_mk'']
     convert rfl
-    change (_ : PlacedTile ps) = g • (g⁻¹ • _)
     simp
   right_inv := by
     intro x
     induction x using Quotient.inductionOn'
     simp only [Quotient.liftOn'_mk'']
     convert rfl
-    change (_ : PlacedTile ps) = g⁻¹ • (g • _)
     simp
 
 /-- The number of orbits of tiles under the action of the symmetry group of a `TileSet`. This

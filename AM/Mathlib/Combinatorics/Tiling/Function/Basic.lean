@@ -298,7 +298,6 @@ def toTileSetFunction (f : VarTileSetFunction Y ps α H) (y : Y) :
   ⟨f.toFun y,
    by simp,
    fun {ιₜ} {g} t hg ↦ by
-     simp only
      nth_rewrite 1 [← MulAction.mem_stabilizer_iff.1 (Subgroup.mem_inf.1 hg).2]
      rw [smul_eq _ _ _ (Subgroup.mem_inf.1 hg).1]⟩
 

@@ -105,7 +105,7 @@ lemma StronglyPeriodic.finite_quotient {t : TileSet ps ιₜ} (h : t.StronglyPer
     infer_instance
   intro ω
   rw [nonempty_quotient_iff]
-  simpa using ω.nonempty_orbit
+  simpa using! ω.nonempty_orbit
 
 lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
     (h : t.StronglyPeriodic) {H : Subgroup G} (free : ∀ x : X, MulAction.stabilizer H x = ⊥)

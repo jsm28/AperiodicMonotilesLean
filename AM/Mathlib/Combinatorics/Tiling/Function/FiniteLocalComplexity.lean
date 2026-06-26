@@ -72,7 +72,7 @@ that point, up to the symmetries in `H`. -/
 def FiniteLocalComplexity (H : Subgroup G) : TileSetFunction ps Prop H :=
   ((FiniteLocalComplexityOn H).toTileSetFunction (Set.range Singleton.singleton)).ofLE (by
     refine Eq.le ?_
-    convert (inf_top_eq H).symm
+    convert! (inf_top_eq H).symm
     ext g
     simp only [MulAction.mem_stabilizer_iff, Subgroup.mem_top, iff_true, Set.smul_set_range]
     ext s
