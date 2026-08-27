@@ -144,7 +144,7 @@ def FiniteIntersections : TileSetFunction ps Prop ⊤ :=
      simp only [eq_iff_iff]
      intro x
      convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f))
-     exact Equiv.setOf_apply_symm_eq_image_setOf f fun i ↦ x ∈ t i,
+     exact Equiv.setOfPred_apply_symm_eq_image_setOfPred f fun i ↦ x ∈ t i,
    by
      intro ιₜ g t _
      simp only [eq_iff_iff]
@@ -177,7 +177,7 @@ lemma FiniteIntersections.reindex_of_surjective {t : TileSet ps ιₜ} {e : ι�
 
 lemma Disjoint.finiteIntersections {t : TileSet ps ιₜ} (h : t.Disjoint) :
     t.FiniteIntersections :=
-  fun _ ↦ Set.Subsingleton.finite (subsingleton_setOf_mem_iff_pairwise_disjoint.2 h _)
+  fun _ ↦ Set.Subsingleton.finite (subsingleton_setOfPred_mem_iff_pairwise_disjoint.2 h _)
 
 /-- Whether only finitely many tiles of `t` contain any point of `s`. -/
 def FiniteIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
@@ -187,7 +187,7 @@ def FiniteIntersectionsOn : VarTileSetFunction (Set X) ps Prop ⊤ :=
      simp only [eq_iff_iff]
      refine forall₂_congr (fun x _ ↦ ?_)
      convert Set.finite_image_iff (Set.injOn_of_injective (EquivLike.injective f))
-     exact Equiv.setOf_apply_symm_eq_image_setOf f fun i ↦ x ∈ t i,
+     exact Equiv.setOfPred_apply_symm_eq_image_setOfPred f fun i ↦ x ∈ t i,
    by
      intro ιₜ g s t _
      simp only [eq_iff_iff]
@@ -240,7 +240,7 @@ lemma DisjointOn.finiteIntersectionsOn {s : Set X} {t : TileSet ps ιₜ}
   revert h'
   simp only [imp_false, Set.not_disjoint_iff]
   refine ⟨x, ?_⟩
-  simp only [Set.mem_setOf_eq] at hi hj
+  simp only [Set.mem_ofPred_eq] at hi hj
   simp [hx, hi, hj]
 
 lemma FiniteIntersections.finiteIntersectionsOn (s : Set X) {t : TileSet ps ιₜ}
@@ -273,7 +273,7 @@ lemma FiniteDistinctIntersections.reindex {t : TileSet ps ιₜ}
     (hfi : t.FiniteDistinctIntersections) {e : ιₜ' → ιₜ} :
     (t.reindex e).FiniteDistinctIntersections := by
   refine fun x ↦ Set.Finite.subset (hfi x) ?_
-  simp only [Set.setOf_subset_setOf, and_imp]
+  simp only [Set.ofPred_subset_ofPred, and_imp]
   exact fun _ h hx ↦ ⟨mem_of_mem_reindex h, hx⟩
 
 lemma FiniteDistinctIntersections.reindex_of_surjective {t : TileSet ps ιₜ} {e : ιₜ' → ιₜ}
@@ -288,7 +288,7 @@ lemma FiniteIntersections.finiteDistinctIntersections {t : TileSet ps ιₜ}
   intro x
   convert Set.Finite.image t (h x)
   ext pt
-  simp only [Set.mem_setOf_eq, Set.mem_image, TileSet.mem_def]
+  simp only [Set.mem_ofPred_eq, Set.mem_image, TileSet.mem_def]
   refine ⟨fun ⟨⟨i, hi⟩, hx⟩ ↦ ?_, fun ⟨i, ⟨hx, hi⟩⟩ ↦ ?_⟩
   · subst hi
     exact ⟨i, hx, rfl⟩
@@ -329,7 +329,7 @@ lemma FiniteDistinctIntersectionsOn.reindex {s : Set X} {t : TileSet ps ιₜ}
     (hfi : t.FiniteDistinctIntersectionsOn s) {e : ιₜ' → ιₜ} :
     (t.reindex e).FiniteDistinctIntersectionsOn s := by
   refine fun x hx ↦ Set.Finite.subset (hfi x hx) ?_
-  simp only [Set.setOf_subset_setOf, and_imp]
+  simp only [Set.ofPred_subset_ofPred, and_imp]
   exact fun _ h hx ↦ ⟨mem_of_mem_reindex h, hx⟩
 
 lemma FiniteDistinctIntersectionsOn.reindex_of_surjective {s : Set X} {t : TileSet ps ιₜ}
@@ -344,7 +344,7 @@ lemma FiniteIntersectionsOn.finiteDistinctIntersectionsOn {s : Set X} {t : TileS
   intro x hx
   convert Set.Finite.image t (h x hx)
   ext pt
-  simp only [Set.mem_setOf_eq, Set.mem_image, TileSet.mem_def]
+  simp only [Set.mem_ofPred_eq, Set.mem_image, TileSet.mem_def]
   refine ⟨fun ⟨⟨i, hi⟩, hx⟩ ↦ ?_, fun ⟨i, ⟨hx, hi⟩⟩ ↦ ?_⟩
   · subst hi
     exact ⟨i, hx, rfl⟩

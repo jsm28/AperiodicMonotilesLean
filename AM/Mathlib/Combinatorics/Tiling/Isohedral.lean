@@ -211,7 +211,7 @@ def subMulActionTilePoint (t : TileSet ps ιₜ) :
   carrier := {x | x.2 ∈ (x.1 : PlacedTile ps)}
   smul_mem' g x h := by
     rcases x with ⟨pt, x⟩
-    simp only [Prod.smul_mk, Set.mem_setOf_eq, coe_symmetryGroup_smul, Subgroup.smul_def] at h ⊢
+    simp only [Prod.smul_mk, Set.mem_ofPred_eq, coe_symmetryGroup_smul, Subgroup.smul_def] at h ⊢
     exact (PlacedTile.smul_mem_smul_iff ↑g).2 h
 
 instance (t : TileSet ps ιₜ) : MulAction t.symmetryGroup
@@ -331,7 +331,7 @@ lemma finite_preimage_quotientPointOfquotientTilePoint {t : TileSet ps ιₜ} (x
     (h : t.FiniteDistinctIntersectionsOn {x}) :
     (t.quotientPointOfquotientTilePoint ⁻¹' {⟦x⟧}).Finite := by
   have hf := (h x (Set.mem_singleton _)).to_subtype
-  rw [Set.coe_setOf] at hf
+  rw [Set.coe_ofPred] at hf
   rw [preimage_quotientPointOfquotientTilePoint_eq_range]
   exact Set.finite_range _
 
