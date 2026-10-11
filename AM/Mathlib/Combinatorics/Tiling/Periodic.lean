@@ -113,8 +113,8 @@ lemma StronglyPeriodic.finite_quotient {t : TileSet ps ιₜ} (h : t.StronglyPer
   simpa using! ω.nonempty_orbit
 
 lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
-    (h : t.StronglyPeriodic) {H : Subgroup G} (free : ∀ x : X, MulAction.stabilizer H x = ⊥)
-    (hi : H.index ≠ 0) : t.symmetryGroup.index ≠ 0 := by
+    (h : t.StronglyPeriodic) {H : Subgroup G} [IsCancelSMul H X] (hi : H.index ≠ 0) :
+    t.symmetryGroup.index ≠ 0 := by
   rw [stronglyPeriodic_iff] at h
   have hr : H.relIndex t.symmetryGroup ≠ 0 := mt Subgroup.index_eq_zero_of_relIndex_eq_zero hi
   suffices t.symmetryGroup.relIndex H ≠ 0 by
@@ -141,7 +141,7 @@ lemma StronglyPeriodic.index_ne_zero_of_free [Nonempty X] {t : TileSet ps ιₜ}
     simp only [MulAction.mem_stabilizer_iff, Subgroup.mem_bot]
     refine ⟨fun hs ↦ ?_, fun hs ↦ by simp [hs]⟩
     suffices g ∈ MulAction.stabilizer H (z : X) by
-      simpa [free] using this
+      simpa using this
     rw [MulAction.mem_stabilizer_iff, ← MulAction.orbitRel.Quotient.orbit.coe_smul, hs]
   rw [(MulAction.equivSubgroupOrbitsQuotientGroup y _).infinite_iff]
   exact h0
@@ -316,10 +316,10 @@ lemma WeaklyPeriodic.stronglyPeriodic_of_pretransitive_of_equiv_of_index_ne_zero
 is weakly `n`-periodic. -/
 lemma StronglyPeriodic.weaklyPeriodic_of_equiv_of_free [Nonempty X] {n : ℕ} {t : TileSet ps ιₜ}
     (h : t.StronglyPeriodic) {H : Subgroup G} (e : H ≃* (Fin n → Multiplicative ℤ))
-    (free : ∀ x : X, MulAction.stabilizer H x = ⊥) (hi : H.index ≠ 0) : t.WeaklyPeriodic n := by
+    [IsCancelSMul H X] (hi : H.index ≠ 0) : t.WeaklyPeriodic n := by
   let e' : (Fin n → Multiplicative ℤ) →* H := ↑e.symm
   have he' : Surjective e' := e.symm.surjective
-  have hsi := Subgroup.index_inf_ne_zero (StronglyPeriodic.index_ne_zero_of_free h free hi) hi
+  have hsi := Subgroup.index_inf_ne_zero (StronglyPeriodic.index_ne_zero_of_free h hi) hi
   rw [← Subgroup.relIndex_top_right, ← Subgroup.relIndex_inf_mul_relIndex, mul_ne_zero_iff,
       Subgroup.relIndex_top_right, and_iff_left hi, inf_top_eq, Subgroup.relIndex,
       ← Subgroup.index_comap_of_surjective _ he', Int.subgroup_index_ne_zero_iff] at hsi
