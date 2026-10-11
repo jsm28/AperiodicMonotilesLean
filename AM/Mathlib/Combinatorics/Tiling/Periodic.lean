@@ -3,10 +3,13 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
-import AM.Mathlib.Combinatorics.Tiling.Isohedral
-import Mathlib.Algebra.Order.Group.Basic
-import Mathlib.LinearAlgebra.FreeModule.Int
+module
+
+public import AM.Mathlib.Combinatorics.Tiling.Function.Tiling
+public import AM.Mathlib.Combinatorics.Tiling.Isohedral
+public import Mathlib.Algebra.Order.Group.Basic
+public import Mathlib.LinearAlgebra.FreeModule.Int
+public import Mathlib.GroupTheory.OrderOfElement
 
 /-!
 # Periodic tilings and aperiodic protosets
@@ -42,6 +45,8 @@ periodic.
 * [Rachel Greenfeld and Terence Tao, *A counterexample to the periodic tiling
   conjecture*][GreenfeldTao2024]
 -/
+
+@[expose] public section
 
 
 noncomputable section

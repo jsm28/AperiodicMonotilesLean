@@ -3,8 +3,10 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Function.Basic
-import Mathlib.Algebra.Pointwise.Stabilizer
+module
+
+public import AM.Mathlib.Combinatorics.Tiling.Function.Basic
+public import Mathlib.Algebra.Pointwise.Stabilizer
 
 /-!
 # Union properties for tiles
@@ -23,6 +25,8 @@ whole of `X`.
 
 * [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
+
+@[expose] public section
 
 
 noncomputable section

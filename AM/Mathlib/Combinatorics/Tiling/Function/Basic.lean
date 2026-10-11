@@ -3,7 +3,9 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.TileSet
+module
+
+public import AM.Mathlib.Combinatorics.Tiling.TileSet
 
 /-!
 # Bundled functions on tilings
@@ -23,6 +25,8 @@ group elements in `H` on both the value from `Y` and the `TileSet`.
 
 * [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
+
+@[expose] public section
 
 
 noncomputable section
@@ -157,7 +161,7 @@ protected def comp₂ (f : TileSetFunction ps α H) (f' : TileSetFunction ps β 
 /-- Converting a `TileSetFunction ps α H` to one using a subgroup of `H`. -/
 protected def ofLE {H' : Subgroup G} (h : H' ≤ H) :
     TileSetFunction ps α H ↪ TileSetFunction ps α H' where
-  toFun f := ⟨f.toFun, by simp, fun _ hg ↦ by simp [SetLike.le_def.1 h hg]⟩
+  toFun f := ⟨f.toFun, by simp, fun _ hg ↦ by simp [IsConcreteLE.le_iff.1 h hg]⟩
   inj' f f' h := by simpa using h
 
 @[simp] lemma ofLE_apply (f : TileSetFunction ps α H) {H' : Subgroup G} (h : H' ≤ H)
@@ -271,7 +275,7 @@ protected def comp₂ (f : VarTileSetFunction Y ps α H) (f' : VarTileSetFunctio
 /-- Converting a `VarTileSetFunction Y ps α H` to one using a subgroup of `H`. -/
 protected def ofLE (f : VarTileSetFunction Y ps α H) {H' : Subgroup G} (h : H' ≤ H) :
     VarTileSetFunction Y ps α H' :=
-  ⟨f.toFun, by simp, fun _ _ hg ↦ by simp [SetLike.le_def.1 h hg]⟩
+  ⟨f.toFun, by simp, fun _ _ hg ↦ by simp [IsConcreteLE.le_iff.1 h hg]⟩
 
 @[simp] lemma ofLE_apply (f : VarTileSetFunction Y ps α H) {H' : Subgroup G} (h : H' ≤ H)
     (y : Y) (t : TileSet ps ιₜ) : f.ofLE h y t = f y t :=

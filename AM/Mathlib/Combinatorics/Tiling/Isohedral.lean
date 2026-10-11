@@ -3,11 +3,13 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
-import AM.Mathlib.Combinatorics.Tiling.Function.Union
-import Mathlib.Algebra.Group.Subgroup.Actions
-import Mathlib.GroupTheory.GroupAction.SubMulAction
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import AM.Mathlib.Combinatorics.Tiling.Function.Disjoint
+public import AM.Mathlib.Combinatorics.Tiling.Function.Union
+public import Mathlib.Algebra.Group.Subgroup.Actions
+public import Mathlib.GroupTheory.GroupAction.SubMulAction
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Isohedral numbers of tilings and protosets
@@ -36,6 +38,8 @@ natural number.
 
 * [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
+
+@[expose] public section
 
 
 noncomputable section
@@ -141,10 +145,10 @@ def isohedralNumber : TileSetFunction ps Cardinal ⊤ :=
     #(MulAction.orbitRel.Quotient t.symmetryGroup (t : Set (PlacedTile ps))),
   by
     refine fun {ιₜ ιₜ'} (f t) ↦
-      Cardinal.eq.2 ⟨Quotient.congr (Equiv.setCongr (by simp)) fun x y ↦ ?_⟩
+      Cardinal.eq.2 ⟨Quotient.congr (Set.equivOfEq (by simp)) fun x y ↦ ?_⟩
     simp_rw [MulAction.orbitRel_apply]
     simp only [MulAction.mem_orbit_iff, Subtype.exists, symmetryGroup_reindex,
-               Equiv.setCongr_apply, Subtype.ext_iff]
+               Set.equivOfEq_apply, Subtype.ext_iff]
     exact Iff.rfl,
   fun {ιₜ g} (t _) ↦ Cardinal.eq.2 ⟨smulOrbitEquiv g t⟩⟩
 

@@ -3,9 +3,11 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import Mathlib.Algebra.Group.Subgroup.Pointwise
-import Mathlib.Combinatorics.Tiling.Tile
-import Mathlib.GroupTheory.GroupAction.Basic
+module
+
+public import Mathlib.Algebra.Group.Subgroup.Pointwise
+public import Mathlib.Combinatorics.Tiling.Tile
+public import Mathlib.GroupTheory.GroupAction.Basic
 
 /-!
 # Tilings
@@ -32,6 +34,8 @@ indices.
 
 * [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
+
+@[expose] public section
 
 
 noncomputable section
@@ -409,7 +413,7 @@ lemma mem_symmetryGroup_smul_iff' {t : TileSet ps ιₜ} {g g' : G} :
 
 lemma symmetryGroup_le_stabilizer_coeSet (t : TileSet ps ιₜ) :
     t.symmetryGroup ≤ MulAction.stabilizer G (t : Set (PlacedTile ps)) := by
-  simp_rw [SetLike.le_def, mem_symmetryGroup_iff_exists, MulAction.mem_stabilizer_iff]
+  simp_rw [IsConcreteLE.le_iff, mem_symmetryGroup_iff_exists, MulAction.mem_stabilizer_iff]
   rintro g ⟨f, hf⟩
   nth_rewrite 2 [← hf]
   simp
@@ -417,7 +421,7 @@ lemma symmetryGroup_le_stabilizer_coeSet (t : TileSet ps ιₜ) :
 lemma symmetryGroup_eq_stabilizer_coeSet_of_injective (t : TileSet ps ιₜ) (h : Injective t) :
     t.symmetryGroup = MulAction.stabilizer G (t : Set (PlacedTile ps)) := by
   refine le_antisymm t.symmetryGroup_le_stabilizer_coeSet ?_
-  simp_rw [SetLike.le_def, mem_symmetryGroup_iff_exists, MulAction.mem_stabilizer_iff]
+  simp_rw [IsConcreteLE.le_iff, mem_symmetryGroup_iff_exists, MulAction.mem_stabilizer_iff]
   intro g hg
   rw [← coeSet_smul] at hg
   exact ⟨equivOfCoeSetEqOfInjective hg ((injective_smul_iff g).2 h) h, by simp⟩

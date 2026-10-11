@@ -3,8 +3,10 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import AM.Mathlib.Combinatorics.Tiling.Function.Basic
-import Mathlib.Logic.Equiv.Pairwise
+module
+
+public import AM.Mathlib.Combinatorics.Tiling.Function.Basic
+public import Mathlib.Logic.Equiv.Pairwise
 
 /-!
 # Disjointness properties for tiles
@@ -34,6 +36,8 @@ many distinct tiles of `t` contain any point of `s`.
 
 * [Branko Grünbaum and G. C. Shephard, *Tilings and Patterns*][GrunbaumShephard1987]
 -/
+
+@[expose] public section
 
 
 noncomputable section
